@@ -1,0 +1,10 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDE configuration
+.vscode/
+.idea/
+
+# Local temporary cache
+*.tmp

@@ -1,0 +1,4271 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waypoint — Command & Portfolio Intelligence</title>
+  <style>
+    /* ==========================================================================
+       WAYPOINT V4 - MODERN GLASSMORPHIC AIR-GAPPED DASHBOARD
+       Zero external dependencies, system fonts, vibrant dark/light theme
+       ========================================================================== */
+    :root[data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 40%, #070913 100%);
+      --bg-primary: #070913;
+      --bg-glass: rgba(15, 23, 42, 0.75);
+      --bg-glass-hover: rgba(30, 41, 59, 0.85);
+      --bg-card: rgba(30, 41, 59, 0.6);
+      --bg-input: rgba(15, 23, 42, 0.8);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(56, 189, 248, 0.3);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --accent: #38bdf8;
+      --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      --accent-hover: #0284c7;
+
+      --status-notstarted: #64748b;
+      --status-inprogress: #38bdf8;
+      --status-blocked: #f43f5e;
+      --status-done: #10b981;
+
+      --health-green: #10b981;
+      --health-yellow: #f59e0b;
+      --health-red: #f43f5e;
+
+      --class-unclass-bg: linear-gradient(90deg, #007a3d, #059669);
+      --class-cui-bg: linear-gradient(90deg, #502b85, #7c3aed);
+
+      --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    :root[data-theme="light"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #e0e7ff 0%, #f8fafc 50%, #f1f5f9 100%);
+      --bg-primary: #f8fafc;
+      --bg-glass: rgba(255, 255, 255, 0.85);
+      --bg-glass-hover: rgba(241, 245, 249, 0.95);
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-input: rgba(248, 250, 252, 0.9);
+      --border-color: rgba(15, 23, 42, 0.1);
+      --border-glow: rgba(2, 132, 199, 0.4);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+
+      --accent: #0284c7;
+      --accent-gradient: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+      --accent-hover: #0369a1;
+
+      --status-notstarted: #64748b;
+      --status-inprogress: #0284c7;
+      --status-blocked: #e11d48;
+      --status-done: #059669;
+
+      --health-green: #059669;
+      --health-yellow: #d97706;
+      --health-red: #e11d48;
+
+      --class-unclass-bg: linear-gradient(90deg, #007a3d, #059669);
+      --class-cui-bg: linear-gradient(90deg, #502b85, #7c3aed);
+
+      --shadow-lg: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+      --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* Top Classification Bar with Centered Selector */
+    .classification-banner {
+      background: var(--class-unclass-bg);
+      color: #ffffff;
+      padding: 4px 16px;
+      user-select: none;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s ease;
+    }
+
+    .classification-banner.cui {
+      background: var(--class-cui-bg);
+    }
+
+    .class-picker-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .class-picker-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 4px;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 2px 24px 2px 10px;
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .class-picker-select:hover {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: #ffffff;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .class-picker-select option {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .class-picker-caret {
+      position: absolute;
+      right: 8px;
+      pointer-events: none;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Header Navbar */
+    header {
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 900;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-gradient);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    .brand-logo svg {
+      fill: #ffffff;
+      width: 18px;
+      height: 18px;
+    }
+
+    .brand-text {
+      font-weight: 900;
+      font-size: 19px;
+      letter-spacing: 1px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-tab {
+      padding: 8px 16px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-main);
+      background: var(--bg-glass-hover);
+    }
+
+    .nav-tab.active {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+      font-weight: 700;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      background: var(--bg-input);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 7px 14px 7px 32px;
+      font-size: 13px;
+      width: 180px;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      width: 240px;
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      width: 14px;
+      height: 14px;
+      fill: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      padding: 7px 14px;
+      border-radius: 7px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-glass);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--bg-glass-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-gradient {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-gradient:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-active-detail {
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
+      font-weight: 700 !important;
+    }
+
+    .save-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--status-done);
+      box-shadow: 0 0 8px var(--status-done);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: scale(1.15);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+    }
+
+    /* Layout Workspace */
+    .app-workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Sidebar Tree Filter */
+    aside.sidebar {
+      width: 300px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    aside.sidebar.collapsed {
+      width: 0;
+      min-width: 0;
+      border-right: none;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 4px;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+
+    .sidebar-toggle-btn:hover {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .sidebar-expand-btn {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 100;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glow);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sidebar-expand-btn:hover {
+      background: var(--accent-gradient);
+      color: #ffffff;
+    }
+
+    .sidebar-tree {
+      padding: 12px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+      transition: scrollbar-color 0.3s ease;
+    }
+
+    aside.sidebar:hover .sidebar-tree,
+    .sidebar-tree:hover {
+      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    [data-theme="light"] aside.sidebar:hover .sidebar-tree,
+    [data-theme="light"] .sidebar-tree:hover {
+      scrollbar-color: rgba(15, 23, 42, 0.3) transparent;
+    }
+
+    /* Modern Sleek Glassmorphic Custom Scrollbar with Auto-Hiding Hover Interaction */
+    .sidebar-tree::-webkit-scrollbar,
+    main.main-content::-webkit-scrollbar,
+    .inspector-content::-webkit-scrollbar,
+    .kanban-grid::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .sidebar-tree::-webkit-scrollbar-track,
+    main.main-content::-webkit-scrollbar-track,
+    .inspector-content::-webkit-scrollbar-track,
+    .kanban-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* Left Sidebar thumb: hidden/subtle until hovering over sidebar panel */
+    .sidebar-tree::-webkit-scrollbar-thumb {
+      background: transparent;
+      border-radius: 10px;
+      transition: background 0.25s ease;
+    }
+
+    main.main-content::-webkit-scrollbar-thumb,
+    .inspector-content::-webkit-scrollbar-thumb,
+    .kanban-grid::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+    }
+
+    /* 1. Reveal thumb in subtle semi-transparent shade when hovering sidebar panel */
+    aside.sidebar:hover .sidebar-tree::-webkit-scrollbar-thumb,
+    .sidebar-tree:hover::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    [data-theme="light"] aside.sidebar:hover .sidebar-tree::-webkit-scrollbar-thumb,
+    [data-theme="light"] .sidebar-tree:hover::-webkit-scrollbar-thumb {
+      background: rgba(15, 23, 42, 0.25);
+    }
+
+    /* 2. Highlight thumb in vibrant accent blue (var(--accent)) on direct thumb hover */
+    .sidebar-tree::-webkit-scrollbar-thumb:hover,
+    main.main-content::-webkit-scrollbar-thumb:hover,
+    .inspector-content::-webkit-scrollbar-thumb:hover,
+    .kanban-grid::-webkit-scrollbar-thumb:hover {
+      background: var(--accent) !important;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .sidebar-node {
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transition: all 0.15s ease;
+      font-size: 13px;
+    }
+
+    .sidebar-node:hover {
+      background: var(--bg-glass-hover);
+      color: var(--text-main);
+    }
+
+    .sidebar-node.active {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--border-glow);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .sidebar-indent {
+      margin-left: 14px;
+      border-left: 1px solid var(--border-color);
+      padding-left: 6px;
+    }
+
+    /* Main View Area */
+    main.main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+
+    .view-pane {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .view-pane.active {
+      display: flex;
+    }
+
+    /* Top Prominent Hero Objective Banner */
+    .hero-objective-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-objective-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: var(--accent-gradient);
+    }
+
+    .hero-title-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-objective-title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+    }
+
+    /* Inspiring End-State Vision Callout */
+    .vision-callout-box {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px dashed var(--accent);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .vision-callout-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .vision-callout-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 2px;
+    }
+
+    .vision-callout-text {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    /* Roll-Up Contextual Statistics Cards (Inside Hero Objective) */
+    .hero-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .stat-card {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .stat-card.interactive {
+      cursor: pointer;
+    }
+
+    .stat-card.interactive:hover {
+      border-color: var(--status-blocked) !important;
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
+    }
+
+    .stat-card.active-filter {
+      border-color: var(--status-blocked) !important;
+      background: rgba(244, 63, 94, 0.15) !important;
+      box-shadow: 0 0 20px rgba(244, 63, 94, 0.4) !important;
+    }
+
+    @keyframes highlightGlow {
+      0% {
+        border-color: #f59e0b;
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.8);
+        transform: scale(1.02);
+      }
+
+      50% {
+        border-color: #f59e0b;
+        box-shadow: 0 0 30px rgba(245, 158, 11, 0.9);
+        transform: scale(1.02);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .highlight-pulse {
+      animation: highlightGlow 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-color: #f59e0b !important;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.5) !important;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--text-main);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    /* Definition of Done Callout Badge */
+    .dod-callout-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: var(--text-main);
+      margin-top: 6px;
+    }
+
+    .dod-callout-label {
+      font-weight: 800;
+      color: var(--status-done);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    /* Executive Container Cards */
+    .tree-cards-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* COA 1: Accordion Collapsible Rows & Action Items */
+    .accordion-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--accent);
+      border-radius: 4px;
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 900;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .accordion-toggle-btn:hover {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    .detail-toggle-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .btn-subitem-chip {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px dashed var(--border-glow);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    .btn-subitem-chip:hover {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: var(--accent);
+      color: #ffffff;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+    }
+
+    .row-add-slot {
+      width: 110px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .detail-toggle-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .detail-toggle-btn.active {
+      background: rgba(56, 189, 248, 0.25) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }
+
+    .exec-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-card);
+    }
+
+    .exec-card.collapsed-card {
+      padding: 10px 14px;
+      gap: 0;
+    }
+
+    .exec-card.collapsed-card .exec-card-body {
+      display: none;
+    }
+
+    .exec-card.expanded-card {
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .exec-card.expanded-card .exec-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .exec-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .exec-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .exec-card-title {
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+    }
+
+    .type-tag {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--accent);
+    }
+
+    /* Status Badges & RAG Dots */
+    .badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-notstarted {
+      background: rgba(100, 116, 139, 0.2);
+      color: var(--status-notstarted);
+      border: 1px solid var(--status-notstarted);
+    }
+
+    .badge-inprogress {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--status-inprogress);
+      border: 1px solid var(--status-inprogress);
+    }
+
+    .badge-blocked {
+      background: rgba(244, 63, 94, 0.2);
+      color: var(--status-blocked);
+      border: 1px solid var(--status-blocked);
+    }
+
+    .badge-done {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--status-done);
+      border: 1px solid var(--status-done);
+    }
+
+    .rag-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .rag-green {
+      background: var(--health-green);
+      box-shadow: 0 0 8px var(--health-green);
+    }
+
+    .rag-yellow {
+      background: var(--health-yellow);
+      box-shadow: 0 0 8px var(--health-yellow);
+    }
+
+    .rag-red {
+      background: var(--health-red);
+      box-shadow: 0 0 8px var(--health-red);
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Progress Bars */
+    .progress-bar-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--accent-gradient);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .team-chip-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .team-chip {
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 3px 10px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Sub-Tree Indented Container */
+    .subtree-container {
+      margin-left: 20px;
+      border-left: 2px dashed rgba(255, 255, 255, 0.15);
+      padding-left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    /* Action Row (Task / Milestone) */
+    .action-item-row {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-item-row:hover {
+      background: var(--bg-glass-hover);
+      border-color: var(--accent);
+      transform: translateX(4px);
+    }
+
+    .action-row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .action-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-item-title {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    /* Interactive Frappe Gantt Chart View Styles (COA #2) */
+    .gantt-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .frappe-gantt-wrapper {
+      display: flex;
+      width: 100%;
+      height: 600px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .frappe-gantt-label-col {
+      width: 280px;
+      flex-shrink: 0;
+      border-right: 2px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.4);
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      z-index: 10;
+    }
+
+    .frappe-gantt-label-head {
+      height: 44px;
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .frappe-gantt-label-row {
+      height: 44px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 12px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .frappe-gantt-label-row:hover {
+      background: var(--bg-glass-hover);
+      color: var(--accent);
+    }
+
+    .frappe-gantt-chart-area {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      position: relative;
+    }
+
+    .frappe-gantt-svg {
+      display: block;
+    }
+
+    .frappe-gantt-bar-group {
+      cursor: grab;
+      transition: opacity 0.2s ease;
+    }
+
+    .frappe-gantt-bar-group:hover .gantt-bar-rect {
+      stroke: var(--accent);
+      filter: drop-shadow(0 4px 12px rgba(56, 189, 248, 0.4));
+    }
+
+    .frappe-gantt-bar-group:hover .gantt-handle {
+      opacity: 0.9;
+    }
+
+    .gantt-handle {
+      opacity: 0;
+      cursor: ew-resize;
+      transition: opacity 0.2s ease;
+    }
+
+    .gantt-handle:hover {
+      fill: var(--accent);
+    }
+
+    /* Kanban Board View & Swimlane Matrix Styles */
+    .kanban-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 16px;
+    }
+
+    .kanban-sticky-header {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 10px 0;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .kanban-status-head {
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .kanban-swimlane {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-card);
+    }
+
+    .kanban-swimlane:hover {
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .kanban-swimlane-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      user-select: none;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .kanban-swimlane-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .kanban-swimlane-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .kanban-col {
+      background: rgba(15, 23, 42, 0.2);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 140px;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .kanban-col.drag-hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent);
+      border-style: solid;
+      box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .kanban-col-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .kanban-count-badge {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .kanban-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .kanban-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .kanban-card.dragging {
+      opacity: 0.4;
+      transform: scale(0.98);
+      border-color: var(--accent);
+    }
+
+    .kanban-card-parent-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* Right Slide-Out Inspector Drawer */
+    .inspector-panel {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      width: 480px;
+      max-width: 90vw;
+      height: 100vh;
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-left: 1px solid var(--border-color);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .inspector-panel.open {
+      right: 0;
+    }
+
+    .inspector-panel.maximized {
+      width: 85vw;
+      max-width: 1400px;
+      box-shadow: -20px 0 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .inspector-head {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .inspector-content {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .inspector-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .inspector-section-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .contact-card-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    /* Rich Text Editor & Display Styles */
+    .rich-text-wrapper {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-input);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rich-text-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      background: rgba(15, 23, 42, 0.5);
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+
+    .rt-btn {
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .rt-btn:hover {
+      background: var(--bg-glass-hover);
+      border-color: var(--border-color);
+      color: var(--accent);
+    }
+
+    .rt-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border-color);
+      margin: 0 4px;
+    }
+
+    .rich-text-editor {
+      min-height: 90px;
+      max-height: 250px;
+      padding: 10px;
+      color: var(--text-main);
+      font-size: 13px;
+      line-height: 1.6;
+      outline: none;
+      overflow-y: auto;
+    }
+
+    .rich-text-editor[placeholder]:empty:before {
+      content: attr(placeholder);
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .rich-text-display,
+    .rich-text-editor {
+      word-break: break-word;
+      line-height: 1.6;
+    }
+
+    .rich-text-display ul,
+    .rich-text-editor ul {
+      list-style-type: disc !important;
+      list-style-position: inside !important;
+      margin-left: 8px !important;
+      margin-top: 6px !important;
+      margin-bottom: 6px !important;
+      padding-left: 16px !important;
+    }
+
+    .rich-text-display ol,
+    .rich-text-editor ol {
+      list-style-type: decimal !important;
+      list-style-position: inside !important;
+      margin-left: 8px !important;
+      margin-top: 6px !important;
+      margin-bottom: 6px !important;
+      padding-left: 16px !important;
+    }
+
+    .rich-text-display li,
+    .rich-text-editor li {
+      display: list-item !important;
+      margin-bottom: 4px !important;
+      color: var(--text-main);
+    }
+
+    .rich-text-display h3,
+    .rich-text-editor h3 {
+      font-size: 15px !important;
+      font-weight: 800 !important;
+      color: var(--accent) !important;
+      margin-top: 10px !important;
+      margin-bottom: 6px !important;
+      display: block !important;
+    }
+
+    .rich-text-display blockquote,
+    .rich-text-editor blockquote {
+      border-left: 3px solid var(--accent) !important;
+      padding: 6px 12px !important;
+      margin: 8px 0 !important;
+      color: var(--text-muted) !important;
+      font-style: italic !important;
+      background: rgba(56, 189, 248, 0.08) !important;
+      border-radius: 0 6px 6px 0 !important;
+      display: block !important;
+    }
+
+    .rich-text-display mark,
+    .rich-text-editor mark,
+    .rich-text-display [style*="background"],
+    .rich-text-editor [style*="background"],
+    .rich-text-display span[style*="background"],
+    .rich-text-editor span[style*="background"],
+    .rich-text-display font[color],
+    .rich-text-editor font[color] {
+      background: rgba(56, 189, 248, 0.35) !important;
+      color: #ffffff !important;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    /* Item CRUD Modal & Form Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      animation: modalSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        transform: translateY(20px) scale(0.96);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-head {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .form-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+    }
+
+    /* Print Briefing Mode */
+    @media print {
+
+      header,
+      aside.sidebar,
+      .inspector-panel,
+      .classification-banner {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        overflow: visible !important;
+      }
+
+      main.main-content {
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+
+      .exec-card,
+      .action-item-row,
+      .hero-objective-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Classification Bar (Centered with Inline Caret Select) -->
+  <div id="topBanner" class="classification-banner unclassified">
+    <div class="class-picker-wrapper">
+      <select class="class-picker-select" id="classificationSelect" onchange="setClassification(this.value)">
+        <option value="UNCLASSIFIED">UNCLASSIFIED</option>
+        <option value="CUI">CUI</option>
+      </select>
+      <span class="class-picker-caret">▾</span>
+    </div>
+  </div>
+
+  <!-- Team Member Personnel CRUD Modal -->
+  <div id="personnelModal" class="modal-overlay">
+    <div class="modal-card" style="width:480px; max-width:92vw;">
+      <div class="modal-head">
+        <h3 id="personnelModalTitle" style="font-size:16px; font-weight:800; color:var(--text-main);">👤 Add Team Member
+        </h3>
+        <button type="button" class="btn" onclick="closePersonnelModal()">✕</button>
+      </div>
+      <form id="personnelForm" onsubmit="savePersonnelForm(event)"
+        style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+        <input type="hidden" id="personnelFormId" value="">
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Full Name & Rank
+            / Honorific</label>
+          <input type="text" id="personnelFormName" class="form-input" placeholder="e.g. Maj Alex Mercer" required
+            style="width:100%; margin-top:4px;">
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Primary Role /
+            Job Position</label>
+          <input type="text" id="personnelFormRole" class="form-input" placeholder="e.g. Cyber Defense Analyst" required
+            style="width:100%; margin-top:4px;">
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Official Email
+            Address</label>
+          <input type="email" id="personnelFormEmail" class="form-input" placeholder="alex.mercer@example.com"
+            style="width:100%; margin-top:4px;">
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div style="flex:1;">
+            <label class="form-label"
+              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Office DSN
+              Phone</label>
+            <input type="text" id="personnelFormOffice" class="form-input" placeholder="DSN 312-555-0122"
+              style="width:100%; margin-top:4px;">
+          </div>
+          <div style="flex:1;">
+            <label class="form-label"
+              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Cell
+              Phone</label>
+            <input type="text" id="personnelFormCell" class="form-input" placeholder="555-888-9999"
+              style="width:100%; margin-top:4px;">
+          </div>
+        </div>
+        <div
+          style="display:flex; gap:10px; justify-content:flex-end; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-color);">
+          <button type="button" class="btn" onclick="closePersonnelModal()">Cancel</button>
+          <button type="submit" class="btn btn-gradient">💾 Save Personnel Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Header Navigation Toolbar -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 19h20L12 2zm0 3.8L18.5 17H5.5L12 5.8zM11 10h2v4h-2zm0 5h2v2h-2z" />
+        </svg>
+      </div>
+      <span class="brand-text">WAYPOINT</span>
+    </div>
+
+    <!-- View Switcher Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-view="tree" onclick="switchView('tree')">📂 Portfolio Hierarchy</button>
+      <button class="nav-tab" data-view="gantt" onclick="switchView('gantt')">📅 Timeline</button>
+      <button class="nav-tab" data-view="kanban" onclick="switchView('kanban')">📋 Kanban Board</button>
+      <button class="nav-tab" data-view="team" onclick="switchView('team')">👥 Team Roster</button>
+    </div>
+
+    <!-- Actions & Controls -->
+    <div class="header-controls">
+      <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path
+            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+        <input type="text" id="globalSearch" class="search-input" placeholder="Search workspace..."
+          oninput="onSearchInput(this.value)">
+      </div>
+
+      <div class="save-tag">
+        <span class="pulse-dot"></span>
+        <span id="saveStatusText">Saved</span>
+      </div>
+
+      <button class="btn btn-gradient" onclick="openCreateTaskDrawer()"
+        title="Add new workstream item, task, or milestone">+ New Workstream</button>
+      <button class="btn" onclick="emailWorkstreamTeam()" title="Send email briefing to team members">✉️ Email
+        Team</button>
+      <button class="btn btn-gradient" onclick="exportJSON()">Export JSON</button>
+      <label class="btn" style="cursor: pointer;">
+        Import JSON
+        <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importJSON(event)">
+      </label>
+      <button class="btn" onclick="resetSampleData()" title="Reset workspace to default sample data">↺ Reset
+        Data</button>
+      <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </header>
+
+  <!-- Workspace Container Layout -->
+  <div class="app-workspace">
+
+    <!-- Left Sidebar Hierarchy Browser -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <span>Portfolio Structure</span>
+        <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Collapse Sidebar (Ctrl+B)">◀</button>
+      </div>
+      <div class="sidebar-tree" id="sidebarTreeContainer">
+        <!-- Sidebar nodes rendered dynamically -->
+      </div>
+    </aside>
+
+    <!-- Main Workspace Content -->
+    <main class="main-content">
+      <!-- Floating Expand Sidebar Button (when collapsed) -->
+      <button id="sidebarExpandBtn" class="sidebar-expand-btn" onclick="toggleSidebar()" style="display: none;">▶ Expand
+        Navigation</button>
+
+      <!-- VIEW 1: Portfolio Hierarchy with Hero Objective Banner -->
+      <div id="view-tree" class="view-pane active">
+        <!-- Dynamic Top-Level Hero Objective & Contextual Roll-Up Banner -->
+        <div id="heroObjectiveContainer"></div>
+
+        <!-- Progressive Disclosure Hierarchy Cards Container -->
+        <div class="tree-cards-wrapper" id="progressiveTreeContainer"></div>
+      </div>
+
+      <!-- VIEW 2: Interactive Frappe Gantt Schedule View (COA #2) -->
+      <div id="view-gantt" class="view-pane">
+        <div class="hero-card"
+          style="padding: 16px; background: var(--bg-card); border-radius: 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; display:flex; align-items:center; gap:8px;">
+              <span>📅 Interactive Master Schedule & Timeline</span>
+            </h3>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">
+              Drag task bars to reschedule dates or stretch side handles to adjust durations. Click bars to open
+              Inspector details.
+            </p>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span
+              style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-right:4px;">VIEW
+              SCALE:</span>
+            <button class="btn" id="ganttScaleBtn-Day" onclick="setGanttViewMode('Day')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to daily columns">☀️ Day</button>
+            <button class="btn btn-gradient" id="ganttScaleBtn-Week" onclick="setGanttViewMode('Week')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to weekly columns">📅 Week</button>
+            <button class="btn" id="ganttScaleBtn-Month" onclick="setGanttViewMode('Month')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to monthly columns">📆
+              Month</button>
+            <button class="btn" id="ganttScaleBtn-Year" onclick="setGanttViewMode('Year')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to quarterly/yearly columns">📊
+              Year</button>
+          </div>
+        </div>
+        <div class="gantt-container" id="ganttChartContainer"></div>
+      </div>
+
+      <!-- VIEW 3: Kanban Board (COA 3: Group By Switcher Toolbar + LOE Swimlanes) -->
+      <div id="view-kanban" class="view-pane">
+        <div class="hero-card"
+          style="padding: 16px; background: var(--bg-card); border-radius: 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800;">📋 Operational Kanban Board</h3>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">Matrix view grouped by parent
+              workstreams, team leads, or item types.</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span
+              style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-right:4px;">GROUP
+              BY:</span>
+            <button class="btn" id="kanbanBtn-project" onclick="setKanbanGroupBy('project')"
+              style="font-size:11px; padding:4px 10px;"
+              title="Group into horizontal swimlanes by Parent Workstream (LOE)">📁 Parent Workstream (LOE)</button>
+            <button class="btn" id="kanbanBtn-lead" onclick="setKanbanGroupBy('lead')"
+              style="font-size:11px; padding:4px 10px;" title="Group into swimlanes by Assigned Leader / Team Member">👤
+              Assigned Lead</button>
+            <button class="btn" id="kanbanBtn-type" onclick="setKanbanGroupBy('type')"
+              style="font-size:11px; padding:4px 10px;" title="Group into swimlanes by Workstream Type">🏷️ Item
+              Type</button>
+            <button class="btn" id="kanbanBtn-flat" onclick="setKanbanGroupBy('flat')"
+              style="font-size:11px; padding:4px 10px;" title="Flat 4-column overview without swimlanes">🌐 Flat
+              Board</button>
+          </div>
+        </div>
+
+        <div class="kanban-grid" id="kanbanBoardContainer"></div>
+      </div>
+
+      <!-- VIEW 4: Workspace Personnel & Team Directory -->
+      <div id="view-team" class="view-pane">
+        <div class="hero-card"
+          style="padding: 20px; background: var(--bg-card); border-radius: 12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h3 style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                <span>👥 Workspace Personnel & Team Directory</span>
+              </h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">Assigned program leads, engineers, and key operational contact cards.</p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button class="btn btn-gradient" onclick="openPersonnelModal()"
+                style="font-size:12px; padding:6px 14px; font-weight:700;"
+                title="Add new team member to workspace personnel roster">
+                ➕ Add Team Member
+              </button>
+              <button class="btn" onclick="clearAllPersonnel()"
+                style="font-size:12px; padding:6px 14px; color:var(--status-blocked); border-color:rgba(244,63,94,0.4);"
+                title="Delete all personnel from workspace roster">
+                🗑️ Delete All Personnel
+              </button>
+            </div>
+          </div>
+          <div id="teamRadarContainer"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 14px;">
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Slide-Out Inspector Drawer Panel (Unified Inspection & In-Line Edit) -->
+    <div class="inspector-panel" id="detailDrawer">
+      <div class="inspector-head">
+        <span style="font-weight: 800; font-size: 15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+          id="drawerTitle">Item Details</span>
+        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;" id="drawerHeaderActions">
+          <button class="btn" onclick="toggleDrawerEditMode()" title="Edit item properties in-line">✏️ Edit
+            In-Line</button>
+          <button class="btn" onclick="deleteCurrentInspectorItem()"
+            style="color:var(--status-blocked); border-color:rgba(244,63,94,0.4);"
+            title="Delete item from workspace">🗑️ Delete</button>
+          <button class="btn" id="drawerMaximizeBtn" onclick="toggleInspectorMaximize()"
+            title="Expand drawer to wide screen reading view">⤢ Expand View</button>
+          <button class="btn" onclick="closeInspector()">✕ Close</button>
+        </div>
+      </div>
+      <div class="inspector-content" id="drawerBody"></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom DoD Security Classification Banner -->
+  <div id="bottomBanner" class="classification-banner unclassified">
+    <span class="banner-title" id="bottomClassificationText">UNCLASSIFIED</span>
+  </div>
+
+  <!-- ==========================================================================
+       WAYPOINT CORE JAVASCRIPT ENGINE (STEP 3B: COMPLETE FULL-FEATURED ENGINE)
+       ========================================================================== -->
+  <script>
+    const SCHEMA_VERSION = 1;
+    const CACHE_KEY = "WAYPOINT_WORKSPACE_CACHE_V8";
+
+    let state = {
+      schemaVersion: SCHEMA_VERSION,
+      lastUpdated: new Date().toISOString(),
+      classification: "UNCLASSIFIED",
+      enums: {
+        type: ["objective", "key_result", "project", "task", "milestone"],
+        status: ["Not Started", "In Progress", "Blocked", "Done"],
+        health: ["Green", "Yellow", "Red"]
+      },
+      tasks: []
+    };
+
+    let activeFilterId = null;
+    let searchQuery = "";
+    let showBlockedOnly = false;
+    let isWorkspaceDirty = false;
+
+    function toggleBlockedFilter() {
+      showBlockedOnly = !showBlockedOnly;
+      renderAll();
+    }
+
+    function emailWorkstreamTeam(taskId) {
+      let targetTask = state.tasks[0];
+      if (taskId) {
+        const found = findTaskRecursive(state.tasks, taskId);
+        if (found) targetTask = found;
+      }
+
+      const resolved = resolveCascadingProps(targetTask, null);
+      const teamMembers = resolved.effectiveTeamMembers || [];
+
+      if (teamMembers.length === 0) {
+        alert("No team member email addresses found for this workstream.");
+        return;
+      }
+
+      const emails = teamMembers.map(tm => tm.email).filter(e => e && e.includes("@")).join(",");
+      const classLevel = state.classification || 'UNCLASSIFIED';
+      const subject = encodeURIComponent(`[${classLevel}] Status Update: ${resolved.title}`);
+
+      let bodyText = `CLASSIFICATION: ${classLevel}\n`;
+      bodyText += `WORKSTREAM: ${resolved.title}\n`;
+      bodyText += `STATUS: ${resolved.status}\n`;
+      bodyText += `PROGRESS: ${resolved.progress || 0}%\n`;
+      if (resolved.effectiveVision) bodyText += `END-STATE VISION: ${resolved.effectiveVision}\n`;
+      if (resolved.definitionOfDone) bodyText += `DEFINITION OF DONE: ${resolved.definitionOfDone}\n`;
+      bodyText += `TIMELINE DATES: ${resolved.startDate || 'N/A'} to ${resolved.dueDate || 'N/A'}\n\n`;
+      bodyText += `---\nSent via Waypoint Portfolio Engine.`;
+
+      const mailtoUrl = `mailto:${emails}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+      window.location.href = mailtoUrl;
+    }
+
+    function scrollToMilestone(milestoneId) {
+      if (!milestoneId) return;
+
+      switchView('tree');
+
+      if (showBlockedOnly) {
+        showBlockedOnly = false;
+      }
+
+      function expandPath(tasks, targetId) {
+        for (const t of tasks) {
+          if (t.id === targetId) {
+            expandedNodeIds.add(t.id);
+            return true;
+          }
+          if (t.subTasks && t.subTasks.length > 0) {
+            if (expandPath(t.subTasks, targetId)) {
+              expandedNodeIds.add(t.id);
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+      expandPath(state.tasks, milestoneId);
+      renderAll();
+
+      let targetEl = document.getElementById(`node-${milestoneId}`);
+      if (!targetEl) {
+        activeFilterId = null;
+        renderAll();
+        targetEl = document.getElementById(`node-${milestoneId}`);
+      }
+
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetEl.classList.add("highlight-pulse");
+        setTimeout(() => targetEl.classList.remove("highlight-pulse"), 2500);
+
+        const foundTask = findTaskRecursive(state.tasks, milestoneId);
+        if (foundTask) {
+          openInspector(resolveCascadingProps(foundTask, null));
+        }
+      }
+    }
+
+    // --- INITIALIZATION ---
+    window.addEventListener("DOMContentLoaded", async () => {
+      await loadInitialData();
+      setClassification(state.classification || "UNCLASSIFIED");
+      renderAll();
+    });
+
+    async function loadInitialData() {
+      // Purge legacy cache keys
+      ["WAYPOINT_WORKSPACE_CACHE_V1", "WAYPOINT_WORKSPACE_CACHE_V2", "WAYPOINT_WORKSPACE_CACHE_V3", "WAYPOINT_WORKSPACE_CACHE_V4", "WAYPOINT_WORKSPACE_CACHE_V5", "WAYPOINT_WORKSPACE_CACHE_V6", "WAYPOINT_WORKSPACE_CACHE_V7"].forEach(k => {
+        try { localStorage.removeItem(k); } catch (e) { }
+      });
+
+      // 1. Seed sample data synchronously FIRST so state is never empty
+      seedSampleData();
+
+      // 2. Check V8 cache
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (validateWorkspaceSchema(parsed) && Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
+            state = parsed;
+            return;
+          }
+        } catch (e) {
+          console.error("Failed to parse cached workspace", e);
+        }
+      }
+
+      // 3. Optional fetch for web servers
+      try {
+        const response = await fetch("./waypoint.json");
+        if (response.ok) {
+          const parsed = await response.json();
+          if (validateWorkspaceSchema(parsed) && Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
+            state = parsed;
+            saveToCache();
+          }
+        }
+      } catch (err) { }
+    }
+
+    function seedSampleData() {
+      state = {
+        schemaVersion: SCHEMA_VERSION,
+        lastUpdated: new Date().toISOString(),
+        classification: "UNCLASSIFIED",
+        enums: {
+          type: ["objective", "key_result", "project", "task", "milestone"],
+          status: ["Not Started", "In Progress", "Blocked", "Done"],
+          health: ["Green", "Yellow", "Red"]
+        },
+        teamRoster: [
+          { id: "tm-101", name: "Marcus White", role: "Executive Sponsor / VP of Technology", email: "marcus.white@example.com", officePhone: "555-0100", cellPhone: "555-111-2222" },
+          { id: "tm-102", name: "Jane A. Smith", role: "Program Director", email: "jane.smith@example.com", officePhone: "555-0150", cellPhone: "555-222-3333" },
+          { id: "tm-103", name: "John Doe", role: "Deputy Program Manager", email: "john.doe@example.com", officePhone: "555-0199", cellPhone: "555-333-4444" },
+          { id: "tm-104", name: "Alice Johnson", role: "Cyber Operations Lead", email: "alice.johnson@example.com", officePhone: "555-0188", cellPhone: "555-444-5555" },
+          { id: "tm-105", name: "E. Wright", role: "Lead Software Engineer", email: "e.wright@example.com", officePhone: "555-0177", cellPhone: "555-555-6666" },
+          { id: "tm-106", name: "M. Chen", role: "Systems Administrator", email: "m.chen@example.com", officePhone: "555-0166", cellPhone: "555-666-7777" }
+        ],
+        tasks: [
+          {
+            id: "t-001",
+            type: "objective",
+            title: "Operation Sentinel Dawn — Cyber Modernization Portfolio",
+            status: "In Progress",
+            health: "Yellow",
+            progress: 68,
+            leadId: "tm-101",
+            endStateVision: "Establish fully resilient, zero-trust digital networks and air-gapped decision support nodes across all operational units by FY28.",
+            definitionOfDone: "All operational command nodes functional on zero-trust architecture with security ATO sign-off.",
+            startDate: "2026-09-01",
+            dueDate: "2027-09-30",
+            notes: "Primary strategic initiative modernizing enterprise infrastructure and offline decision tools.",
+            teamMembers: [
+              { id: "tm-101", name: "Marcus White", role: "Executive Sponsor / VP of Technology", email: "marcus.white@example.com", officePhone: "555-0100", cellPhone: "555-111-2222" },
+              { id: "tm-102", name: "Jane A. Smith", role: "Program Director", email: "jane.smith@example.com", officePhone: "555-0150", cellPhone: "555-222-3333" },
+              { id: "tm-103", name: "John Doe", role: "Deputy Program Manager", email: "john.doe@example.com", officePhone: "555-0199", cellPhone: "555-333-4444" },
+              { id: "tm-104", name: "Alice Johnson", role: "Cyber Operations Lead", email: "alice.johnson@example.com", officePhone: "555-0188", cellPhone: "555-444-5555" },
+              { id: "tm-105", name: "E. Wright", role: "Lead Software Engineer", email: "e.wright@example.com", officePhone: "555-0177", cellPhone: "555-555-6666" },
+              { id: "tm-106", name: "M. Chen", role: "Systems Administrator", email: "m.chen@example.com", officePhone: "555-0166", cellPhone: "555-666-7777" }
+            ],
+            subTasks: [
+              {
+                id: "t-002",
+                type: "project",
+                title: "Sub-Project A: Zero-Trust Network Architecture (ZTNA)",
+                status: "In Progress",
+                health: "Green",
+                progress: 75,
+                leadId: "tm-102",
+                startDate: "2026-09-05",
+                dueDate: "2026-12-15",
+                notes: "Deploying identity provider integration and micro-segmentation security policies across network nodes.",
+                subTasks: [
+                  { id: "t-101", type: "task", title: "Identity Provider (IdP) & SSO Integration", status: "Done", assigneeId: "tm-104", definitionOfDone: "Single sign-on authentication verified on testbed environment with 100% pass rate.", startDate: "2026-09-06", dueDate: "2026-09-20", estimatedDuration: "2 weeks", blocked: false, notes: "Single sign-on authentication verified on testbed." },
+                  { id: "t-102", type: "task", title: "Micro-Segmentation Security Policy Mapping", status: "In Progress", assigneeId: "tm-106", definitionOfDone: "100% of server-to-client traffic flows mapped and firewall rules configured across base enclaves.", startDate: "2026-09-21", dueDate: "2026-10-18", estimatedDuration: "4 weeks", blocked: false, notes: "Mapping server-to-client traffic flows across base enclaves." },
+                  { id: "m-101", type: "milestone", title: "Zero-Trust Baseline Architecture Sign-Off", status: "In Progress", assigneeId: "tm-102", definitionOfDone: "Formal baseline architecture review document signed off by Cyber Security Directorate.", dueDate: "2026-10-30", notes: "Formal review gate with Cyber Security Directorate." }
+                ]
+              },
+              {
+                id: "t-003",
+                type: "project",
+                title: "Sub-Project B: Offline Decision Support Engine (Waypoint)",
+                status: "In Progress",
+                health: "Green",
+                progress: 82,
+                leadId: "tm-103",
+                startDate: "2026-09-10",
+                dueDate: "2026-11-15",
+                notes: "Single-file HTML5/CSS3/JS offline portfolio management engine with zero external dependencies.",
+                subTasks: [
+                  { id: "t-201", type: "task", title: "Single-File HTML5 Glassmorphic UI Framework", status: "Done", assigneeId: "tm-105", definitionOfDone: "Single-file HTML5 UI framework created, styled, and verified offline with zero CDN calls.", startDate: "2026-09-10", dueDate: "2026-09-20", estimatedDuration: "10 days", blocked: false, notes: "High-contrast midnight theme, glassmorphic panels, and security classification banners." },
+                  { id: "t-202", type: "task", title: "Cascading Inheritance & Recursive Tree Resolver", status: "Done", assigneeId: "tm-105", definitionOfDone: "Cascading resolver unit tests passing for team roster and vision inheritance down sub-task branches.", startDate: "2026-09-20", dueDate: "2026-09-28", estimatedDuration: "8 days", blocked: false, notes: "Automatic inheritance of teamMembers and endStateVision down subTask branches." },
+                  { id: "t-203", type: "task", title: "Interactive Gantt Timeline & Schedule Engine", status: "In Progress", assigneeId: "tm-105", definitionOfDone: "Timeline view charts date axes, project bars, and milestone diamonds accurately.", startDate: "2026-09-29", dueDate: "2026-10-15", estimatedDuration: "2 weeks", blocked: false, notes: "Time axis rendering days/weeks/months with project bars and milestone diamonds." },
+                  { id: "m-201", type: "milestone", title: "Full Prototype Briefing & Field Test", status: "In Progress", assigneeId: "tm-103", definitionOfDone: "Offline prototype briefing delivered to Program Director with full JSON import/export validation.", dueDate: "2026-11-01", notes: "Demonstrate offline JSON import/export and executive tree rendering." }
+                ]
+              },
+              {
+                id: "t-004",
+                type: "project",
+                title: "Sub-Project C: Cyber Authority to Operate (ATO) Package",
+                status: "Blocked",
+                health: "Red",
+                progress: 35,
+                leadId: "tm-104",
+                startDate: "2026-09-12",
+                dueDate: "2026-11-30",
+                notes: "Formal cyber risk assessment, vulnerability scanning, and approval package.",
+                subTasks: [
+                  { id: "t-301", type: "task", title: "Static Application Security Testing (SAST) Audit", status: "Done", assigneeId: "tm-104", definitionOfDone: "SAST scan report clean with zero high or critical security findings.", startDate: "2026-09-15", dueDate: "2026-09-22", estimatedDuration: "1 week", blocked: false, notes: "Confirmed zero external network calls, CDNs, or dynamic script injections." },
+                  { id: "t-302", type: "task", title: "Obtain Cyber Security Approval Signature", status: "Blocked", assigneeId: "tm-104", definitionOfDone: "Designated Approving Authority signature affixed to official ATO memorandum.", startDate: "2026-09-22", dueDate: "2026-10-15", estimatedDuration: "3 weeks", blocked: true, delegatedToId: "tm-104", delegatedOnDate: "2026-09-22", delegatedDueDate: "2026-10-05", notes: "Designated Approving Authority on leave until Oct 5th." },
+                  { id: "m-301", type: "milestone", title: "ATO Package Formal Submission", status: "Not Started", assigneeId: "tm-104", definitionOfDone: "Complete compliance binder submitted to Accrediting Authority.", dueDate: "2026-11-15", notes: "Submit complete compliance binder to Accrediting Authority." }
+                ]
+              }
+            ]
+          }
+        ]
+      };
+      saveToCache();
+    }
+
+    function validateWorkspaceSchema(data) {
+      if (!data || typeof data !== "object") return false;
+      if (data.schemaVersion !== SCHEMA_VERSION) return false;
+      if (!Array.isArray(data.tasks)) return false;
+      if (data.tasks.length !== 1) return false;
+      return true;
+    }
+
+    function updateSaveStatusUI() {
+      const statusEl = document.getElementById("saveStatusText");
+      const saveTag = document.querySelector(".save-tag");
+      if (!statusEl) return;
+
+      if (isWorkspaceDirty) {
+        statusEl.innerText = "Unsaved Changes";
+        if (saveTag) {
+          saveTag.style.borderColor = "rgba(245, 158, 11, 0.6)";
+          saveTag.style.color = "#f59e0b";
+          const dot = saveTag.querySelector(".pulse-dot");
+          if (dot) {
+            dot.style.background = "#f59e0b";
+            dot.style.boxShadow = "0 0 8px #f59e0b";
+          }
+        }
+      } else {
+        statusEl.innerText = "Saved " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        if (saveTag) {
+          saveTag.style.borderColor = "var(--border-color)";
+          saveTag.style.color = "var(--text-muted)";
+          const dot = saveTag.querySelector(".pulse-dot");
+          if (dot) {
+            dot.style.background = "var(--status-done)";
+            dot.style.boxShadow = "0 0 8px var(--status-done)";
+          }
+        }
+      }
+    }
+
+    function saveToCache(isUserMutation = true) {
+      if (!state || !Array.isArray(state.tasks)) return;
+      state.lastUpdated = new Date().toISOString();
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(state));
+        if (isUserMutation) {
+          isWorkspaceDirty = true;
+        }
+        updateSaveStatusUI();
+      } catch (e) { }
+    }
+
+    function resetSampleData() {
+      if (confirm("Reset workspace to default sample dataset (Operation Sentinel Dawn)?")) {
+        seedSampleData();
+        isWorkspaceDirty = false;
+        setClassification(state.classification || "UNCLASSIFIED");
+        renderAll();
+        updateSaveStatusUI();
+      }
+    }
+
+    // --- JSON IMPORT / EXPORT ---
+    function exportJSON() {
+      saveToCache(false);
+      isWorkspaceDirty = false;
+      updateSaveStatusUI();
+
+      const filename = `waypoint_${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", filename);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!validateWorkspaceSchema(parsed)) {
+            alert(`INVALID FILE: Schema validation failed!\nEnsure schemaVersion is ${SCHEMA_VERSION} and root 'tasks' array contains EXACTLY ONE primary root-level workstream item.`);
+            return;
+          }
+          state = parsed;
+          isWorkspaceDirty = false;
+          saveToCache(false);
+          setClassification(state.classification || "UNCLASSIFIED");
+          renderAll();
+          alert("Workspace cleanly loaded!");
+        } catch (err) {
+          alert("ERROR: Failed to parse JSON file!\n" + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    // Warn User Before Closing Tab/Browser with Unsaved Changes
+    window.addEventListener("beforeunload", (event) => {
+      if (isWorkspaceDirty) {
+        event.preventDefault();
+        event.returnValue = "You have unsaved changes in your workspace. Please export your JSON file before closing!";
+        return event.returnValue;
+      }
+    });
+
+    // --- CASCADING PROPERTY RESOLVER ---
+    function resolveCascadingProps(task, parentContext) {
+      const parent = parentContext || {};
+      const parentMembers = parent.effectiveTeamMembers || parent.teamMembers || [];
+      const teamMembers = (task && task.teamMembers && task.teamMembers.length > 0)
+        ? task.teamMembers
+        : parentMembers;
+
+      const endStateVision = (task && task.endStateVision) || parent.effectiveVision || parent.endStateVision || "";
+      const rootLeadId = (task && task.leadId) || parent.effectiveLeadId || parent.leadId || "";
+
+      return {
+        ...task,
+        effectiveTeamMembers: teamMembers,
+        effectiveVision: endStateVision,
+        effectiveLeadId: rootLeadId
+      };
+    }
+
+    function findTeamMember(id, resolvedTask) {
+      if (!id) return null;
+      // 1. Search effective team members
+      if (resolvedTask && Array.isArray(resolvedTask.effectiveTeamMembers)) {
+        const match = resolvedTask.effectiveTeamMembers.find(tm => tm.id === id);
+        if (match) return match;
+      }
+      // 2. Search root workspace team members
+      const rootMembers = (state.tasks && state.tasks[0] && state.tasks[0].teamMembers) || [];
+      const match = rootMembers.find(tm => tm.id === id);
+      if (match) return match;
+
+      return { id: id, name: id, role: "Team Member" };
+    }
+
+    // --- CLASSIFICATION TOGGLE ---
+    function setClassification(val) {
+      state.classification = val;
+      const top = document.getElementById("topBanner");
+      const bottom = document.getElementById("bottomBanner");
+      const select = document.getElementById("classificationSelect");
+      const bottomText = document.getElementById("bottomClassificationText");
+
+      if (top) top.className = "classification-banner " + val.toLowerCase();
+      if (bottom) bottom.className = "classification-banner " + val.toLowerCase();
+      if (select) select.value = val;
+      if (bottomText) bottomText.innerText = val;
+
+      saveToCache();
+    }
+
+    function toggleTheme() {
+      const cur = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = cur === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      document.getElementById("themeBtn").innerText = next === "dark" ? "🌙" : "☀️";
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById("appSidebar");
+      const expandBtn = document.getElementById("sidebarExpandBtn");
+      sidebar.classList.toggle("collapsed");
+      if (sidebar.classList.contains("collapsed")) {
+        expandBtn.style.display = "inline-flex";
+      } else {
+        expandBtn.style.display = "none";
+      }
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll(".nav-tab").forEach(tab => tab.classList.remove("active"));
+      document.querySelectorAll(".view-pane").forEach(pane => pane.classList.remove("active"));
+
+      const activeTab = document.querySelector(`.nav-tab[data-view="${viewId}"]`);
+      if (activeTab) activeTab.classList.add("active");
+
+      const activePane = document.getElementById(`view-${viewId}`);
+      if (activePane) activePane.classList.add("active");
+    }
+
+    function onSearchInput(val) {
+      searchQuery = val.toLowerCase().trim();
+      renderAll();
+    }
+
+    // --- RENDER ALL VIEWS ---
+    function renderAll() {
+      renderSidebarTree();
+      renderHeroObjective();
+      renderProgressiveTree();
+      renderGanttTimeline();
+      renderKanbanBoard();
+      renderTeamRadar();
+    }
+
+    // --- SIDEBAR TREE RENDERER ---
+    function renderSidebarTree() {
+      const container = document.getElementById("sidebarTreeContainer");
+      container.innerHTML = "";
+
+      const rootItem = document.createElement("div");
+      rootItem.className = `sidebar-node ${activeFilterId === null ? 'active' : ''}`;
+      rootItem.onclick = () => { activeFilterId = null; renderAll(); };
+      rootItem.innerHTML = `<span>🌐 All Workspace Workstreams</span>`;
+      container.appendChild(rootItem);
+
+      state.tasks.forEach(t => container.appendChild(createSidebarTreeElement(t, 0)));
+    }
+
+    function createSidebarTreeElement(task, depth) {
+      const wrapper = document.createElement("div");
+      if (depth > 0) wrapper.className = "sidebar-indent";
+
+      const item = document.createElement("div");
+      item.className = `sidebar-node ${activeFilterId === task.id ? 'active' : ''}`;
+      item.onclick = (e) => { e.stopPropagation(); activeFilterId = task.id; renderAll(); };
+
+      const icon = (task.type === "objective" || task.type === "project") ? "📁" : (task.type === "milestone" ? "◆" : "📋");
+      item.innerHTML = `<span>${icon} ${task.title}</span>`;
+      wrapper.appendChild(item);
+
+      if (task.subTasks && task.subTasks.length > 0) {
+        task.subTasks.forEach(child => wrapper.appendChild(createSidebarTreeElement(child, depth + 1)));
+      }
+
+      return wrapper;
+    }
+
+    // --- PROMINENT HERO OBJECTIVE & ROLL-UP METRICS RENDERER ---
+    function findTaskResolved(taskId) {
+      if (!taskId) return null;
+      const found = findTaskRecursive(state.tasks, taskId);
+      if (!found) return null;
+
+      function findParent(tasks, childId, parent = null) {
+        for (const t of tasks) {
+          if (t.id === childId) return parent;
+          if (t.subTasks && t.subTasks.length > 0) {
+            const res = findParent(t.subTasks, childId, t);
+            if (res !== undefined) return res;
+          }
+        }
+        return undefined;
+      }
+      const parentTask = findParent(state.tasks, taskId);
+      const parentContext = parentTask ? resolveCascadingProps(parentTask, null) : null;
+      return resolveCascadingProps(found, parentContext);
+    }
+
+    function renderHeroObjective() {
+      const container = document.getElementById("heroObjectiveContainer");
+      container.innerHTML = "";
+
+      let targetTask = state.tasks[0];
+      if (activeFilterId) {
+        const found = findTaskRecursive(state.tasks, activeFilterId);
+        if (found) targetTask = found;
+      }
+
+      if (!targetTask) return;
+
+      const resolved = resolveCascadingProps(targetTask, null);
+      const leadMember = findTeamMember(resolved.effectiveLeadId || resolved.leadId, resolved);
+
+      // Compute operational metrics for target sub-tree
+      let totalItems = 0;
+      let doneItems = 0;
+      let blockedCount = 0;
+      let milestoneList = [];
+
+      function walk(tasks) {
+        tasks.forEach(t => {
+          totalItems++;
+          if (t.status === "Done") doneItems++;
+          if (t.status === "Blocked" || t.blocked) blockedCount++;
+          if (t.type === "milestone" && t.dueDate) milestoneList.push(t);
+          if (t.subTasks) walk(t.subTasks);
+        });
+      }
+      walk([targetTask]);
+
+      milestoneList.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+      const nextMilestone = milestoneList.find(m => m.status !== "Done") || milestoneList[0];
+
+      const completionPct = totalItems === 0 ? 0 : Math.round((doneItems / totalItems) * 100);
+
+      const healthVal = resolved.health || "Green";
+      const healthColor = healthVal === "Red" ? "var(--health-red)" : (healthVal === "Yellow" ? "var(--health-yellow)" : "var(--health-green)");
+      const healthLabel = healthVal === "Red" ? "🔴 At Risk" : (healthVal === "Yellow" ? "🟡 Caution" : "🟢 On Track");
+
+      // Build Team Members Roster Chips HTML
+      const teamMembers = resolved.effectiveTeamMembers || [];
+      let teamChipsHtml = "";
+      if (teamMembers.length > 0) {
+        teamChipsHtml = `
+          <div class="team-chip-group" style="margin-top: 4px;">
+            <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">ASSIGNED WORKSTREAM ROSTER (${teamMembers.length}):</span>
+            ${teamMembers.map(tm => `<span class="team-chip" title="${tm.role} • ${tm.email}">👤 ${tm.name} <small style="opacity:0.75; font-size:10px;">(${tm.role.split('/')[0].trim()})</small></span>`).join('')}
+          </div>
+        `;
+      }
+
+      const card = document.createElement("div");
+      card.className = "hero-objective-card";
+      card.id = `node-${resolved.id}`;
+      card.style.cursor = "pointer";
+      card.onclick = () => openInspector(findTaskResolved(resolved.id));
+      card.title = `Click to view full operational details for ${resolved.title} in Inspector Drawer`;
+
+      card.innerHTML = `
+        <div class="hero-title-group">
+          <div>
+            <div style="font-size:11px; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">
+              PRIMARY WORKSTREAM FOCUS
+            </div>
+            <div class="hero-objective-title">
+              <span>${resolved.title}</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;" onclick="event.stopPropagation()">
+            <button class="btn" onclick="emailWorkstreamTeam('${resolved.id}')" style="font-size:12px; padding:4px 10px;" title="Send email briefing to team">✉️ Email Team</button>
+            <span class="badge badge-${(resolved.status || 'notstarted').toLowerCase().replace(/\s+/g, '')}">${resolved.status}</span>
+            <div class="row-add-slot">
+              <button class="btn-subitem-chip" onclick="openCreateTaskDrawer('${resolved.id}')" title="Add sub-item under ${resolved.title}">➕ Add Sub-Item</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:12px; color:var(--text-muted); display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-top:2px;">
+          <span>👤 Lead: <strong>${leadMember ? leadMember.name : (resolved.leadId || 'Unassigned')}</strong></span>
+          <span>📅 Timeline: ${resolved.startDate || 'N/A'} → ${resolved.dueDate || 'N/A'}</span>
+        </div>
+
+        <div class="hero-metrics-grid" style="margin-top:12px;">
+          <div class="stat-card" title="Overall completion percentage">
+            <div class="stat-value" style="color:var(--accent);">${completionPct}%</div>
+            <div class="stat-label">OVERALL COMPLETION</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${doneItems} of ${totalItems} Tasks Completed</div>
+          </div>
+
+          <div class="stat-card" title="Executive RAG status">
+            <div class="stat-value" style="color:${healthColor}; font-size:20px;">${healthLabel}</div>
+            <div class="stat-label">OPERATIONAL HEALTH</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Executive RAG Status</div>
+          </div>
+
+          <div class="stat-card ${showBlockedOnly ? 'active-filter' : ''}" onclick="event.stopPropagation(); toggleBlockedFilter();" title="Click to isolate blocked workstreams">
+            <div class="stat-value" style="color:var(--status-blocked);">${blockedCount}</div>
+            <div class="stat-label" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>BLOCKED ITEMS</span>
+              <span style="font-size:10px; text-decoration:underline;">${showBlockedOnly ? '✕ CLEAR' : '🔍 FILTER'}</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+              ${showBlockedOnly ? 'Showing blocked items only' : 'Click to filter blocked items'}
+            </div>
+          </div>
+
+          <div class="stat-card" onclick="event.stopPropagation(); scrollToMilestone('${nextMilestone ? nextMilestone.id : ''}');" title="Click to scroll to next milestone">
+            <div class="stat-value" style="color:#f59e0b; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              ◆ ${nextMilestone ? nextMilestone.dueDate : 'N/A'}
+            </div>
+            <div class="stat-label" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>NEXT MILESTONE</span>
+              <span style="font-size:10px; text-decoration:underline;">📍 JUMP TO</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${nextMilestone ? nextMilestone.title : ''}">
+              ${nextMilestone ? nextMilestone.title : 'No upcoming milestones'}
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.appendChild(card);
+    }
+
+    // --- PROGRESSIVE DISCLOSURE TREE RENDERER (CLEAN 1-LINE NODES) ---
+    let expandedNodeIds = new Set();
+
+    function toggleAccordionNode(id, event) {
+      if (event) event.stopPropagation();
+      if (expandedNodeIds.has(id)) {
+        expandedNodeIds.delete(id);
+      } else {
+        expandedNodeIds.add(id);
+      }
+      renderProgressiveTree();
+    }
+
+    function expandAllNodes() {
+      function collect(tasks) {
+        tasks.forEach(t => {
+          expandedNodeIds.add(t.id);
+          if (t.subTasks) collect(t.subTasks);
+        });
+      }
+      collect(state.tasks);
+      renderProgressiveTree();
+    }
+
+    function collapseAllNodes() {
+      expandedNodeIds.clear();
+      renderProgressiveTree();
+    }
+
+    function renderProgressiveTree() {
+      const container = document.getElementById("progressiveTreeContainer");
+      container.innerHTML = "";
+
+      if (!state.tasks || state.tasks.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding:40px 20px; background:var(--bg-glass); border:1px dashed var(--border-glow); border-radius:12px;">
+            <div style="font-size:32px; margin-bottom:8px;">🚀</div>
+            <div style="font-size:16px; font-weight:800; color:var(--text-main); margin-bottom:4px;">No Workstream Items Found</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Your workspace is currently empty. Create your first top-level objective or project to get started.</div>
+            <button class="btn btn-gradient" onclick="openCreateTaskDrawer('')" style="padding:8px 22px; font-size:13px; font-weight:700;">
+              ➕ Add Workstream Item
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let focusedTask = state.tasks[0];
+      if (activeFilterId) {
+        const found = findTaskRecursive(state.tasks, activeFilterId);
+        if (found) focusedTask = found;
+      }
+
+      if (!focusedTask) return;
+
+      const resolvedFocused = resolveCascadingProps(focusedTask, null);
+
+      // Sub-items of the focused workstream ONLY (never duplicate focusedTask itself!)
+      let targetItems = (focusedTask.subTasks && Array.isArray(focusedTask.subTasks)) ? focusedTask.subTasks : [];
+
+      // Auto-expand nodes matching search query
+      if (searchQuery && searchQuery.length > 0) {
+        function autoExpandMatch(tasks) {
+          tasks.forEach(t => {
+            if (t.title.toLowerCase().includes(searchQuery)) {
+              expandedNodeIds.add(t.id);
+            }
+            if (t.subTasks) autoExpandMatch(t.subTasks);
+          });
+        }
+        autoExpandMatch(state.tasks);
+      }
+
+      // If blocked filter is active, filter items to show only blocked items
+      if (showBlockedOnly) {
+        function filterBlocked(items) {
+          const res = [];
+          items.forEach(it => {
+            const isSelfBlocked = (it.status === "Blocked" || it.blocked);
+            const subBlocked = it.subTasks ? filterBlocked(it.subTasks) : [];
+            if (isSelfBlocked || subBlocked.length > 0) {
+              expandedNodeIds.add(it.id);
+              res.push({ ...it, subTasks: subBlocked });
+            }
+          });
+          return res;
+        }
+        targetItems = filterBlocked(focusedTask.subTasks || []);
+
+        const banner = document.createElement("div");
+        banner.className = "vision-callout-box";
+        banner.style.cssText = "border-color:var(--status-blocked); background:rgba(244,63,94,0.12); margin-bottom:12px;";
+        banner.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+            <div>
+              <strong style="color:var(--status-blocked);">⚠️ FILTER ACTIVE:</strong> Displaying blocked workstreams requiring leadership intervention.
+            </div>
+            <button class="btn" onclick="toggleBlockedFilter()" style="font-size:11px; padding:3px 10px;">✕ Clear Filter</button>
+          </div>
+        `;
+        container.appendChild(banner);
+      }
+
+      // Render Section Header
+      const headerLabel = document.createElement("div");
+      headerLabel.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;";
+      headerLabel.innerHTML = `
+        <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);">
+          Breakdown & Sub-Workstreams under "${focusedTask.title}"
+        </div>
+        ${targetItems.length > 0 ? `
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button class="btn" onclick="collapseAllNodes()" style="font-size:10px; padding:3px 10px;" title="Collapse all sub-element tree rows">▶ Collapse All</button>
+            <button class="btn" onclick="expandAllNodes()" style="font-size:10px; padding:3px 10px;" title="Expand all sub-element tree rows">▼ Expand All</button>
+          </div>
+        ` : ''}
+      `;
+      container.appendChild(headerLabel);
+
+      if (targetItems.length > 0) {
+        targetItems.forEach(child => {
+          container.appendChild(createProgressiveTreeNode(child, resolvedFocused));
+        });
+
+        // Inline Add Sub-Item button logically placed right under the child elements
+        const addSubBtn = document.createElement("div");
+        addSubBtn.style.cssText = "margin-top:8px; display:flex; justify-content:flex-start;";
+        addSubBtn.innerHTML = `
+          <button class="btn" onclick="openCreateTaskDrawer('${focusedTask.id}')" style="font-size:11px; color:var(--accent); border:1px dashed var(--border-glow); background:rgba(56,189,248,0.06); padding:5px 14px; border-radius:6px;" title="Add new sub-item under ${focusedTask.title}">
+            ➕ Add Sub-Item under "${focusedTask.title}"
+          </button>
+        `;
+        container.appendChild(addSubBtn);
+      } else {
+        // Empty children state: when focusedTask currently has no sub-elements
+        const emptyBox = document.createElement("div");
+        emptyBox.style.cssText = "padding:24px; text-align:center; background:var(--bg-glass); border:1px dashed var(--border-color); border-radius:8px; display:flex; flex-direction:column; align-items:center; gap:8px;";
+        emptyBox.innerHTML = `
+          <div style="font-size:12px; color:var(--text-muted);">No sub-items under <strong>${focusedTask.title}</strong> yet.</div>
+          <button class="btn" onclick="openCreateTaskDrawer('${focusedTask.id}')" style="font-size:11px; color:var(--accent); border:1px dashed var(--border-glow); background:rgba(56,189,248,0.08); padding:6px 16px; border-radius:6px;" title="Add sub-item under ${focusedTask.title}">
+            ➕ Add Sub-Item under "${focusedTask.title}"
+          </button>
+        `;
+        container.appendChild(emptyBox);
+      }
+    }
+
+    function createProgressiveTreeNode(task, parentContext) {
+      const resolved = resolveCascadingProps(task, parentContext);
+      const isContainer = (resolved.type === "objective" || resolved.type === "project" || resolved.type === "key_result");
+      const hasSubtasks = resolved.subTasks && resolved.subTasks.length > 0;
+      const isTreeExpanded = expandedNodeIds.has(resolved.id);
+
+      const wrapper = document.createElement("div");
+      wrapper.style.display = "flex";
+      wrapper.style.flexDirection = "column";
+      wrapper.style.gap = "8px";
+
+      if (isContainer) {
+        // Executive Container Card (Clean 1-Line Node)
+        const card = document.createElement("div");
+        card.id = `node-${resolved.id}`;
+        card.className = "exec-card collapsed-card";
+        card.onclick = (e) => { e.stopPropagation(); openInspector(resolved); };
+
+        const leadMember = findTeamMember(resolved.effectiveLeadId || resolved.leadId, resolved);
+        const healthClass = resolved.health ? `rag-${resolved.health.toLowerCase()}` : "rag-green";
+        const statusClass = `badge-${(resolved.status || 'notstarted').toLowerCase().replace(/\s+/g, '')}`;
+
+        card.innerHTML = `
+          <div class="exec-card-top" style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:12px;">
+            <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+              ${hasSubtasks ? `
+                <button class="accordion-toggle-btn" onclick="toggleAccordionNode('${resolved.id}', event)" title="${isTreeExpanded ? 'Collapse sub-elements' : 'Expand sub-elements'}">
+                  ${isTreeExpanded ? '▼' : '▶'}
+                </button>
+              ` : `<span style="width:22px; height:22px; display:inline-block;"></span>`}
+              <span class="rag-dot ${healthClass}"></span>
+              <span class="type-tag">${resolved.type}</span>
+              <span style="font-size:15px; font-weight:800; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" onclick="openInspector(findTaskResolved('${resolved.id}'))" title="Click for Inspector Drawer">${resolved.title}</span>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+              <div style="font-size:11px; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                <span>${resolved.progress || 0}%</span>
+                <div class="progress-bar-track" style="width:45px; margin:0;">
+                  <div class="progress-bar-fill" style="width:${resolved.progress || 0}%;"></div>
+                </div>
+              </div>
+              <span style="font-size:12px; color:var(--text-muted);">👤 ${leadMember ? leadMember.name.split(' ')[0] + ' ' + (leadMember.name.split(' ').slice(-1)[0] || '') : 'Unassigned'}</span>
+              <span class="badge ${statusClass}">${resolved.status}</span>
+              <div class="row-add-slot">
+                <button class="btn-subitem-chip" onclick="event.stopPropagation(); openCreateTaskDrawer('${resolved.id}')" title="Add sub-item under ${resolved.title}">➕ Add Sub-Item</button>
+              </div>
+            </div>
+          </div>
+        `;
+        wrapper.appendChild(card);
+
+        if (hasSubtasks) {
+          const subContainer = document.createElement("div");
+          subContainer.className = "subtree-container";
+          subContainer.style.display = isTreeExpanded ? "flex" : "none";
+          resolved.subTasks.forEach(child => {
+            subContainer.appendChild(createProgressiveTreeNode(child, resolved));
+          });
+
+          // Add inline button logically under existing tasks in this sub-tree
+          const addSubBtn = document.createElement("div");
+          addSubBtn.style.cssText = "margin-top:4px; padding-top:4px;";
+          addSubBtn.innerHTML = `
+            <button class="btn" onclick="event.stopPropagation(); openCreateTaskDrawer('${resolved.id}')" style="font-size:11px; color:var(--accent); border:1px dashed var(--border-glow); background:rgba(56,189,248,0.06); padding:4px 12px; border-radius:6px; cursor:pointer;" title="Add new sub-item under ${resolved.title}">
+              ➕ Add Sub-Item under "${resolved.title}"
+            </button>
+          `;
+          subContainer.appendChild(addSubBtn);
+
+          wrapper.appendChild(subContainer);
+        } else if (isTreeExpanded) {
+          const emptySubContainer = document.createElement("div");
+          emptySubContainer.className = "subtree-container";
+          emptySubContainer.style.display = "flex";
+          emptySubContainer.style.paddingLeft = "28px";
+          emptySubContainer.innerHTML = `
+            <button class="btn" onclick="event.stopPropagation(); openCreateTaskDrawer('${resolved.id}')" style="font-size:11px; color:var(--accent); border:1px dashed var(--border-glow); background:rgba(56,189,248,0.06); padding:4px 12px; border-radius:6px; cursor:pointer;" title="Add new sub-item under ${resolved.title}">
+              ➕ Add Sub-Item under "${resolved.title}"
+            </button>
+          `;
+          wrapper.appendChild(emptySubContainer);
+        }
+
+      } else {
+        // Task / Milestone Action Row (Clean 1-Line Node)
+        const row = document.createElement("div");
+        row.id = `node-${resolved.id}`;
+        row.className = "action-item-row";
+        row.onclick = (e) => { e.stopPropagation(); openInspector(resolved); };
+
+        const assigneeMember = findTeamMember(resolved.assigneeId, resolved);
+        const statusClass = `badge-${(resolved.status || 'notstarted').toLowerCase().replace(/\s+/g, '')}`;
+        const icon = resolved.type === "milestone" ? "◆" : "📋";
+        const blockedBadge = resolved.blocked ? `<span class="badge badge-blocked">BLOCKED</span>` : "";
+
+        row.innerHTML = `
+          <div class="action-row-header">
+            <div class="action-title-group" style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+              ${hasSubtasks ? `
+                <button class="accordion-toggle-btn" onclick="toggleAccordionNode('${resolved.id}', event)" title="${isTreeExpanded ? 'Collapse sub-elements' : 'Expand sub-elements'}">
+                  ${isTreeExpanded ? '▼' : '▶'}
+                </button>
+              ` : `<span style="width:22px; height:22px; display:inline-block;"></span>`}
+
+              <span class="type-tag">${icon} ${resolved.type}</span>
+              <span class="action-item-title">${resolved.title}</span>
+              ${blockedBadge}
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-muted); flex-shrink:0;">
+              <span>👤 ${assigneeMember ? assigneeMember.name : (resolved.assigneeId || 'Unassigned')}</span>
+              <span>📅 Due: ${resolved.dueDate || 'N/A'}</span>
+              <span class="badge ${statusClass}">${resolved.status}</span>
+              <div class="row-add-slot">
+                <button class="btn-subitem-chip" onclick="event.stopPropagation(); openCreateTaskDrawer('${resolved.id}')" title="Add sub-item under ${resolved.title}">➕ Add Sub-Item</button>
+              </div>
+            </div>
+          </div>
+        `;
+        wrapper.appendChild(row);
+
+        if (hasSubtasks) {
+          const subContainer = document.createElement("div");
+          subContainer.className = "subtree-container";
+          subContainer.style.display = isTreeExpanded ? "flex" : "none";
+          resolved.subTasks.forEach(child => {
+            subContainer.appendChild(createProgressiveTreeNode(child, resolved));
+          });
+          wrapper.appendChild(subContainer);
+        }
+      }
+
+      return wrapper;
+    }
+
+    function findTaskRecursive(tasks, id) {
+      for (const t of tasks) {
+        if (t.id === id) return t;
+        if (t.subTasks && t.subTasks.length > 0) {
+          const found = findTaskRecursive(t.subTasks, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+
+    // --- INTERACTIVE FRAPPE GANTT SCHEDULE ENGINE (COA #2) ---
+    let ganttViewMode = "Week"; // Options: 'Day', 'Week', 'Month', 'Year'
+
+    function setGanttViewMode(mode) {
+      ganttViewMode = mode;
+      ["Day", "Week", "Month", "Year"].forEach(m => {
+        const btn = document.getElementById(`ganttScaleBtn-${m}`);
+        if (btn) {
+          if (m === mode) btn.classList.add("btn-gradient");
+          else btn.classList.remove("btn-gradient");
+        }
+      });
+      renderGanttTimeline();
+    }
+
+    function renderGanttTimeline() {
+      const container = document.getElementById("ganttChartContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      // 1. Gather all tasks in tree sequence
+      const flatList = [];
+      function flatten(tasks, depth = 0) {
+        tasks.forEach(t => {
+          flatList.push({ task: t, depth });
+          if (t.subTasks) flatten(t.subTasks, depth + 1);
+        });
+      }
+      flatten(state.tasks);
+
+      if (flatList.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); padding:20px;">No timeline data found in workspace.</p>`;
+        return;
+      }
+
+      // Compute Timeline Min & Max Dates across all tasks
+      let minTimestamp = Infinity;
+      let maxTimestamp = -Infinity;
+
+      flatList.forEach(({ task }) => {
+        let s = task.startDate ? new Date(task.startDate).getTime() : new Date("2026-09-01").getTime();
+        let d = task.dueDate ? new Date(task.dueDate).getTime() : s + (7 * 24 * 3600 * 1000);
+        if (isNaN(s)) s = new Date("2026-09-01").getTime();
+        if (isNaN(d)) d = s + (7 * 24 * 3600 * 1000);
+
+        if (s < minTimestamp) minTimestamp = s;
+        if (d > maxTimestamp) maxTimestamp = d;
+      });
+
+      // Add padding buffer around date bounds
+      const minDate = new Date(minTimestamp - (5 * 24 * 3600 * 1000));
+      const maxDate = new Date(maxTimestamp + (15 * 24 * 3600 * 1000));
+
+      // Calculate time step parameters based on ganttViewMode
+      let stepMs = 24 * 3600 * 1000; // 1 day default
+      let colWidth = 38; // px per step
+
+      if (ganttViewMode === "Day") {
+        stepMs = 24 * 3600 * 1000;
+        colWidth = 40;
+      } else if (ganttViewMode === "Week") {
+        stepMs = 7 * 24 * 3600 * 1000;
+        colWidth = 70;
+      } else if (ganttViewMode === "Month") {
+        stepMs = 30 * 24 * 3600 * 1000;
+        colWidth = 100;
+      } else if (ganttViewMode === "Year") {
+        stepMs = 90 * 24 * 3600 * 1000;
+        colWidth = 130;
+      }
+
+      const totalSpanMs = maxDate.getTime() - minDate.getTime();
+      const numCols = Math.max(10, Math.ceil(totalSpanMs / stepMs));
+      const chartWidth = numCols * colWidth;
+      const rowHeight = 44;
+      const headerHeight = 44;
+      const chartHeight = headerHeight + (flatList.length * rowHeight);
+
+      // Create Gantt Outer Layout
+      const ganttWrapper = document.createElement("div");
+      ganttWrapper.className = "frappe-gantt-wrapper";
+
+      // Left Column: Task Labels
+      const labelCol = document.createElement("div");
+      labelCol.className = "frappe-gantt-label-col";
+
+      const labelHead = document.createElement("div");
+      labelHead.className = "frappe-gantt-label-head";
+      labelHead.innerText = "WORKSTREAM ITEM";
+      labelCol.appendChild(labelHead);
+
+      flatList.forEach(({ task, depth }) => {
+        const resolved = resolveCascadingProps(task, null);
+        const labelRow = document.createElement("div");
+        labelRow.className = "frappe-gantt-label-row";
+        labelRow.style.paddingLeft = `${12 + (depth * 14)}px`;
+        labelRow.onclick = () => openInspector(resolved);
+
+        const icon = task.type === "milestone" ? "◆" : (task.type === "objective" || task.type === "project" ? "📁" : "📋");
+        labelRow.innerHTML = `
+          <span class="type-tag" style="padding:1px 5px; font-size:9px;">${icon}</span>
+          <span style="font-weight:700; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${task.title}">${task.title}</span>
+        `;
+        labelCol.appendChild(labelRow);
+      });
+
+      ganttWrapper.appendChild(labelCol);
+
+      // Right Area: Scrollable SVG Chart Area
+      const chartArea = document.createElement("div");
+      chartArea.className = "frappe-gantt-chart-area";
+
+      // Build SVG Element
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("width", chartWidth);
+      svg.setAttribute("height", chartHeight);
+      svg.setAttribute("class", "frappe-gantt-svg");
+
+      // 1. Grid Background & Header
+      let headerSvg = `<rect x="0" y="0" width="${chartWidth}" height="${headerHeight}" fill="rgba(15,23,42,0.6)" stroke="var(--border-color)"/>`;
+
+      for (let i = 0; i < numCols; i++) {
+        const x = i * colWidth;
+        const colDate = new Date(minDate.getTime() + (i * stepMs));
+
+        let labelText = "";
+        if (ganttViewMode === "Day") {
+          labelText = colDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        } else if (ganttViewMode === "Week") {
+          labelText = `Wk ${colDate.toLocaleDateString("en-US", { month: "numeric", day: "numeric" })}`;
+        } else if (ganttViewMode === "Month") {
+          labelText = colDate.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+        } else {
+          const q = Math.floor(colDate.getMonth() / 3) + 1;
+          labelText = `Q${q} '${colDate.getFullYear().toString().substr(2)}`;
+        }
+
+        headerSvg += `
+          <line x1="${x}" y1="0" x2="${x}" y2="${chartHeight}" stroke="rgba(255,255,255,0.05)" stroke-dasharray="2,2"/>
+          <text x="${x + 6}" y="26" fill="var(--text-muted)" font-size="11" font-weight="700">${labelText}</text>
+        `;
+      }
+
+      // Horizontal Row Lines
+      let rowsSvg = "";
+      flatList.forEach((_, idx) => {
+        const y = headerHeight + (idx * rowHeight);
+        const bgFill = idx % 2 === 0 ? "rgba(255,255,255,0.01)" : "rgba(255,255,255,0.03)";
+        rowsSvg += `
+          <rect x="0" y="${y}" width="${chartWidth}" height="${rowHeight}" fill="${bgFill}"/>
+          <line x1="0" y1="${y}" x2="${chartWidth}" y2="${y}" stroke="var(--border-color)" stroke-opacity="0.4"/>
+        `;
+      });
+
+      // Today Indicator Line
+      const todayMs = new Date("2026-09-28").getTime();
+      const todayPct = (todayMs - minDate.getTime()) / totalSpanMs;
+      const todayX = todayPct * chartWidth;
+      let todaySvg = "";
+      if (todayX >= 0 && todayX <= chartWidth) {
+        todaySvg = `
+          <line x1="${todayX}" y1="0" x2="${todayX}" y2="${chartHeight}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4,4"/>
+          <circle cx="${todayX}" cy="12" r="5" fill="var(--accent)"/>
+          <text x="${todayX + 8}" y="15" fill="var(--accent)" font-size="10" font-weight="900">TODAY</text>
+        `;
+      }
+
+      svg.innerHTML = headerSvg + rowsSvg + todaySvg;
+
+      // 2. Render Interactive Task Bars with Handles
+      flatList.forEach(({ task }, idx) => {
+        const resolved = resolveCascadingProps(task, null);
+        const y = headerHeight + (idx * rowHeight) + 8;
+        const barH = 28;
+
+        let sMs = task.startDate ? new Date(task.startDate).getTime() : minTimestamp;
+        let dMs = task.dueDate ? new Date(task.dueDate).getTime() : sMs + (7 * 24 * 3600 * 1000);
+        if (isNaN(sMs)) sMs = minTimestamp;
+        if (isNaN(dMs)) dMs = sMs + (7 * 24 * 3600 * 1000);
+
+        const startX = Math.max(0, ((sMs - minDate.getTime()) / totalSpanMs) * chartWidth);
+        const endX = Math.min(chartWidth, ((dMs - minDate.getTime()) / totalSpanMs) * chartWidth);
+        const width = Math.max(24, endX - startX);
+
+        const groupG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        groupG.setAttribute("class", "frappe-gantt-bar-group");
+        groupG.setAttribute("data-id", task.id);
+
+        if (task.type === "milestone") {
+          // Milestone Diamond Symbol
+          const cx = startX;
+          const cy = y + (barH / 2);
+          groupG.innerHTML = `
+            <polygon points="${cx},${cy - 10} ${cx + 10},${cy} ${cx},${cy + 10} ${cx - 10},${cy}" fill="#f59e0b" stroke="#ffffff" stroke-width="1.5" class="gantt-milestone-marker"/>
+            <text x="${cx + 16}" y="${cy + 4}" fill="var(--text-main)" font-size="11" font-weight="800">${task.title}</text>
+          `;
+          groupG.onclick = () => openInspector(resolved);
+        } else {
+          // Task Gantt Bar
+          const progress = task.progress || 0;
+          const progressW = (width * progress) / 100;
+          const healthVal = task.health || "Green";
+          const barColor = healthVal === "Red" ? "var(--health-red)" : (healthVal === "Yellow" ? "var(--health-yellow)" : "var(--accent-hover)");
+
+          groupG.innerHTML = `
+            <!-- Main Bar Background -->
+            <rect x="${startX}" y="${y}" width="${width}" height="${barH}" rx="6" ry="6" fill="${barColor}" stroke="var(--border-color)" class="gantt-bar-rect"/>
+            <!-- Progress Fill Overlay -->
+            <rect x="${startX}" y="${y}" width="${progressW}" height="${barH}" rx="6" ry="6" fill="var(--accent)" opacity="0.8" pointer-events="none"/>
+            <!-- Bar Title Label -->
+            <text x="${startX + 10}" y="${y + 18}" fill="#ffffff" font-size="11" font-weight="800" pointer-events="none" style="text-shadow:0 1px 2px rgba(0,0,0,0.8);">${task.title} (${progress}%)</text>
+            
+            <!-- Interactive Resize Drag Handles -->
+            <rect x="${startX + width - 8}" y="${y + 4}" width="6" height="${barH - 8}" rx="2" fill="#ffffff" class="gantt-handle gantt-handle-right" data-id="${task.id}" data-mode="resize-right" title="Drag to adjust due date"/>
+            <rect x="${startX + 2}" y="${y + 4}" width="6" height="${barH - 8}" rx="2" fill="#ffffff" class="gantt-handle gantt-handle-left" data-id="${task.id}" data-mode="resize-left" title="Drag to adjust start date"/>
+          `;
+
+          // Setup Drag Listeners on Bar
+          setupGanttBarDrag(groupG, task, startX, width, chartWidth, minDate, totalSpanMs);
+        }
+
+        svg.appendChild(groupG);
+      });
+
+      chartArea.appendChild(svg);
+      ganttWrapper.appendChild(chartArea);
+      container.appendChild(ganttWrapper);
+    }
+
+    // --- FRAPPE GANTT DRAG-TO-RESCHEDULE EVENT HANDLER ---
+    function setupGanttBarDrag(groupG, task, initialX, initialW, chartWidth, minDate, totalSpanMs) {
+      let isDragging = false;
+      let dragMode = "move"; // 'move', 'resize-left', 'resize-right'
+      let startMouseX = 0;
+
+      const rect = groupG.querySelector(".gantt-bar-rect");
+      const handleRight = groupG.querySelector(".gantt-handle-right");
+      const handleLeft = groupG.querySelector(".gantt-handle-left");
+
+      const onMouseDown = (e, mode) => {
+        e.stopPropagation();
+        isDragging = true;
+        dragMode = mode;
+        startMouseX = e.clientX;
+        document.body.style.cursor = mode === "move" ? "grabbing" : "ew-resize";
+
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", onMouseUp);
+      };
+
+      if (rect) rect.onmousedown = (e) => onMouseDown(e, "move");
+      if (handleRight) handleRight.onmousedown = (e) => onMouseDown(e, "resize-right");
+      if (handleLeft) handleLeft.onmousedown = (e) => onMouseDown(e, "resize-left");
+
+      const onMouseMove = (e) => {
+        if (!isDragging) return;
+        // Drag active feedback
+      };
+
+      const onMouseUp = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        document.body.style.cursor = "default";
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+
+        const dx = e.clientX - startMouseX;
+        if (Math.abs(dx) < 3) {
+          // Click event -> open inspector
+          openInspector(resolveCascadingProps(task, null));
+          return;
+        }
+
+        const msPerPx = totalSpanMs / chartWidth;
+        const deltaMs = Math.round((dx * msPerPx) / (24 * 3600 * 1000)) * (24 * 3600 * 1000);
+
+        let origStart = new Date(task.startDate || "2026-09-01").getTime();
+        let origDue = new Date(task.dueDate || "2026-10-01").getTime();
+
+        if (dragMode === "move") {
+          origStart += deltaMs;
+          origDue += deltaMs;
+        } else if (dragMode === "resize-right") {
+          origDue = Math.max(origStart + (24 * 3600 * 1000), origDue + deltaMs);
+        } else if (dragMode === "resize-left") {
+          origStart = Math.min(origDue - (24 * 3600 * 1000), origStart + deltaMs);
+        }
+
+        // Update task object in state
+        const targetInState = findTaskRecursive(state.tasks, task.id);
+        if (targetInState) {
+          targetInState.startDate = new Date(origStart).toISOString().split("T")[0];
+          targetInState.dueDate = new Date(origDue).toISOString().split("T")[0];
+          saveToCache();
+          renderGanttTimeline();
+          if (document.getElementById("detailDrawer").classList.contains("open")) {
+            openInspector(resolveCascadingProps(targetInState, null));
+          }
+        }
+      };
+    }
+
+    // --- KANBAN BOARD RENDERER (COA 3: GROUP BY SWITCHER & LOE SWIMLANES) ---
+    let kanbanGroupBy = "project";
+    let collapsedSwimlaneIds = new Set();
+
+    function setKanbanGroupBy(mode) {
+      kanbanGroupBy = mode;
+      renderKanbanBoard();
+    }
+
+    function toggleSwimlane(groupId) {
+      if (collapsedSwimlaneIds.has(groupId)) {
+        collapsedSwimlaneIds.delete(groupId);
+      } else {
+        collapsedSwimlaneIds.add(groupId);
+      }
+      renderKanbanBoard();
+    }
+
+    function renderKanbanBoard() {
+      const container = document.getElementById("kanbanBoardContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      // Update Toolbar Button Active Styles
+      ["project", "lead", "type", "flat"].forEach(m => {
+        const btn = document.getElementById(`kanbanBtn-${m}`);
+        if (btn) {
+          if (m === kanbanGroupBy) {
+            btn.classList.add("btn-gradient");
+          } else {
+            btn.classList.remove("btn-gradient");
+          }
+        }
+      });
+
+      // 1. Gather all tasks with parent context
+      const flatTasks = [];
+      function collect(tasks, parentResolved = null) {
+        tasks.forEach(t => {
+          const resolved = resolveCascadingProps(t, parentResolved);
+          const parentTitle = parentResolved ? parentResolved.title : "Top-Level Portfolio Focus";
+          const parentId = parentResolved ? parentResolved.id : "root";
+          flatTasks.push({ resolved, parentTitle, parentId });
+          if (t.subTasks) collect(t.subTasks, resolved);
+        });
+      }
+      collect(state.tasks);
+
+      const columns = ["Not Started", "In Progress", "Blocked", "Done"];
+
+      // 2. Build Sticky Status Column Headers
+      const stickyHeader = document.createElement("div");
+      stickyHeader.className = "kanban-sticky-header";
+      columns.forEach(colName => {
+        const head = document.createElement("div");
+        head.className = "kanban-status-head";
+
+        let colorStyle = "var(--text-main)";
+        if (colName === "Blocked") colorStyle = "var(--status-blocked)";
+        else if (colName === "Done") colorStyle = "var(--status-done)";
+        else if (colName === "In Progress") colorStyle = "var(--status-inprogress)";
+
+        head.innerHTML = `
+          <span style="color:${colorStyle};">${colName.toUpperCase()}</span>
+          <span class="kanban-count-badge" id="kanban-status-count-${colName.replace(/\s+/g, '')}">0</span>
+        `;
+        stickyHeader.appendChild(head);
+      });
+      container.appendChild(stickyHeader);
+
+      const globalColCounts = { "Not Started": 0, "In Progress": 0, "Blocked": 0, "Done": 0 };
+
+      // 3. Group Tasks into Swimlane Categories
+      const groupsMap = new Map();
+
+      flatTasks.forEach(item => {
+        const { resolved, parentTitle, parentId } = item;
+        let groupKey = "default";
+        let groupTitle = "All Workstreams";
+        let groupIcon = "🌐";
+
+        if (kanbanGroupBy === "project") {
+          groupKey = parentId;
+          groupTitle = `LOE: ${parentTitle}`;
+          groupIcon = "📁";
+        } else if (kanbanGroupBy === "lead") {
+          const leadMember = findTeamMember(resolved.assigneeId || resolved.effectiveLeadId, resolved);
+          groupKey = leadMember ? leadMember.id : "unassigned";
+          groupTitle = `Leader: ${leadMember ? leadMember.name + ' (' + (leadMember.role.split('/')[0] || '').trim() + ')' : 'Unassigned'}`;
+          groupIcon = "👤";
+        } else if (kanbanGroupBy === "type") {
+          groupKey = resolved.type;
+          groupTitle = `Workstream Type: ${resolved.type.toUpperCase()}`;
+          groupIcon = resolved.type === "milestone" ? "◆" : (resolved.type === "objective" || resolved.type === "project" ? "📁" : "📋");
+        } else {
+          groupKey = "flat";
+          groupTitle = "All Workspace Workstreams";
+          groupIcon = "🌐";
+        }
+
+        if (!groupsMap.has(groupKey)) {
+          groupsMap.set(groupKey, { id: groupKey, title: groupTitle, icon: groupIcon, items: [] });
+        }
+        groupsMap.get(groupKey).items.push(item);
+      });
+
+      // 4. Render Swimlane Rows
+      groupsMap.forEach((group, groupId) => {
+        const isCollapsed = collapsedSwimlaneIds.has(groupId);
+
+        const groupCols = { "Not Started": [], "In Progress": [], "Blocked": [], "Done": [] };
+        group.items.forEach(it => {
+          const st = it.resolved.blocked ? "Blocked" : (it.resolved.status || "Not Started");
+          if (groupCols[st]) groupCols[st].push(it);
+          else groupCols["Not Started"].push(it);
+
+          if (globalColCounts[st] !== undefined) globalColCounts[st]++;
+        });
+
+        const totalCount = group.items.length;
+        const doneCount = groupCols["Done"].length;
+        const blockedCount = groupCols["Blocked"].length;
+        const progressPct = totalCount === 0 ? 0 : Math.round((doneCount / totalCount) * 100);
+
+        const swimlane = document.createElement("div");
+        swimlane.className = "kanban-swimlane";
+
+        // Swimlane Header
+        const head = document.createElement("div");
+        head.className = "kanban-swimlane-head";
+        head.onclick = () => toggleSwimlane(groupId);
+        head.innerHTML = `
+          <div class="kanban-swimlane-title">
+            <button class="accordion-toggle-btn" style="pointer-events:none;">${isCollapsed ? '▶' : '▼'}</button>
+            <span>${group.icon} ${group.title}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:16px; font-size:12px; color:var(--text-muted);">
+            ${blockedCount > 0 ? `<span style="color:var(--status-blocked); font-weight:800;">⚠️ ${blockedCount} Blocked</span>` : ''}
+            <span>${doneCount}/${totalCount} Complete (${progressPct}%)</span>
+            <div class="progress-bar-track" style="width:60px; margin:0;">
+              <div class="progress-bar-fill" style="width:${progressPct}%;"></div>
+            </div>
+          </div>
+        `;
+        swimlane.appendChild(head);
+
+        // Swimlane 4-Column Grid
+        if (!isCollapsed) {
+          const grid = document.createElement("div");
+          grid.className = "kanban-swimlane-grid";
+
+          columns.forEach(colName => {
+            const colEl = document.createElement("div");
+            colEl.className = "kanban-col";
+            colEl.setAttribute("data-status", colName);
+
+            colEl.ondragover = (e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+              colEl.classList.add("drag-hover");
+            };
+
+            colEl.ondragleave = () => {
+              colEl.classList.remove("drag-hover");
+            };
+
+            colEl.ondrop = (e) => {
+              e.preventDefault();
+              colEl.classList.remove("drag-hover");
+              const taskId = e.dataTransfer.getData("text/plain");
+              if (taskId) {
+                moveTaskToStatus(taskId, colName);
+              }
+            };
+
+            const colItems = groupCols[colName] || [];
+            colEl.innerHTML = `
+              <div class="kanban-col-head">
+                <span style="font-size:10px; color:var(--text-muted);">${colName.toUpperCase()}</span>
+                <span class="kanban-count-badge">${colItems.length}</span>
+              </div>
+            `;
+
+            colItems.forEach(({ resolved, parentTitle }) => {
+              const assigneeMember = findTeamMember(resolved.assigneeId || resolved.effectiveLeadId, resolved);
+
+              const card = document.createElement("div");
+              card.className = "kanban-card";
+              card.setAttribute("draggable", "true");
+              card.setAttribute("data-id", resolved.id);
+
+              card.ondragstart = (e) => {
+                e.stopPropagation();
+                e.dataTransfer.setData("text/plain", resolved.id);
+                e.dataTransfer.effectAllowed = "move";
+                card.classList.add("dragging");
+              };
+
+              card.ondragend = () => {
+                card.classList.remove("dragging");
+              };
+
+              card.onclick = (e) => { e.stopPropagation(); openInspector(resolved); };
+
+              let dodHtml = resolved.definitionOfDone ? `
+                <div style="font-size:10px; color:var(--status-done); font-weight:800;">☑️ DoD Defined</div>
+              ` : "";
+
+              card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span class="type-tag">${resolved.type}</span>
+                  ${resolved.health ? `<span class="rag-dot rag-${resolved.health.toLowerCase()}"></span>` : ''}
+                </div>
+                ${kanbanGroupBy !== "project" ? `<div class="kanban-card-parent-tag" title="Parent: ${parentTitle}">📁 ${parentTitle}</div>` : ''}
+                <div style="font-weight:700; font-size:13px; color:var(--text-main);">${resolved.title}</div>
+                ${dodHtml}
+                <div style="font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; margin-top:4px;">
+                  <span>👤 ${assigneeMember ? assigneeMember.name.split(' ')[0] + ' ' + (assigneeMember.name.split(' ').slice(-1)[0] || '') : 'Unassigned'}</span>
+                  <span>📅 ${resolved.dueDate || 'N/A'}</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width:${resolved.progress || 0}%;"></div>
+                </div>
+              `;
+              colEl.appendChild(card);
+            });
+
+            grid.appendChild(colEl);
+          });
+
+          swimlane.appendChild(grid);
+        }
+
+        container.appendChild(swimlane);
+      });
+
+      // Update sticky column count badges
+      columns.forEach(colName => {
+        const badge = document.getElementById(`kanban-status-count-${colName.replace(/\s+/g, '')}`);
+        if (badge) badge.innerText = globalColCounts[colName] || 0;
+      });
+    }
+
+    function moveTaskToStatus(taskId, newStatus) {
+      const task = findTaskRecursive(state.tasks, taskId);
+      if (!task) return;
+
+      if (newStatus === "Blocked") {
+        task.status = "Blocked";
+        task.blocked = true;
+      } else {
+        task.status = newStatus;
+        task.blocked = false;
+        if (newStatus === "Done") {
+          task.progress = 100;
+        } else if (newStatus === "Not Started" && (task.progress === undefined || task.progress === 100)) {
+          task.progress = 0;
+        }
+      }
+
+      saveToCache();
+      renderAll();
+
+      if (document.getElementById("detailDrawer").classList.contains("open")) {
+        const updatedResolved = findTaskResolved(taskId);
+        if (updatedResolved) openInspector(updatedResolved);
+      }
+    }
+
+    let currentInspectorTaskId = null;
+    let isDrawerInlineEdit = false;
+    let isDrawerCreateMode = false;
+    let drawerTargetParentId = "";
+
+    // --- DETAIL INSPECTOR DRAWER (UNIFIED IN-LINE EDIT & VIEW ENGINE) ---
+    function openInspector(resolvedTask, forceEditMode = false) {
+      if (!resolvedTask) return;
+      if (typeof resolvedTask === "string") {
+        resolvedTask = findTaskResolved(resolvedTask);
+      }
+      if (!resolvedTask || !resolvedTask.id) return;
+
+      currentInspectorTaskId = resolvedTask.id;
+      isDrawerCreateMode = false;
+      isDrawerInlineEdit = forceEditMode;
+
+      const drawer = document.getElementById("detailDrawer");
+      if (drawer) drawer.setAttribute("data-task-id", resolvedTask.id);
+
+      renderDrawerContent();
+      drawer.classList.add("open");
+    }
+
+    function openCreateTaskDrawer(parentId = "") {
+      currentInspectorTaskId = null;
+      if (!parentId && state.tasks && state.tasks.length >= 1) {
+        parentId = state.tasks[0].id;
+      }
+      drawerTargetParentId = parentId;
+      isDrawerCreateMode = true;
+      isDrawerInlineEdit = true;
+
+      const drawer = document.getElementById("detailDrawer");
+      if (drawer) drawer.removeAttribute("data-task-id");
+
+      renderDrawerContent();
+      drawer.classList.add("open");
+    }
+
+    function toggleDrawerEditMode() {
+      if (isDrawerCreateMode) {
+        closeInspector();
+        return;
+      }
+      isDrawerInlineEdit = !isDrawerInlineEdit;
+      renderDrawerContent();
+    }
+
+    function renderDrawerContent() {
+      const drawer = document.getElementById("detailDrawer");
+      const title = document.getElementById("drawerTitle");
+      const body = document.getElementById("drawerBody");
+      const actions = document.getElementById("drawerHeaderActions");
+
+      const isMaximized = drawer ? drawer.classList.contains("maximized") : false;
+
+      if (isDrawerCreateMode) {
+        title.innerText = "➕ Create Workstream Item";
+        if (actions) {
+          actions.innerHTML = `
+            <button class="btn btn-gradient" onclick="submitDrawerInlineForm(event)" title="Save new item">💾 Create Item</button>
+            <button class="btn" id="drawerMaximizeBtn" onclick="toggleInspectorMaximize()" title="Expand view">${isMaximized ? '🗗 Normal View' : '⤢ Expand View'}</button>
+            <button class="btn" onclick="closeInspector()">✕ Close</button>
+          `;
+        }
+        renderInlineDrawerForm(body, null, drawerTargetParentId);
+        return;
+      }
+
+      const resolvedTask = findTaskResolved(currentInspectorTaskId);
+      const rawTask = findTaskRecursive(state.tasks, currentInspectorTaskId) || resolvedTask;
+      if (!resolvedTask || !rawTask) {
+        closeInspector();
+        return;
+      }
+
+      const itemType = (rawTask.type || resolvedTask.type || "").toUpperCase();
+      const itemTitle = rawTask.title || resolvedTask.title;
+
+      if (isDrawerInlineEdit) {
+        title.innerText = `✏️ Edit: ${itemTitle}`;
+        if (actions) {
+          actions.innerHTML = `
+            <button class="btn btn-gradient" onclick="submitDrawerInlineForm(event)" title="Save changes">💾 Save</button>
+            <button class="btn" onclick="toggleDrawerEditMode()" title="Cancel editing">👁️ View Mode</button>
+            <button class="btn" onclick="deleteCurrentInspectorItem()" style="color:var(--status-blocked); border-color:rgba(244,63,94,0.4);" title="Delete item">🗑️ Delete</button>
+            <button class="btn" id="drawerMaximizeBtn" onclick="toggleInspectorMaximize()" title="Expand view">${isMaximized ? '🗗 Normal View' : '⤢ Expand View'}</button>
+            <button class="btn" onclick="closeInspector()">✕ Close</button>
+          `;
+        }
+
+        function findParentId(tasks, targetId, currP = "") {
+          for (const t of tasks) {
+            if (t.id === targetId) return currP;
+            if (t.subTasks && t.subTasks.length > 0) {
+              const res = findParentId(t.subTasks, targetId, t.id);
+              if (res !== undefined) return res;
+            }
+          }
+          return undefined;
+        }
+        const parentId = findParentId(state.tasks, rawTask.id) || "";
+
+        renderInlineDrawerForm(body, rawTask, parentId);
+      } else {
+        title.innerText = `${itemType}: ${itemTitle}`;
+        if (actions) {
+          actions.innerHTML = `
+            <button class="btn" onclick="toggleDrawerEditMode()" title="Edit item properties in-line">✏️ Edit In-Line</button>
+            <button class="btn" onclick="deleteCurrentInspectorItem()" style="color:var(--status-blocked); border-color:rgba(244,63,94,0.4);" title="Delete item from workspace">🗑️ Delete</button>
+            <button class="btn" id="drawerMaximizeBtn" onclick="toggleInspectorMaximize()" title="Expand view">${isMaximized ? '🗗 Normal View' : '⤢ Expand View'}</button>
+            <button class="btn" onclick="closeInspector()">✕ Close</button>
+          `;
+        }
+
+        renderInlineDrawerView(body, rawTask, resolvedTask);
+      }
+    }
+
+    function renderInlineDrawerView(body, rawTask, resolvedTask) {
+      // 1. Team Roster & Contacts (only display if explicitly defined on this task entity)
+      let teamHtml = "";
+      if (Array.isArray(rawTask.teamMembers) && rawTask.teamMembers.length > 0) {
+        teamHtml = `
+          <div class="inspector-section">
+            <span class="inspector-section-label">Team Roster & Contacts</span>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              ${rawTask.teamMembers.map(tm => `
+                <div class="contact-card-box">
+                  <div style="font-weight:700; font-size:13px;">👤 ${tm.name}</div>
+                  <div style="color:var(--text-muted); font-size:11px;">${tm.role}</div>
+                  <div style="margin-top:4px;">📧 <a href="mailto:${tm.email}" style="color:var(--accent); font-weight:600;">${tm.email}</a></div>
+                  <div>🏢 DSN: ${tm.officePhone || 'N/A'} | 📱 Cell: ${tm.cellPhone || 'N/A'}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // 2. Strategic End-State Vision (only display if explicitly defined on this task entity)
+      const explicitVision = rawTask.endStateVision || rawTask.vision;
+      let visionHtml = "";
+      if (explicitVision) {
+        visionHtml = `
+          <div class="inspector-section">
+            <span class="inspector-section-label">Strategic End-State Vision</span>
+            <div class="vision-callout-box">${explicitVision}</div>
+          </div>
+        `;
+      }
+
+      // 3. Tactical Definition of Done (DoD) (only display if explicitly defined on this task entity)
+      let dodHtml = "";
+      if (rawTask.definitionOfDone) {
+        dodHtml = `
+          <div class="inspector-section">
+            <span class="inspector-section-label">Tactical Definition of Done (DoD)</span>
+            <div class="dod-callout-box">${rawTask.definitionOfDone}</div>
+          </div>
+        `;
+      }
+
+      // 4. Lead / Assignee & Schedule (only display fields explicitly defined on this task entity)
+      let explicitLeadId = rawTask.assigneeId || rawTask.leadId;
+      let explicitLeadMember = explicitLeadId ? findTeamMember(explicitLeadId, resolvedTask) : null;
+
+      let scheduleItems = [];
+      if (explicitLeadMember) {
+        scheduleItems.push(`<div>👤 Lead / Assignee: <strong>${explicitLeadMember.name}</strong></div>`);
+      }
+      if (rawTask.startDate) {
+        scheduleItems.push(`<div>📅 Start Date: ${rawTask.startDate}</div>`);
+      }
+      if (rawTask.dueDate) {
+        scheduleItems.push(`<div>📅 Target Due Date: ${rawTask.dueDate}</div>`);
+      }
+      if (rawTask.estimatedDuration) {
+        scheduleItems.push(`<div>⏱️ Duration: ${rawTask.estimatedDuration}</div>`);
+      }
+
+      let scheduleHtml = "";
+      if (scheduleItems.length > 0) {
+        scheduleHtml = `
+          <div class="inspector-section">
+            <span class="inspector-section-label">Schedule & Lead</span>
+            ${scheduleItems.join('')}
+          </div>
+        `;
+      }
+
+      // 5. Operational Status & Health
+      const statusVal = rawTask.status || resolvedTask.status || "Not Started";
+      const statusClass = statusVal.toLowerCase().replace(/\s+/g, '');
+      let statusHtml = `
+        <div class="inspector-section">
+          <span class="inspector-section-label">Operational Status & Health</span>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="badge badge-${statusClass}">${statusVal}</span>
+            ${rawTask.health ? `<span class="badge" style="background:rgba(255,255,255,0.08);">Health RAG: ${rawTask.health}</span>` : ''}
+            ${rawTask.blocked ? `<span class="badge badge-blocked">BLOCKED</span>` : ''}
+          </div>
+        </div>
+      `;
+
+      function execRichTextCommand(cmd, val = null) {
+        const editor = document.getElementById("drawerFormNotesEditor");
+        if (editor) editor.focus();
+
+        if (cmd === "hiliteColor" || cmd === "highlight") {
+          const color = val || "rgba(56, 189, 248, 0.35)";
+          let ok = false;
+          try { ok = document.execCommand("hiliteColor", false, color); } catch (e) { }
+          if (!ok) {
+            try { document.execCommand("backColor", false, color); } catch (e) { }
+          }
+        } else if (cmd === "formatBlock") {
+          const tag = (val || "P").replace(/[<>]/g, "").toUpperCase();
+          try {
+            document.execCommand("formatBlock", false, tag);
+          } catch (e) {
+            try { document.execCommand("formatBlock", false, `<${tag}>`); } catch (err) { }
+          }
+        } else {
+          try {
+            document.execCommand(cmd, false, val);
+          } catch (e) { }
+        }
+
+        if (editor) editor.focus();
+      }
+
+      // 6. Notes (only display if explicitly defined on this task entity)
+      let notesHtml = "";
+      if (rawTask.notes) {
+        notesHtml = `
+          <div class="inspector-section">
+            <span class="inspector-section-label">Notes & Operational Briefing</span>
+            <div class="contact-card-box rich-text-display">${rawTask.notes}</div>
+          </div>
+        `;
+      }
+
+      body.innerHTML = statusHtml + visionHtml + dodHtml + scheduleHtml + teamHtml + notesHtml;
+    }
+
+    function renderInlineDrawerForm(container, task = null, defaultParentId = "") {
+      const isNew = !task;
+      const t = task || {};
+
+      container.innerHTML = `
+        <form id="drawerInlineForm" onsubmit="saveDrawerForm(event)" style="display:flex; flex-direction:column; gap:12px;">
+          <input type="hidden" id="drawerFormId" value="${t.id || ''}">
+
+          <div style="display:flex; gap:10px;">
+            <div style="flex:1;">
+              <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Item Type</label>
+              <select id="drawerFormType" class="form-input" required style="width:100%; margin-top:4px;">
+                <option value="objective" ${t.type === 'objective' ? 'selected' : ''}>Objective (Top-Level Goal)</option>
+                <option value="project" ${t.type === 'project' ? 'selected' : ''}>Project / Sub-Project</option>
+                <option value="key_result" ${t.type === 'key_result' ? 'selected' : ''}>Key Result</option>
+                <option value="task" ${(!t.type || t.type === 'task') ? 'selected' : ''}>Task (Action Item)</option>
+                <option value="milestone" ${t.type === 'milestone' ? 'selected' : ''}>Milestone (Target Event)</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Parent Workstream (LOE)</label>
+              <select id="drawerFormParent" class="form-input" style="width:100%; margin-top:4px;"></select>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Title / Name</label>
+            <input type="text" id="drawerFormTitle" class="form-input" value="${t.title || ''}" placeholder="e.g. Identity Provider CAC/PKI Integration" required style="width:100%; margin-top:4px;">
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <div style="flex:1;">
+              <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Status</label>
+              <select id="drawerFormStatus" class="form-input" style="width:100%; margin-top:4px;">
+                <option value="Not Started" ${(t.status === 'Not Started') ? 'selected' : ''}>Not Started</option>
+                <option value="In Progress" ${(!t.status || t.status === 'In Progress') ? 'selected' : ''}>In Progress</option>
+                <option value="Blocked" ${(t.status === 'Blocked') ? 'selected' : ''}>Blocked</option>
+                <option value="Done" ${(t.status === 'Done') ? 'selected' : ''}>Done</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Health RAG</label>
+              <select id="drawerFormHealth" class="form-input" style="width:100%; margin-top:4px;">
+                <option value="Green" ${(!t.health || t.health === 'Green') ? 'selected' : ''}>🟢 Green</option>
+                <option value="Yellow" ${(t.health === 'Yellow') ? 'selected' : ''}>🟡 Yellow</option>
+                <option value="Red" ${(t.health === 'Red') ? 'selected' : ''}>🔴 Red</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Completion Progress</label>
+              <span id="drawerFormProgressVal" style="font-weight:800; color:var(--accent); font-size:12px;">${t.progress || 0}%</span>
+            </div>
+            <input type="range" id="drawerFormProgress" min="0" max="100" value="${t.progress || 0}" class="form-input" style="width:100%; margin-top:4px;" oninput="document.getElementById('drawerFormProgressVal').innerText = this.value + '%'">
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <div style="flex:1;">
+              <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Start Date</label>
+              <input type="date" id="drawerFormStartDate" class="form-input" value="${t.startDate || ''}" style="width:100%; margin-top:4px;">
+            </div>
+            <div style="flex:1;">
+              <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Target Due Date</label>
+              <input type="date" id="drawerFormDueDate" class="form-input" value="${t.dueDate || ''}" style="width:100%; margin-top:4px;">
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Lead / Assignee</label>
+            <select id="drawerFormLead" class="form-input" style="width:100%; margin-top:4px;"></select>
+          </div>
+
+          <div>
+            <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Tactical Definition of Done (DoD)</label>
+            <textarea id="drawerFormDoD" class="form-input" rows="2" placeholder="Measurable completion criteria..." style="width:100%; margin-top:4px;">${t.definitionOfDone || ''}</textarea>
+          </div>
+
+          <div>
+            <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Notes & Operational Briefing (Rich Text)</label>
+            <div class="rich-text-wrapper" style="margin-top:4px;">
+              <div class="rich-text-toolbar" onmousedown="event.preventDefault()">
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                <span class="rt-divider"></span>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('formatBlock', 'h3')" title="Heading"><b>H3</b></button>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('insertUnorderedList')" title="Bullet List">• List</button>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('insertOrderedList')" title="Numbered List">1. List</button>
+                <span class="rt-divider"></span>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('hiliteColor', 'rgba(56, 189, 248, 0.35)')" title="Highlight Text">🖍️ Highlight</button>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('formatBlock', 'blockquote')" title="Blockquote">❝ Quote</button>
+                <button type="button" class="rt-btn" onclick="execRichTextCommand('removeFormat')" title="Clear Formatting">🧹 Clear</button>
+              </div>
+              <div id="drawerFormNotesEditor" class="rich-text-editor" contenteditable="true" placeholder="Key operational context, briefing notes, lists, or requirements...">${t.notes || ''}</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:12px; padding-top:10px; border-top:1px solid var(--border-color);">
+            <button type="button" class="btn" onclick="${isNew ? 'closeInspector()' : 'toggleDrawerEditMode()'}">Cancel</button>
+            <button type="submit" class="btn btn-gradient">${isNew ? '➕ Create Workstream Item' : '💾 Save Changes'}</button>
+          </div>
+        </form>
+      `;
+
+      populateParentSelect(document.getElementById("drawerFormParent"), t.id || null, defaultParentId);
+      populateLeadSelect(document.getElementById("drawerFormLead"), t.assigneeId || t.leadId || "");
+    }
+
+    function submitDrawerInlineForm(e) {
+      if (e) e.preventDefault();
+      const form = document.getElementById("drawerInlineForm");
+      if (form) {
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        saveDrawerForm(e);
+      }
+    }
+
+    function saveDrawerForm(e) {
+      if (e) e.preventDefault();
+      const id = document.getElementById("drawerFormId").value;
+      const parentId = document.getElementById("drawerFormParent").value;
+      const title = document.getElementById("drawerFormTitle").value.trim();
+      const type = document.getElementById("drawerFormType").value;
+      const status = document.getElementById("drawerFormStatus").value;
+      const health = document.getElementById("drawerFormHealth").value;
+      const progress = parseInt(document.getElementById("drawerFormProgress").value, 10) || 0;
+      const startDate = document.getElementById("drawerFormStartDate").value;
+      const dueDate = document.getElementById("drawerFormDueDate").value;
+      const leadId = document.getElementById("drawerFormLead").value;
+      const definitionOfDone = document.getElementById("drawerFormDoD").value.trim();
+
+      const notesEditor = document.getElementById("drawerFormNotesEditor");
+      const notes = notesEditor ? notesEditor.innerHTML.trim() : "";
+
+      if (!title) return;
+
+      if (id) {
+        // Update item
+        const existing = findTaskRecursive(state.tasks, id);
+        if (existing) {
+          existing.title = title;
+          existing.type = type;
+          existing.status = status;
+          existing.health = health;
+          existing.progress = progress;
+          existing.startDate = startDate;
+          existing.dueDate = dueDate;
+          existing.definitionOfDone = definitionOfDone;
+          existing.notes = notes;
+
+          if (type === "task" || type === "milestone") {
+            existing.assigneeId = leadId;
+            delete existing.leadId;
+          } else {
+            existing.leadId = leadId;
+            delete existing.assigneeId;
+          }
+
+          // Check if parent changed
+          function removeChild(tasks, targetId) {
+            for (let i = 0; i < tasks.length; i++) {
+              if (tasks[i].id === targetId) return tasks.splice(i, 1)[0];
+              if (tasks[i].subTasks && tasks[i].subTasks.length > 0) {
+                const res = removeChild(tasks[i].subTasks, targetId);
+                if (res) return res;
+              }
+            }
+            return null;
+          }
+
+          function findCurrentParentId(tasks, targetId, currP = "") {
+            for (const t of tasks) {
+              if (t.id === targetId) return currP;
+              if (t.subTasks && t.subTasks.length > 0) {
+                const res = findCurrentParentId(t.subTasks, targetId, t.id);
+                if (res !== undefined) return res;
+              }
+            }
+            return undefined;
+          }
+
+          const currParentId = findCurrentParentId(state.tasks, id) || "";
+          if (currParentId !== parentId) {
+            const removed = removeChild(state.tasks, id);
+            if (removed) {
+              if (parentId) {
+                const newParent = findTaskRecursive(state.tasks, parentId);
+                if (newParent) {
+                  if (!newParent.subTasks) newParent.subTasks = [];
+                  newParent.subTasks.push(removed);
+                } else {
+                  state.tasks.push(removed);
+                }
+              } else {
+                state.tasks.push(removed);
+              }
+            }
+          }
+        }
+
+        isDrawerInlineEdit = false;
+        saveToCache();
+        renderAll();
+        openInspector(id, false);
+      } else {
+        // Create new item
+        const newId = `${type.substr(0, 1)}-${Date.now().toString().substr(-6)}`;
+        const newItem = {
+          id: newId,
+          type,
+          title,
+          status,
+          health,
+          progress,
+          startDate,
+          dueDate,
+          definitionOfDone,
+          notes,
+          subTasks: []
+        };
+
+        if (type === "task" || type === "milestone") newItem.assigneeId = leadId;
+        else newItem.leadId = leadId;
+
+        if (parentId) {
+          const parentObj = findTaskRecursive(state.tasks, parentId);
+          if (parentObj) {
+            if (!parentObj.subTasks) parentObj.subTasks = [];
+            parentObj.subTasks.push(newItem);
+            expandedNodeIds.add(parentId);
+          } else {
+            if (state.tasks.length === 0) {
+              state.tasks.push(newItem);
+            } else {
+              if (!state.tasks[0].subTasks) state.tasks[0].subTasks = [];
+              state.tasks[0].subTasks.push(newItem);
+            }
+          }
+        } else {
+          if (state.tasks.length === 0) {
+            state.tasks.push(newItem);
+          } else {
+            if (!state.tasks[0].subTasks) state.tasks[0].subTasks = [];
+            state.tasks[0].subTasks.push(newItem);
+          }
+        }
+
+        isDrawerCreateMode = false;
+        isDrawerInlineEdit = false;
+        saveToCache();
+        renderAll();
+        openInspector(newId, false);
+      }
+    }
+
+    function closeInspector() {
+      const drawer = document.getElementById("detailDrawer");
+      drawer.classList.remove("open");
+      drawer.classList.remove("maximized");
+      isDrawerInlineEdit = false;
+      isDrawerCreateMode = false;
+      const btn = document.getElementById("drawerMaximizeBtn");
+      if (btn) { btn.innerText = "⤢ Expand View"; btn.title = "Expand drawer to wide screen reading view"; }
+    }
+
+    // Keyboard Shortcut Listener: 'Esc' Key closes Inspector Drawer
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" || e.key === "Esc") {
+        const drawer = document.getElementById("detailDrawer");
+        if (drawer && drawer.classList.contains("open")) {
+          closeInspector();
+        }
+      }
+    });
+
+    // Outside Click Listener: Close Inspector Drawer when clicking outside of panel
+    document.addEventListener("pointerdown", (e) => {
+      const drawer = document.getElementById("detailDrawer");
+      if (!drawer || !drawer.classList.contains("open")) return;
+
+      // Do not close if clicking inside drawer
+      if (drawer.contains(e.target)) {
+        return;
+      }
+
+      // Do not close if clicking an element that opens inspector
+      if (e.target.closest(".kanban-card, .exec-card, .action-item-row, .hero-objective-card, .frappe-gantt-bar-group, [onclick*='openInspector'], [onclick*='openCreateTaskDrawer']")) {
+        return;
+      }
+
+      closeInspector();
+    });
+
+    function toggleInspectorMaximize() {
+      const drawer = document.getElementById("detailDrawer");
+      const btn = document.getElementById("drawerMaximizeBtn");
+      drawer.classList.toggle("maximized");
+      if (drawer.classList.contains("maximized")) {
+        btn.innerText = "🗗 Normal View";
+        btn.title = "Restore drawer to standard side panel size";
+      } else {
+        btn.innerText = "⤢ Expand View";
+        btn.title = "Expand drawer to wide screen reading view";
+      }
+    }
+
+    // --- WORKSTREAM ITEM CRUD HANDLERS ---
+    function populateParentSelect(selectEl, currentTaskId = null, selectedParentId = "") {
+      if (!selectEl) return;
+      selectEl.innerHTML = "";
+
+      const canBeRoot = (!state.tasks || state.tasks.length === 0) || (currentTaskId && state.tasks[0] && currentTaskId === state.tasks[0].id);
+
+      if (canBeRoot) {
+        const rootOpt = document.createElement("option");
+        rootOpt.value = "";
+        rootOpt.innerText = "(None - Primary Root Objective)";
+        if (!selectedParentId) rootOpt.selected = true;
+        selectEl.appendChild(rootOpt);
+      }
+
+      function walk(tasks, depth = 0) {
+        tasks.forEach(t => {
+          if (t.id === currentTaskId) return;
+          const prefix = "— ".repeat(depth);
+          const opt = document.createElement("option");
+          opt.value = t.id;
+          opt.innerText = `${prefix}${t.type.toUpperCase()}: ${t.title}`;
+          if (t.id === selectedParentId) opt.selected = true;
+          selectEl.appendChild(opt);
+          if (t.subTasks) walk(t.subTasks, depth + 1);
+        });
+      }
+      if (state.tasks) walk(state.tasks);
+    }
+
+    function populateLeadSelect(selectEl, selectedLeadId = "") {
+      if (!selectEl) return;
+      selectEl.innerHTML = `<option value="">Unassigned</option>`;
+
+      const members = collectAllTeamMembers();
+      members.forEach(tm => {
+        const opt = document.createElement("option");
+        opt.value = tm.id;
+        opt.innerText = `${tm.name} (${(tm.role || 'Member').split('/')[0].trim()})`;
+        if (tm.id === selectedLeadId) opt.selected = true;
+        selectEl.appendChild(opt);
+      });
+    }
+
+    function editCurrentInspectorItem() {
+      const drawer = document.getElementById("detailDrawer");
+      const taskId = currentInspectorTaskId || (drawer ? drawer.getAttribute("data-task-id") : null);
+      if (taskId) openInspector(taskId, true);
+    }
+
+    function deleteCurrentInspectorItem() {
+      const drawer = document.getElementById("detailDrawer");
+      const taskId = currentInspectorTaskId || (drawer ? drawer.getAttribute("data-task-id") : null);
+      if (!taskId) return;
+      deleteTaskRecursive(taskId);
+    }
+
+    function deleteTaskRecursive(taskId) {
+      const task = findTaskRecursive(state.tasks, taskId);
+      if (!task) return;
+
+      const isRootTask = state.tasks[0] && state.tasks[0].id === taskId;
+      const subCount = task.subTasks ? task.subTasks.length : 0;
+
+      let msg = `Are you sure you want to delete "${task.title}"?`;
+      if (isRootTask) {
+        msg = `WARNING: "${task.title}" is the primary root objective. Deleting it will clear all ${subCount} sub-item(s) and reset the workspace. Are you sure?`;
+      } else if (subCount > 0) {
+        msg = `Are you sure you want to delete "${task.title}" and its ${subCount} sub-item(s)?`;
+      }
+
+      if (!confirm(msg)) return;
+
+      if (isRootTask) {
+        state.tasks = [];
+      } else {
+        function removeChild(tasks, targetId) {
+          for (let i = 0; i < tasks.length; i++) {
+            if (tasks[i].id === targetId) {
+              tasks.splice(i, 1);
+              return true;
+            }
+            if (tasks[i].subTasks && tasks[i].subTasks.length > 0) {
+              if (removeChild(tasks[i].subTasks, targetId)) return true;
+            }
+          }
+          return false;
+        }
+        removeChild(state.tasks, taskId);
+      }
+
+      currentInspectorTaskId = null;
+      saveToCache();
+      closeInspector();
+      renderAll();
+    }
+
+    // --- TEAM ROSTER RENDERER & PERSONNEL CRUD ---
+    function collectAllTeamMembers() {
+      const memberMap = new Map();
+      if (state && Array.isArray(state.teamRoster)) {
+        state.teamRoster.forEach(tm => {
+          if (tm && tm.id) memberMap.set(tm.id, tm);
+        });
+      }
+      function collect(tasks) {
+        if (!Array.isArray(tasks)) return;
+        tasks.forEach(t => {
+          if (t.teamMembers) t.teamMembers.forEach(tm => {
+            if (tm && tm.id && !memberMap.has(tm.id)) memberMap.set(tm.id, tm);
+          });
+          if (t.subTasks) collect(t.subTasks);
+        });
+      }
+      if (state && Array.isArray(state.tasks)) collect(state.tasks);
+      return Array.from(memberMap.values());
+    }
+
+    function renderTeamRadar() {
+      const container = document.getElementById("teamRadarContainer") || document.getElementById("mainPageTeamRosterContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const members = collectAllTeamMembers();
+
+      if (members.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); padding:10px 0;">No personnel in roster yet. Click "Add Team Member" above to add team members.</p>`;
+        return;
+      }
+
+      members.forEach(tm => {
+        const card = document.createElement("div");
+        card.className = "contact-card-box";
+        card.style.cssText = "padding:14px; display:flex; flex-direction:column; justify-content:space-between; gap:10px;";
+        card.innerHTML = `
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+              <div>
+                <div style="font-size:14px; font-weight:800; color:var(--text-main);">👤 ${tm.name}</div>
+                <div style="font-size:11px; color:var(--accent); font-weight:700; margin-top:2px;">${tm.role}</div>
+              </div>
+              <div style="display:flex; gap:4px; flex-shrink:0;">
+                <button class="btn" onclick="event.stopPropagation(); openPersonnelModal('${tm.id}')" style="font-size:10px; padding:2px 6px;" title="Edit ${tm.name}">✏️</button>
+                <button class="btn" onclick="event.stopPropagation(); deletePersonnel('${tm.id}')" style="font-size:10px; padding:2px 6px; color:var(--status-blocked); border-color:rgba(244,63,94,0.3);" title="Delete ${tm.name}">🗑️</button>
+              </div>
+            </div>
+            <hr style="border:0; border-top:1px solid var(--border-color); margin:8px 0;">
+            <div style="display:flex; flex-direction:column; gap:4px; font-size:11px; color:var(--text-muted);">
+              <div>📧 <a href="mailto:${tm.email}" style="color:var(--accent); font-weight:600;">${tm.email || 'N/A'}</a></div>
+              <div>🏢 DSN: ${tm.officePhone || 'N/A'}</div>
+              <div>📱 Cell: ${tm.cellPhone || 'N/A'}</div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openPersonnelModal(memberId = null) {
+      const modal = document.getElementById("personnelModal");
+      const title = document.getElementById("personnelModalTitle");
+      const formId = document.getElementById("personnelFormId");
+      const nameInput = document.getElementById("personnelFormName");
+      const roleInput = document.getElementById("personnelFormRole");
+      const emailInput = document.getElementById("personnelFormEmail");
+      const officeInput = document.getElementById("personnelFormOffice");
+      const cellInput = document.getElementById("personnelFormCell");
+
+      if (!modal) return;
+
+      if (memberId) {
+        const members = collectAllTeamMembers();
+        const found = members.find(m => m.id === memberId);
+        if (found) {
+          title.innerText = `✏️ Edit Team Member: ${found.name}`;
+          formId.value = found.id;
+          nameInput.value = found.name || "";
+          roleInput.value = found.role || "";
+          emailInput.value = found.email || "";
+          officeInput.value = found.officePhone || "";
+          cellInput.value = found.cellPhone || "";
+        }
+      } else {
+        title.innerText = "👤 Add New Team Member";
+        formId.value = "";
+        nameInput.value = "";
+        roleInput.value = "";
+        emailInput.value = "";
+        officeInput.value = "";
+        cellInput.value = "";
+      }
+
+      modal.classList.add("open");
+    }
+
+    function closePersonnelModal() {
+      const modal = document.getElementById("personnelModal");
+      if (modal) modal.classList.remove("open");
+    }
+
+    function savePersonnelForm(e) {
+      if (e) e.preventDefault();
+      const id = document.getElementById("personnelFormId").value;
+      const name = document.getElementById("personnelFormName").value.trim();
+      const role = document.getElementById("personnelFormRole").value.trim();
+      const email = document.getElementById("personnelFormEmail").value.trim();
+      const officePhone = document.getElementById("personnelFormOffice").value.trim();
+      const cellPhone = document.getElementById("personnelFormCell").value.trim();
+
+      if (!name) return;
+
+      if (!Array.isArray(state.teamRoster)) {
+        state.teamRoster = [];
+      }
+
+      if (id) {
+        const existing = state.teamRoster.find(m => m.id === id);
+        if (existing) {
+          existing.name = name;
+          existing.role = role;
+          existing.email = email;
+          existing.officePhone = officePhone;
+          existing.cellPhone = cellPhone;
+        } else {
+          state.teamRoster.push({ id, name, role, email, officePhone, cellPhone });
+        }
+      } else {
+        const newId = `tm-${Date.now().toString().substr(-6)}`;
+        state.teamRoster.push({
+          id: newId,
+          name,
+          role,
+          email,
+          officePhone,
+          cellPhone
+        });
+      }
+
+      saveToCache();
+      closePersonnelModal();
+      renderAll();
+    }
+
+    function deletePersonnel(memberId) {
+      if (!memberId) return;
+      const members = collectAllTeamMembers();
+      const target = members.find(m => m.id === memberId);
+      if (!target) return;
+
+      if (!confirm(`Are you sure you want to delete ${target.name} (${target.role}) from the team roster?`)) return;
+
+      // 1. Remove from global state.teamRoster
+      if (Array.isArray(state.teamRoster)) {
+        const idx = state.teamRoster.findIndex(m => m.id === memberId);
+        if (idx !== -1) state.teamRoster.splice(idx, 1);
+      }
+
+      // 2. Remove from embedded teamMembers arrays in task tree
+      function removeMemberFromTasks(tasks) {
+        if (!Array.isArray(tasks)) return;
+        tasks.forEach(t => {
+          if (Array.isArray(t.teamMembers)) {
+            const tmIdx = t.teamMembers.findIndex(tm => tm.id === memberId);
+            if (tmIdx !== -1) t.teamMembers.splice(tmIdx, 1);
+          }
+          if (t.leadId === memberId) delete t.leadId;
+          if (t.assigneeId === memberId) delete t.assigneeId;
+          if (t.subTasks) removeMemberFromTasks(t.subTasks);
+        });
+      }
+      if (Array.isArray(state.tasks)) removeMemberFromTasks(state.tasks);
+
+      saveToCache();
+      renderAll();
+    }
+
+    function clearAllPersonnel() {
+      const members = collectAllTeamMembers();
+      if (members.length === 0) {
+        alert("The personnel roster is already empty.");
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to delete ALL ${members.length} team members from the personnel roster? This action cannot be undone.`)) {
+        return;
+      }
+
+      state.teamRoster = [];
+
+      function clearTasksMembers(tasks) {
+        if (!Array.isArray(tasks)) return;
+        tasks.forEach(t => {
+          if (t.teamMembers) t.teamMembers = [];
+          if (t.subTasks) clearTasksMembers(t.subTasks);
+        });
+      }
+      if (Array.isArray(state.tasks)) clearTasksMembers(state.tasks);
+
+      saveToCache();
+      renderAll();
+    }
+  </script>
+</body>
+
+</html>
