@@ -13,46 +13,11 @@
       if (!activePane || activePane.id === "view-launcher") {
         switchView("tree");
       }
-
-      renderSidebarTree();
       renderHeroObjective();
       renderProgressiveTree();
       renderGanttTimeline();
       renderKanbanBoard();
       renderTeamRadar();
-    }
-
-    // --- SIDEBAR TREE RENDERER ---
-    function renderSidebarTree() {
-      const container = document.getElementById("sidebarTreeContainer");
-      container.innerHTML = "";
-
-      const rootItem = document.createElement("div");
-      rootItem.className = `sidebar-node ${activeFilterId === null ? 'active' : ''}`;
-      rootItem.onclick = () => { activeFilterId = null; renderAll(); };
-      rootItem.innerHTML = `<span>🌐 All Workspace Workstreams</span>`;
-      container.appendChild(rootItem);
-
-      state.tasks.forEach(t => container.appendChild(createSidebarTreeElement(t, 0)));
-    }
-
-    function createSidebarTreeElement(task, depth) {
-      const wrapper = document.createElement("div");
-      if (depth > 0) wrapper.className = "sidebar-indent";
-
-      const item = document.createElement("div");
-      item.className = `sidebar-node ${activeFilterId === task.id ? 'active' : ''}`;
-      item.onclick = (e) => { e.stopPropagation(); activeFilterId = task.id; renderAll(); };
-
-      const icon = (task.type === "objective" || task.type === "project") ? "📁" : (task.type === "milestone" ? "◆" : "📋");
-      item.innerHTML = `<span>${icon} ${task.title}</span>`;
-      wrapper.appendChild(item);
-
-      if (task.subTasks && task.subTasks.length > 0) {
-        task.subTasks.forEach(child => wrapper.appendChild(createSidebarTreeElement(child, depth + 1)));
-      }
-
-      return wrapper;
     }
 
     // --- PROMINENT HERO OBJECTIVE & ROLL-UP METRICS RENDERER ---

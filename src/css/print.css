@@ -2,7 +2,6 @@
     @media print {
 
       header,
-      aside.sidebar,
       .inspector-panel,
       .classification-banner {
         display: none !important;
