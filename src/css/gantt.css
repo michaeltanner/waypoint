@@ -1,0 +1,93 @@
+/* Interactive Frappe Gantt Chart View Styles (COA #2) */
+    .gantt-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .frappe-gantt-wrapper {
+      display: flex;
+      width: 100%;
+      height: 600px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .frappe-gantt-label-col {
+      width: 280px;
+      flex-shrink: 0;
+      border-right: 2px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.4);
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      z-index: 10;
+    }
+
+    .frappe-gantt-label-head {
+      height: 44px;
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .frappe-gantt-label-row {
+      height: 44px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 12px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .frappe-gantt-label-row:hover {
+      background: var(--bg-glass-hover);
+      color: var(--accent);
+    }
+
+    .frappe-gantt-chart-area {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      position: relative;
+    }
+
+    .frappe-gantt-svg {
+      display: block;
+    }
+
+    .frappe-gantt-bar-group {
+      cursor: grab;
+      transition: opacity 0.2s ease;
+    }
+
+    .frappe-gantt-bar-group:hover .gantt-bar-rect {
+      stroke: var(--accent);
+      filter: drop-shadow(0 4px 12px rgba(56, 189, 248, 0.4));
+    }
+
+    .frappe-gantt-bar-group:hover .gantt-handle {
+      opacity: 0.9;
+    }
+
+    .gantt-handle {
+      opacity: 0;
+      cursor: ew-resize;
+      transition: opacity 0.2s ease;
+    }
+
+    .gantt-handle:hover {
+      fill: var(--accent);
+    }

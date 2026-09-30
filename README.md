@@ -28,15 +28,63 @@ Top and bottom security classification banners (UNCLASSIFIED, CUI, or custom). H
 
 ## Deployment & Usage
 
-1. Save `waypoint.html` to any local directory or offline media drive.
-2. Open `waypoint.html` directly in any modern web browser (Google Chrome, Microsoft Edge, Firefox, Safari).
-3. The application starts cleanly without preloading any default JSON content, presenting the **Workspace Launcher Hub**:
+1. Compile the standalone distribution artifact using `node build.js` or `.\build.ps1` (or download the precompiled `build/waypoint.html` release).
+2. Save `build/waypoint.html` to any local directory or offline media drive.
+3. Open `build/waypoint.html` directly in any modern web browser (Google Chrome, Microsoft Edge, Firefox, Safari).
+4. The application starts cleanly without preloading any default JSON content, presenting the **Workspace Launcher Hub**:
    * **🚀 Built-in Example**: One-click interactive load of the canonical demonstration dataset (*Operation Sentinel Dawn*).
    * **📥 Open JSON Workspace**: Seamless drag-and-drop anywhere onto the page (or click to browse local storage) to immediately load any existing `.json` portfolio file.
    * **➕ Create Blank Workspace**: Start fresh with an empty project, customizable OKR ladder, DoD criteria, and clean team directory.
    * **🕒 Recent Workspaces**: Quickly resume recent workspaces with 1-click open buttons, showing workstream counts, personnel counts, and last modified timestamps.
-4. Use the **📂 Workspace ▾** header menu at any time to open new files, switch recent workspaces, or close the active session to return to the launcher.
-5. Click **Export JSON** to download an authoritative offline snapshot of your workspace.
+5. Use the **📂 Workspace ▾** header menu at any time to open new files, save, save as, switch recent workspaces, or close the active session to return to the launcher.
+6. Use **💾 Save** (`Ctrl+S`) to save directly back to the active file handle or prompt Save As, **Save As...** (`Ctrl+Shift+S`) to write to a chosen file destination (or download offline JSON), and **✕ Close** to close the session with an interactive confirmation modal offering **Save & Close**, **Save As & Close**, **Discard & Close**, or **Cancel** whenever unsaved changes are present.
+
+## Development & Build Workflow
+
+Waypoint follows **COA #2 (Source Separation with a Zero-Dependency Micro-Bundler)** for developer ergonomics and modular code maintenance:
+
+### Directory Structure
+
+```text
+/waypoint
+├── build.js                 # Zero-dependency Node.js compiler (~12ms compile time)
+├── build.ps1                # Zero-dependency native Windows PowerShell compiler
+├── build/                   # Compiled distribution directory (gitignored)
+│   └── waypoint.html        # Compiled single-file air-gapped release artifact
+├── waypoint.json            # Canonical reference data schema
+└── src/                     # Modular source code
+    ├── index.html           # Skeleton template & security classification banners
+    ├── css/                 # Discrete stylesheets
+    │   ├── tokens.css       # Design tokens, variables & typography
+    │   ├── layout.css       # Main shell, header & responsive container
+    │   ├── tree.css         # Tree hierarchy view & rollup indicators
+    │   ├── gantt.css        # Timeline & Gantt chart styling
+    │   ├── kanban.css       # Kanban board & drag-and-drop swimlanes
+    │   ├── inspector.css    # Slide-out inspector drawer & header actions
+    │   ├── modals.css       # Dialog modals, confirmation boxes & forms
+    │   ├── print.css        # Briefing layout & 1-page print media rules
+    │   └── launcher.css     # Workspace launcher hub styling
+    └── js/
+        ├── core/            # Foundation logic (schema, data, hierarchy, storage, navigation)
+        ├── views/           # View modules (launcher, tree, gantt, kanban, roster)
+        └── components/      # Reusable components (inspector drawer, rich-text editor)
+```
+
+### Compiling Changes
+
+To compile edits made in `/src/` into the standalone `build/waypoint.html` distribution file:
+
+* **Using Node.js (cross-platform)**:
+  ```bash
+  node build.js          # One-shot build -> outputs to build/waypoint.html
+  node build.js --watch  # Watch mode: auto-recompiles on any file edit
+  ```
+* **Using PowerShell (native Windows, no Node required)**:
+  ```powershell
+  .\build.ps1            # Outputs to build/waypoint.html
+  ```
+
+> **Air-Gapped Standalone Guarantee**: The compiled artifact `build/waypoint.html` is generated on demand, excluded from git version control, and remains a completely standalone, zero-dependency HTML5 application ready for drag-and-drop deployment onto secure, offline, air-gapped systems.
 
 ## Data Schema Specification
 
@@ -143,7 +191,8 @@ Split the codebase into a clean `/src` directory structure during development, a
   ```text
   /waypoint
   ├── build.js (or build.ps1 - zero npm packages, native fs concatenation)
-  ├── waypoint.html (generated standalone release artifact)
+  ├── build/
+  │   └── waypoint.html (generated standalone release artifact, gitignored)
   ├── waypoint.json
   └── src/
       ├── index.html (skeleton layout and banners)
@@ -190,7 +239,7 @@ Preserve the existing codebase structure and monolithic file, but surgically add
 ---
 
 ### Recommended Phased Roadmap
-1. **Phase 1**: Implement **COA 2** by separating CSS, HTML, and JS into `/src/` with a zero-dependency native script (`build.js` / `build.ps1`).
+1. **Phase 1 (Completed)**: Implemented **COA 2** by separating CSS, HTML, and JS into `/src/` with zero-dependency native scripts (`build.js` / `build.ps1`).
 2. **Phase 2**: Implement the normalized in-memory index from **COA 1** to make task and member lookups $O(1)$.
 3. **Phase 3**: Build upcoming backlog features (Meetings & Minutes, Risk Register, Audit Logs) inside isolated modular files.
 

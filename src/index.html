@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waypoint — Command & Portfolio Intelligence</title>
+  <style>
+    /* <!-- INJECT:CSS --> */
+  </style>
+</head>
+
+<body>
+
+  <!-- Fullscreen Drag & Drop Overlay -->
+  <div id="globalDropOverlay" class="global-drop-overlay">
+    <div class="global-drop-box">
+      <div style="font-size:52px; margin-bottom:12px;">📥</div>
+      <div style="font-size:24px; font-weight:800; color:var(--accent);">Drop Waypoint JSON File</div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">Release to immediately load and open this portfolio workspace</div>
+    </div>
+  </div>
+
+  <!-- Top Classification Bar (Centered with Inline Caret Select) -->
+  <div id="topBanner" class="classification-banner unclassified">
+    <div class="class-picker-wrapper">
+      <select class="class-picker-select" id="classificationSelect" onchange="setClassification(this.value, true)">
+        <option value="UNCLASSIFIED">UNCLASSIFIED</option>
+        <option value="CUI">CUI</option>
+      </select>
+      <span class="class-picker-caret">▾</span>
+    </div>
+  </div>
+
+  <!-- Task Hierarchy Configuration Modal -->
+  <div id="taskHierarchyModal" class="modal-overlay">
+    <div class="modal-card" style="width:520px; max-width:92vw;">
+      <div class="modal-head">
+        <h3 style="font-size:16px; font-weight:800; color:var(--text-main);">⚙️ Task Type Hierarchy Configuration</h3>
+        <button type="button" class="btn" onclick="closeTaskHierarchyModal()">✕</button>
+      </div>
+      <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+        <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+          Configure workstream type levels. Top-level items default to <strong>Level 0</strong>, sub-items default down the ladder.
+        </p>
+        <div id="hierarchyLevelsContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+        <div style="display:flex; justify-content:flex-start;">
+          <button type="button" class="btn" onclick="addHierarchyLevelRow()" style="font-size:11px; color:var(--accent);">+ Add Level</button>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:space-between; margin-top:8px; padding-top:12px; border-top:1px solid var(--border-color);">
+          <button type="button" class="btn" onclick="resetDefaultHierarchy()">↺ Reset Defaults</button>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn" onclick="closeTaskHierarchyModal()">Cancel</button>
+            <button type="button" class="btn btn-gradient" onclick="saveTaskHierarchyConfig()">💾 Save Hierarchy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Member Personnel CRUD Modal -->
+  <div id="personnelModal" class="modal-overlay">
+    <div class="modal-card" style="width:500px; max-width:92vw;">
+      <div class="modal-head">
+        <h3 id="personnelModalTitle" style="font-size:16px; font-weight:800; color:var(--text-main);">👤 Add Team Member</h3>
+        <button type="button" class="btn" onclick="closePersonnelModal()">✕</button>
+      </div>
+      <form id="personnelForm" onsubmit="savePersonnelForm(event)"
+        style="padding:20px; display:flex; flex-direction:column; gap:14px; max-height:80vh; overflow-y:auto;">
+        <input type="hidden" id="personnelFormId" value="">
+        <div id="personnelFormHybridIdBanner" style="display:none; padding:8px 12px; background:var(--bg-glass); border-radius:6px; border:1px solid var(--border-color); justify-content:space-between; align-items:center; font-size:11px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">DISPLAY ID:</span>
+            <span id="personnelDisplayIdText" class="badge" style="font-size:11px; font-family:monospace; font-weight:700; color:var(--accent); background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25);"></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:10px; font-weight:800; color:var(--text-dim); text-transform:uppercase;">UUID:</span>
+            <span id="personnelUuidText" style="font-size:10px; font-family:monospace; color:var(--text-muted); background:var(--bg-input); padding:2px 6px; border-radius:4px; border:1px solid var(--border-color); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+            <button type="button" class="btn" onclick="navigator.clipboard.writeText(document.getElementById('personnelUuidText').title); showClipboardToast('Copied Member UUID to clipboard!');" style="font-size:10px; padding:2px 6px;" title="Copy Member UUID">📋</button>
+          </div>
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Full Name & Rank / Honorific</label>
+          <input type="text" id="personnelFormName" class="form-input" placeholder="e.g. Maj Alex Mercer" required
+            style="width:100%; margin-top:4px;">
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Primary Role / Job Position</label>
+          <input type="text" id="personnelFormRole" class="form-input" placeholder="e.g. Cyber Defense Analyst" required
+            style="width:100%; margin-top:4px;">
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Official Email Address</label>
+          <input type="email" id="personnelFormEmail" class="form-input" placeholder="alex.mercer@example.com"
+            style="width:100%; margin-top:4px;">
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div style="flex:1;">
+            <label class="form-label"
+              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Office DSN Phone</label>
+            <input type="text" id="personnelFormOffice" class="form-input" placeholder="DSN 312-555-0122"
+              style="width:100%; margin-top:4px;">
+          </div>
+          <div style="flex:1;">
+            <label class="form-label"
+              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Cell Phone</label>
+            <input type="text" id="personnelFormCell" class="form-input" placeholder="555-888-9999"
+              style="width:100%; margin-top:4px;">
+          </div>
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Member Flags & Tags</label>
+          <div id="personnelFormFlagsContainer" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;"></div>
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <input type="text" id="newFlagInput" class="form-input" placeholder="Add custom tag (e.g. Contractor)" style="flex:1; font-size:11px; padding:4px 8px;">
+            <button type="button" class="btn" onclick="addNewMemberFlag()" style="font-size:11px; padding:4px 10px;">+ Add Tag</button>
+          </div>
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Notes</label>
+          <textarea id="personnelFormNotes" class="form-input" rows="3" placeholder="Operational notes, clearances, or contact preferences..." style="width:100%; margin-top:4px; font-size:12px;"></textarea>
+        </div>
+        <div
+          style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px; padding-top:12px; border-top:1px solid var(--border-color);">
+          <button type="button" class="btn" onclick="closePersonnelModal()">Cancel</button>
+          <button type="submit" class="btn btn-gradient">💾 Save Personnel Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Header Navigation Toolbar -->
+  <header>
+    <div class="brand-group">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 19h20L12 2zm0 3.8L18.5 17H5.5L12 5.8zM11 10h2v4h-2zm0 5h2v2h-2z" />
+        </svg>
+      </div>
+      <span class="brand-text">WAYPOINT</span>
+    </div>
+
+    <!-- View Switcher Tabs -->
+    <div class="nav-tabs" id="navTabs">
+      <button class="nav-tab active" data-view="tree" onclick="switchView('tree')">📂 Portfolio Hierarchy</button>
+      <button class="nav-tab" data-view="gantt" onclick="switchView('gantt')">📅 Timeline</button>
+      <button class="nav-tab" data-view="kanban" onclick="switchView('kanban')">📋 Kanban Board</button>
+      <button class="nav-tab" data-view="team" onclick="switchView('team')">👥 Team Roster</button>
+    </div>
+
+    <!-- Actions & Controls -->
+    <div class="header-controls">
+      <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path
+            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+        <input type="text" id="globalSearch" class="search-input" placeholder="Search workspace..."
+          oninput="onSearchInput(this.value)">
+      </div>
+
+      <div class="save-tag">
+        <span class="pulse-dot"></span>
+        <span id="saveStatusText">Saved</span>
+      </div>
+
+      <div style="position:relative;">
+        <button class="btn" id="workspaceMenuBtn" onclick="toggleWorkspaceMenu(event)" title="Open, switch, or manage workspaces">
+          📂 Workspace ▾
+        </button>
+        <div id="workspaceMenuPopover" class="workspace-menu-popover" onclick="event.stopPropagation()">
+          <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Workspace Actions</div>
+          <button type="button" class="workspace-menu-item" onclick="loadBuiltinExample(); closeWorkspaceMenu();">
+            <span>🚀</span> <span><strong>Load Built-in Example</strong> (Sentinel Dawn)</span>
+          </button>
+          <label class="workspace-menu-item" style="cursor:pointer; margin:0;">
+            <span>📥</span> <span>Open JSON File...</span>
+            <input type="file" id="workspaceMenuFileInput" accept=".json" style="display:none;" onchange="importJSON(event); closeWorkspaceMenu();">
+          </label>
+          <button type="button" class="workspace-menu-item" onclick="createBlankWorkspace(); closeWorkspaceMenu();">
+            <span>➕</span> <span>Create Blank Workspace</span>
+          </button>
+          <div class="workspace-menu-divider"></div>
+          <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Recent Workspaces</div>
+          <div id="headerRecentWorkspacesList" style="display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
+          <div class="workspace-menu-divider"></div>
+          <button type="button" class="workspace-menu-item" id="headerCloseWorkspaceBtn" onclick="closeCurrentWorkspace(); closeWorkspaceMenu();" style="color:var(--status-blocked);">
+            <span>✕</span> <span>Close / Return to Launcher</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-gradient" id="headerNewWorkstreamBtn" onclick="openCreateTaskDrawer()"
+        title="Add new workstream item, task, or milestone">+ New Workstream</button>
+      <button class="btn" id="headerHierarchyBtn" onclick="openTaskHierarchyModal()" title="Configure workstream type hierarchy levels">⚙️ Hierarchy</button>
+      <button class="btn btn-gradient" id="headerExportBtn" onclick="exportJSON()">Export JSON</button>
+      <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+    </div>
+  </header>
+
+  <!-- Workspace Container Layout -->
+  <div class="app-workspace">
+
+    <!-- Left Sidebar Hierarchy Browser -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-header">
+        <span>Portfolio Structure</span>
+        <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Collapse Sidebar (Ctrl+B)">◀</button>
+      </div>
+      <div class="sidebar-tree" id="sidebarTreeContainer">
+        <!-- Sidebar nodes rendered dynamically -->
+      </div>
+    </aside>
+
+    <!-- Main Workspace Content -->
+    <main class="main-content">
+      <!-- Floating Expand Sidebar Button (when collapsed) -->
+      <button id="sidebarExpandBtn" class="sidebar-expand-btn" onclick="toggleSidebar()" style="display: none;">▶ Expand
+        Navigation</button>
+
+      <!-- VIEW 0: Workspace Welcome & File Launcher -->
+      <div id="view-launcher" class="view-pane">
+        <div class="launcher-wrapper" id="launcherWrapper"></div>
+      </div>
+
+      <!-- VIEW 1: Portfolio Hierarchy with Hero Objective Banner -->
+      <div id="view-tree" class="view-pane">
+        <!-- Dynamic Top-Level Hero Objective & Contextual Roll-Up Banner -->
+        <div id="heroObjectiveContainer"></div>
+
+        <!-- Progressive Disclosure Hierarchy Cards Container -->
+        <div class="tree-cards-wrapper" id="progressiveTreeContainer"></div>
+      </div>
+
+      <!-- VIEW 2: Interactive Frappe Gantt Schedule View (COA #2) -->
+      <div id="view-gantt" class="view-pane">
+        <div class="hero-card"
+          style="padding: 16px; background: var(--bg-card); border-radius: 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; display:flex; align-items:center; gap:8px;">
+              <span>📅 Interactive Master Schedule & Timeline</span>
+            </h3>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">
+              Drag task bars to reschedule dates or stretch side handles to adjust durations. Click bars to open
+              Inspector details.
+            </p>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span
+              style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-right:4px;">VIEW
+              SCALE:</span>
+            <button class="btn" id="ganttScaleBtn-Day" onclick="setGanttViewMode('Day')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to daily columns">☀️ Day</button>
+            <button class="btn btn-gradient" id="ganttScaleBtn-Week" onclick="setGanttViewMode('Week')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to weekly columns">📅 Week</button>
+            <button class="btn" id="ganttScaleBtn-Month" onclick="setGanttViewMode('Month')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to monthly columns">📆
+              Month</button>
+            <button class="btn" id="ganttScaleBtn-Year" onclick="setGanttViewMode('Year')"
+              style="font-size:11px; padding:4px 10px;" title="View timeline zoomed to quarterly/yearly columns">📊
+              Year</button>
+          </div>
+        </div>
+        <div class="gantt-container" id="ganttChartContainer"></div>
+      </div>
+
+      <!-- VIEW 3: Kanban Board (Group By Hierarchy Switcher + Type Filter) -->
+      <div id="view-kanban" class="view-pane">
+        <div class="hero-card"
+          style="padding: 16px; background: var(--bg-card); border-radius: 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800;">📋 Operational Kanban Board</h3>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">Matrix view grouped by hierarchy level, assigned leads, or item types.</p>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span
+              style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px;">GROUP BY:</span>
+            <select id="kanbanGroupBySelect" onchange="setKanbanGroupBy(this.value)" class="form-input" style="font-size:11px; padding:3px 8px; height:28px;">
+              <option value="project" selected>📁 By Project</option>
+              <option value="objective">🎯 By Objective</option>
+              <option value="key_result">📊 By Key Result</option>
+              <option value="lead">👤 By Assigned Lead</option>
+              <option value="type">🏷️ By Item Type</option>
+              <option value="flat">🌐 Flat Board</option>
+            </select>
+
+            <div style="position:relative;">
+              <button class="btn" id="kanbanFilterBtn" onclick="toggleKanbanFilterPopover(event)" style="font-size:11px; padding:4px 10px;" title="Filter card types">
+                🌪️ Filter Types <span id="kanbanFilterBadge" class="kanban-count-badge" style="margin-left:3px;">4</span>
+              </button>
+              <div id="kanbanFilterPopover" class="dropdown-popover" style="display:none;" onclick="event.stopPropagation()">
+                <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Visible Card Types</div>
+                <div id="kanbanFilterCheckboxes" style="display:flex; flex-direction:column; gap:6px;"></div>
+                <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid var(--border-color); font-size:11px;">
+                  <button type="button" class="btn" onclick="resetKanbanTypeFilter()" style="padding:2px 8px; font-size:10px;">Reset Default</button>
+                  <button type="button" class="btn btn-gradient" onclick="toggleKanbanFilterPopover(event)" style="padding:2px 10px; font-size:10px;">Done</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kanban-grid" id="kanbanBoardContainer"></div>
+      </div>
+
+      <!-- VIEW 4: Workspace Personnel & Team Directory -->
+      <div id="view-team" class="view-pane">
+        <div class="hero-card"
+          style="padding: 20px; background: var(--bg-card); border-radius: 12px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h3 style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                <span>👥 Workspace Personnel & Team Directory</span>
+              </h3>
+              <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">Assigned program leads, engineers, and key operational contact cards.</p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button class="btn btn-gradient" onclick="copyDisplayedTeamEmails()"
+                style="font-size:12px; padding:6px 14px; font-weight:700;"
+                title="Copy all displayed team member email addresses to clipboard">
+                📋 Copy Displayed Emails
+              </button>
+              <button class="btn" onclick="copyFormattedTeamEmails()"
+                style="font-size:12px; padding:6px 14px;"
+                title="Copy emails categorized by To (Primary) and Cc (Support)">
+                ✉️ Copy To / Cc
+              </button>
+              <button class="btn" onclick="openPersonnelModal()"
+                style="font-size:12px; padding:6px 14px; font-weight:700;"
+                title="Add new team member to workspace personnel roster">
+                ➕ Add Team Member
+              </button>
+              <button class="btn" onclick="clearAllPersonnel()"
+                style="font-size:12px; padding:6px 14px; color:var(--status-blocked); border-color:rgba(244,63,94,0.4);"
+                title="Delete all personnel from workspace roster">
+                🗑️ Delete All Personnel
+              </button>
+            </div>
+          </div>
+
+          <!-- Team Roster Filter Bar -->
+          <div id="teamTagFilterBar" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-color);">
+            <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Filter by Tag:</span>
+            <div id="teamTagFilterChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+          </div>
+
+          <div id="teamRadarContainer"
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 14px;">
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Slide-Out Inspector Drawer Panel (Unified Inspection & In-Line Edit) -->
+    <div class="inspector-panel" id="detailDrawer">
+      <div class="inspector-head">
+        <span style="font-weight: 800; font-size: 15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+          id="drawerTitle">Item Details</span>
+        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;" id="drawerHeaderActions">
+          <button class="btn" onclick="toggleDrawerEditMode()" title="Edit item properties in-line">✏️ Edit
+            In-Line</button>
+          <button class="btn" onclick="deleteCurrentInspectorItem()"
+            style="color:var(--status-blocked); border-color:rgba(244,63,94,0.4);"
+            title="Delete item from workspace">🗑️ Delete</button>
+          <button class="btn" id="drawerMaximizeBtn" onclick="toggleInspectorMaximize()"
+            title="Expand drawer to wide screen reading view">⤢ Expand View</button>
+          <button class="btn" onclick="closeInspector()">✕ Close</button>
+        </div>
+      </div>
+      <div class="inspector-content" id="drawerBody"></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom DoD Security Classification Banner -->
+  <div id="bottomBanner" class="classification-banner unclassified">
+    <span class="banner-title" id="bottomClassificationText">UNCLASSIFIED</span>
+  </div>
+
+  <!-- ==========================================================================
+       WAYPOINT CORE JAVASCRIPT ENGINE (STEP 3B: COMPLETE FULL-FEATURED ENGINE)
+       ========================================================================== -->
+  <script>
+    /* <!-- INJECT:JS --> */
+  </script>
+</body>
+
+</html>

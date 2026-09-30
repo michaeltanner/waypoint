@@ -8,3 +8,7 @@ Thumbs.db
 
 # Local temporary cache
 *.tmp
+
+# Build artifacts
+build/
+waypoint.html

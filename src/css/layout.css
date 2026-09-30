@@ -1,0 +1,469 @@
+/* Top Classification Bar with Centered Selector */
+    .classification-banner {
+      background: var(--class-unclass-bg);
+      color: #ffffff;
+      padding: 4px 16px;
+      user-select: none;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s ease;
+    }
+
+    .classification-banner.cui {
+      background: var(--class-cui-bg);
+    }
+
+    .class-picker-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .class-picker-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 4px;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 2px 24px 2px 10px;
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .class-picker-select:hover {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: #ffffff;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .class-picker-select option {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .class-picker-caret {
+      position: absolute;
+      right: 8px;
+      pointer-events: none;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Header Navbar */
+    header {
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 900;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-gradient);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    .brand-logo svg {
+      fill: #ffffff;
+      width: 18px;
+      height: 18px;
+    }
+
+    .brand-text {
+      font-weight: 900;
+      font-size: 19px;
+      letter-spacing: 1px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-tab {
+      padding: 8px 16px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-main);
+      background: var(--bg-glass-hover);
+    }
+
+    .nav-tab.active {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+      font-weight: 700;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      background: var(--bg-input);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 7px 14px 7px 32px;
+      font-size: 13px;
+      width: 180px;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      width: 240px;
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      width: 14px;
+      height: 14px;
+      fill: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      padding: 7px 14px;
+      border-radius: 7px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-glass);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--bg-glass-hover);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-gradient {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-gradient:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-active-detail {
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
+      font-weight: 700 !important;
+    }
+
+    .save-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--status-done);
+      box-shadow: 0 0 8px var(--status-done);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: scale(1.15);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+      }
+    }
+
+    /* Layout Workspace */
+    .app-workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Left Sidebar Tree Filter */
+    aside.sidebar {
+      width: 300px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    aside.sidebar.collapsed {
+      width: 0;
+      min-width: 0;
+      border-right: none;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sidebar-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 4px;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+
+    .sidebar-toggle-btn:hover {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    .sidebar-expand-btn {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 100;
+      background: var(--bg-glass);
+      border: 1px solid var(--border-glow);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sidebar-expand-btn:hover {
+      background: var(--accent-gradient);
+      color: #ffffff;
+    }
+
+    .sidebar-tree {
+      padding: 12px;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+      transition: scrollbar-color 0.3s ease;
+    }
+
+    aside.sidebar:hover .sidebar-tree,
+    .sidebar-tree:hover {
+      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    [data-theme="light"] aside.sidebar:hover .sidebar-tree,
+    [data-theme="light"] .sidebar-tree:hover {
+      scrollbar-color: rgba(15, 23, 42, 0.3) transparent;
+    }
+
+    /* Modern Sleek Glassmorphic Custom Scrollbar with Auto-Hiding Hover Interaction */
+    .sidebar-tree::-webkit-scrollbar,
+    main.main-content::-webkit-scrollbar,
+    .inspector-content::-webkit-scrollbar,
+    .kanban-grid::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .sidebar-tree::-webkit-scrollbar-track,
+    main.main-content::-webkit-scrollbar-track,
+    .inspector-content::-webkit-scrollbar-track,
+    .kanban-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* Left Sidebar thumb: hidden/subtle until hovering over sidebar panel */
+    .sidebar-tree::-webkit-scrollbar-thumb {
+      background: transparent;
+      border-radius: 10px;
+      transition: background 0.25s ease;
+    }
+
+    main.main-content::-webkit-scrollbar-thumb,
+    .inspector-content::-webkit-scrollbar-thumb,
+    .kanban-grid::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+    }
+
+    /* 1. Reveal thumb in subtle semi-transparent shade when hovering sidebar panel */
+    aside.sidebar:hover .sidebar-tree::-webkit-scrollbar-thumb,
+    .sidebar-tree:hover::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    [data-theme="light"] aside.sidebar:hover .sidebar-tree::-webkit-scrollbar-thumb,
+    [data-theme="light"] .sidebar-tree:hover::-webkit-scrollbar-thumb {
+      background: rgba(15, 23, 42, 0.25);
+    }
+
+    /* 2. Highlight thumb in vibrant accent blue (var(--accent)) on direct thumb hover */
+    .sidebar-tree::-webkit-scrollbar-thumb:hover,
+    main.main-content::-webkit-scrollbar-thumb:hover,
+    .inspector-content::-webkit-scrollbar-thumb:hover,
+    .kanban-grid::-webkit-scrollbar-thumb:hover {
+      background: var(--accent) !important;
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .sidebar-node {
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transition: all 0.15s ease;
+      font-size: 13px;
+    }
+
+    .sidebar-node:hover {
+      background: var(--bg-glass-hover);
+      color: var(--text-main);
+    }
+
+    .sidebar-node.active {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--border-glow);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .sidebar-indent {
+      margin-left: 14px;
+      border-left: 1px solid var(--border-color);
+      padding-left: 6px;
+    }
+
+    /* Main View Area */
+    main.main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+
+    .view-pane {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .view-pane.active {
+      display: flex;
+    }

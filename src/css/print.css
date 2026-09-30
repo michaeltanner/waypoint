@@ -1,0 +1,147 @@
+/* Print Briefing Mode */
+    @media print {
+
+      header,
+      aside.sidebar,
+      .inspector-panel,
+      .classification-banner {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        overflow: visible !important;
+      }
+
+      main.main-content {
+        padding: 0 !important;
+        overflow: visible !important;
+      }
+
+      .exec-card,
+      .action-item-row,
+      .hero-objective-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       WORKSPACE LAUNCHER, RECENT HISTORY & GLOBAL DRAG-AND-DROP ENGINE
+       ========================================================================== */
+    .launcher-wrapper {
+      max-width: 1120px;
+      margin: 20px auto 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 0 16px;
+    }
+
+    .launcher-hero-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 32px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .launcher-hero-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent-gradient);
+    }
+
+    .launcher-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    @media (min-width: 940px) {
+      .launcher-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .launcher-action-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .launcher-action-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-glow);
+      box-shadow: 0 8px 24px -6px rgba(56, 189, 248, 0.2);
+    }
+
+    .launcher-drop-zone {
+      border: 2px dashed var(--border-glow);
+      background: rgba(56, 189, 248, 0.03);
+      border-radius: 10px;
+      padding: 22px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .launcher-drop-zone:hover,
+    .launcher-drop-zone.drag-active {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--accent);
+      transform: scale(1.01);
+    }
+
+    .launcher-recent-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .recent-cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .recent-item-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      transition: all 0.2s ease;
+    }
+
+    .recent-item-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: var(--bg-glass-hover);
+    }

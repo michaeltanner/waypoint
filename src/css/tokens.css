@@ -1,0 +1,85 @@
+:root[data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 40%, #070913 100%);
+      --bg-primary: #070913;
+      --bg-glass: rgba(15, 23, 42, 0.75);
+      --bg-glass-hover: rgba(30, 41, 59, 0.85);
+      --bg-card: rgba(30, 41, 59, 0.6);
+      --bg-input: rgba(15, 23, 42, 0.8);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(56, 189, 248, 0.3);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --accent: #38bdf8;
+      --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      --accent-hover: #0284c7;
+
+      --status-notstarted: #64748b;
+      --status-inprogress: #38bdf8;
+      --status-blocked: #f43f5e;
+      --status-done: #10b981;
+
+      --health-green: #10b981;
+      --health-yellow: #f59e0b;
+      --health-red: #f43f5e;
+
+      --class-unclass-bg: linear-gradient(90deg, #007a3d, #059669);
+      --class-cui-bg: linear-gradient(90deg, #502b85, #7c3aed);
+
+      --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    :root[data-theme="light"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #e0e7ff 0%, #f8fafc 50%, #f1f5f9 100%);
+      --bg-primary: #f8fafc;
+      --bg-glass: rgba(255, 255, 255, 0.85);
+      --bg-glass-hover: rgba(241, 245, 249, 0.95);
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-input: rgba(248, 250, 252, 0.9);
+      --border-color: rgba(15, 23, 42, 0.1);
+      --border-glow: rgba(2, 132, 199, 0.4);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+
+      --accent: #0284c7;
+      --accent-gradient: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+      --accent-hover: #0369a1;
+
+      --status-notstarted: #64748b;
+      --status-inprogress: #0284c7;
+      --status-blocked: #e11d48;
+      --status-done: #059669;
+
+      --health-green: #059669;
+      --health-yellow: #d97706;
+      --health-red: #e11d48;
+
+      --class-unclass-bg: linear-gradient(90deg, #007a3d, #059669);
+      --class-cui-bg: linear-gradient(90deg, #502b85, #7c3aed);
+
+      --shadow-lg: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+      --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 14px;
+      line-height: 1.5;
+    }
