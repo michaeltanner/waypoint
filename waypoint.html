@@ -923,10 +923,118 @@
       border: 1px solid var(--status-blocked);
     }
 
-    .badge-done {
+    .badge-done,
+    .badge-completed {
       background: rgba(16, 185, 129, 0.2);
       color: var(--status-done);
       border: 1px solid var(--status-done);
+    }
+
+    /* Completed Workstream Item Styling (Grayed Out) */
+    .is-completed,
+    .kanban-card.is-completed,
+    .action-item-row.is-completed,
+    .exec-card.is-completed {
+      opacity: 0.62;
+      filter: grayscale(0.45);
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+    .is-completed:hover,
+    .kanban-card.is-completed:hover,
+    .action-item-row.is-completed:hover,
+    .exec-card.is-completed:hover {
+      opacity: 0.95;
+      filter: grayscale(0);
+    }
+    .action-item-row.is-completed .action-item-title,
+    .exec-card.is-completed span[onclick*="openInspector"],
+    .kanban-card.is-completed div[style*="font-weight:700"] {
+      text-decoration: line-through;
+      text-decoration-color: var(--text-dim);
+    }
+
+    /* Member Flags & Badges */
+    .member-flag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .flag-primary {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+    .flag-support {
+      background: rgba(129, 140, 248, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(129, 140, 248, 0.4);
+    }
+    .flag-inactive {
+      background: rgba(148, 163, 184, 0.15);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+    .member-card-inactive {
+      opacity: 0.65;
+      border-style: dashed;
+    }
+    .member-notes-box {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 2px solid var(--accent);
+      padding: 5px 8px;
+      border-radius: 0 4px 4px 0;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    /* Dropdown popover */
+    .dropdown-popover {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      border-radius: 8px;
+      padding: 10px 14px;
+      z-index: 1000;
+      min-width: 220px;
+      backdrop-filter: blur(12px);
+    }
+
+    /* Toast Notification */
+    .clipboard-toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      animation: fadeInOut 2.5s forwards ease;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(10px); }
+      15% { opacity: 1; transform: translateY(0); }
+      80% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(10px); }
     }
 
     .rag-dot {
@@ -1632,15 +1740,222 @@
         box-shadow: none !important;
       }
     }
+
+    /* ==========================================================================
+       WORKSPACE LAUNCHER, RECENT HISTORY & GLOBAL DRAG-AND-DROP ENGINE
+       ========================================================================== */
+    .launcher-wrapper {
+      max-width: 1120px;
+      margin: 20px auto 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 0 16px;
+    }
+
+    .launcher-hero-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 32px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .launcher-hero-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent-gradient);
+    }
+
+    .launcher-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    @media (min-width: 940px) {
+      .launcher-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .launcher-action-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .launcher-action-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-glow);
+      box-shadow: 0 8px 24px -6px rgba(56, 189, 248, 0.2);
+    }
+
+    .launcher-drop-zone {
+      border: 2px dashed var(--border-glow);
+      background: rgba(56, 189, 248, 0.03);
+      border-radius: 10px;
+      padding: 22px 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .launcher-drop-zone:hover,
+    .launcher-drop-zone.drag-active {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--accent);
+      transform: scale(1.01);
+    }
+
+    .launcher-recent-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .recent-cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .recent-item-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      transition: all 0.2s ease;
+    }
+
+    .recent-item-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: var(--bg-glass-hover);
+    }
+
+    /* Fullscreen Drag & Drop Overlay */
+    .global-drop-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      background: rgba(7, 9, 19, 0.88);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      pointer-events: none;
+    }
+
+    .global-drop-overlay.active {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .global-drop-box {
+      border: 3px dashed var(--accent);
+      border-radius: 20px;
+      padding: 50px 70px;
+      text-align: center;
+      background: rgba(15, 23, 42, 0.95);
+      box-shadow: 0 0 50px rgba(56, 189, 248, 0.35);
+      animation: pulse-glow 2s infinite ease-in-out;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.2); }
+      50% { box-shadow: 0 0 60px rgba(56, 189, 248, 0.5); }
+    }
+
+    .workspace-menu-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 320px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      padding: 12px;
+      z-index: 1000;
+      display: none;
+      backdrop-filter: blur(12px);
+    }
+
+    .workspace-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: background 0.15s ease;
+      text-decoration: none;
+      border: 0;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .workspace-menu-item:hover {
+      background: var(--bg-glass-hover);
+      color: var(--accent);
+    }
+
+    .workspace-menu-divider {
+      height: 1px;
+      background: var(--border-color);
+      margin: 8px 0;
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- Fullscreen Drag & Drop Overlay -->
+  <div id="globalDropOverlay" class="global-drop-overlay">
+    <div class="global-drop-box">
+      <div style="font-size:52px; margin-bottom:12px;">📥</div>
+      <div style="font-size:24px; font-weight:800; color:var(--accent);">Drop Waypoint JSON File</div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">Release to immediately load and open this portfolio workspace</div>
+    </div>
+  </div>
+
   <!-- Top Classification Bar (Centered with Inline Caret Select) -->
   <div id="topBanner" class="classification-banner unclassified">
     <div class="class-picker-wrapper">
-      <select class="class-picker-select" id="classificationSelect" onchange="setClassification(this.value)">
+      <select class="class-picker-select" id="classificationSelect" onchange="setClassification(this.value, true)">
         <option value="UNCLASSIFIED">UNCLASSIFIED</option>
         <option value="CUI">CUI</option>
       </select>
@@ -1648,56 +1963,101 @@
     </div>
   </div>
 
+  <!-- Task Hierarchy Configuration Modal -->
+  <div id="taskHierarchyModal" class="modal-overlay">
+    <div class="modal-card" style="width:520px; max-width:92vw;">
+      <div class="modal-head">
+        <h3 style="font-size:16px; font-weight:800; color:var(--text-main);">⚙️ Task Type Hierarchy Configuration</h3>
+        <button type="button" class="btn" onclick="closeTaskHierarchyModal()">✕</button>
+      </div>
+      <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+        <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+          Configure workstream type levels. Top-level items default to <strong>Level 0</strong>, sub-items default down the ladder.
+        </p>
+        <div id="hierarchyLevelsContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+        <div style="display:flex; justify-content:flex-start;">
+          <button type="button" class="btn" onclick="addHierarchyLevelRow()" style="font-size:11px; color:var(--accent);">+ Add Level</button>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:space-between; margin-top:8px; padding-top:12px; border-top:1px solid var(--border-color);">
+          <button type="button" class="btn" onclick="resetDefaultHierarchy()">↺ Reset Defaults</button>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn" onclick="closeTaskHierarchyModal()">Cancel</button>
+            <button type="button" class="btn btn-gradient" onclick="saveTaskHierarchyConfig()">💾 Save Hierarchy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Team Member Personnel CRUD Modal -->
   <div id="personnelModal" class="modal-overlay">
-    <div class="modal-card" style="width:480px; max-width:92vw;">
+    <div class="modal-card" style="width:500px; max-width:92vw;">
       <div class="modal-head">
-        <h3 id="personnelModalTitle" style="font-size:16px; font-weight:800; color:var(--text-main);">👤 Add Team Member
-        </h3>
+        <h3 id="personnelModalTitle" style="font-size:16px; font-weight:800; color:var(--text-main);">👤 Add Team Member</h3>
         <button type="button" class="btn" onclick="closePersonnelModal()">✕</button>
       </div>
       <form id="personnelForm" onsubmit="savePersonnelForm(event)"
-        style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+        style="padding:20px; display:flex; flex-direction:column; gap:14px; max-height:80vh; overflow-y:auto;">
         <input type="hidden" id="personnelFormId" value="">
+        <div id="personnelFormHybridIdBanner" style="display:none; padding:8px 12px; background:var(--bg-glass); border-radius:6px; border:1px solid var(--border-color); justify-content:space-between; align-items:center; font-size:11px;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">DISPLAY ID:</span>
+            <span id="personnelDisplayIdText" class="badge" style="font-size:11px; font-family:monospace; font-weight:700; color:var(--accent); background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25);"></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:10px; font-weight:800; color:var(--text-dim); text-transform:uppercase;">UUID:</span>
+            <span id="personnelUuidText" style="font-size:10px; font-family:monospace; color:var(--text-muted); background:var(--bg-input); padding:2px 6px; border-radius:4px; border:1px solid var(--border-color); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+            <button type="button" class="btn" onclick="navigator.clipboard.writeText(document.getElementById('personnelUuidText').title); showClipboardToast('Copied Member UUID to clipboard!');" style="font-size:10px; padding:2px 6px;" title="Copy Member UUID">📋</button>
+          </div>
+        </div>
         <div>
           <label class="form-label"
-            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Full Name & Rank
-            / Honorific</label>
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Full Name & Rank / Honorific</label>
           <input type="text" id="personnelFormName" class="form-input" placeholder="e.g. Maj Alex Mercer" required
             style="width:100%; margin-top:4px;">
         </div>
         <div>
           <label class="form-label"
-            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Primary Role /
-            Job Position</label>
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Primary Role / Job Position</label>
           <input type="text" id="personnelFormRole" class="form-input" placeholder="e.g. Cyber Defense Analyst" required
             style="width:100%; margin-top:4px;">
         </div>
         <div>
           <label class="form-label"
-            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Official Email
-            Address</label>
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Official Email Address</label>
           <input type="email" id="personnelFormEmail" class="form-input" placeholder="alex.mercer@example.com"
             style="width:100%; margin-top:4px;">
         </div>
         <div style="display:flex; gap:10px;">
           <div style="flex:1;">
             <label class="form-label"
-              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Office DSN
-              Phone</label>
+              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Office DSN Phone</label>
             <input type="text" id="personnelFormOffice" class="form-input" placeholder="DSN 312-555-0122"
               style="width:100%; margin-top:4px;">
           </div>
           <div style="flex:1;">
             <label class="form-label"
-              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Cell
-              Phone</label>
+              style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Cell Phone</label>
             <input type="text" id="personnelFormCell" class="form-input" placeholder="555-888-9999"
               style="width:100%; margin-top:4px;">
           </div>
         </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Member Flags & Tags</label>
+          <div id="personnelFormFlagsContainer" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;"></div>
+          <div style="display:flex; gap:6px; margin-top:8px;">
+            <input type="text" id="newFlagInput" class="form-input" placeholder="Add custom tag (e.g. Contractor)" style="flex:1; font-size:11px; padding:4px 8px;">
+            <button type="button" class="btn" onclick="addNewMemberFlag()" style="font-size:11px; padding:4px 10px;">+ Add Tag</button>
+          </div>
+        </div>
+        <div>
+          <label class="form-label"
+            style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Notes</label>
+          <textarea id="personnelFormNotes" class="form-input" rows="3" placeholder="Operational notes, clearances, or contact preferences..." style="width:100%; margin-top:4px; font-size:12px;"></textarea>
+        </div>
         <div
-          style="display:flex; gap:10px; justify-content:flex-end; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-color);">
+          style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px; padding-top:12px; border-top:1px solid var(--border-color);">
           <button type="button" class="btn" onclick="closePersonnelModal()">Cancel</button>
           <button type="submit" class="btn btn-gradient">💾 Save Personnel Record</button>
         </div>
@@ -1717,7 +2077,7 @@
     </div>
 
     <!-- View Switcher Tabs -->
-    <div class="nav-tabs">
+    <div class="nav-tabs" id="navTabs">
       <button class="nav-tab active" data-view="tree" onclick="switchView('tree')">📂 Portfolio Hierarchy</button>
       <button class="nav-tab" data-view="gantt" onclick="switchView('gantt')">📅 Timeline</button>
       <button class="nav-tab" data-view="kanban" onclick="switchView('kanban')">📋 Kanban Board</button>
@@ -1740,17 +2100,36 @@
         <span id="saveStatusText">Saved</span>
       </div>
 
-      <button class="btn btn-gradient" onclick="openCreateTaskDrawer()"
+      <div style="position:relative;">
+        <button class="btn" id="workspaceMenuBtn" onclick="toggleWorkspaceMenu(event)" title="Open, switch, or manage workspaces">
+          📂 Workspace ▾
+        </button>
+        <div id="workspaceMenuPopover" class="workspace-menu-popover" onclick="event.stopPropagation()">
+          <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Workspace Actions</div>
+          <button type="button" class="workspace-menu-item" onclick="loadBuiltinExample(); closeWorkspaceMenu();">
+            <span>🚀</span> <span><strong>Load Built-in Example</strong> (Sentinel Dawn)</span>
+          </button>
+          <label class="workspace-menu-item" style="cursor:pointer; margin:0;">
+            <span>📥</span> <span>Open JSON File...</span>
+            <input type="file" id="workspaceMenuFileInput" accept=".json" style="display:none;" onchange="importJSON(event); closeWorkspaceMenu();">
+          </label>
+          <button type="button" class="workspace-menu-item" onclick="createBlankWorkspace(); closeWorkspaceMenu();">
+            <span>➕</span> <span>Create Blank Workspace</span>
+          </button>
+          <div class="workspace-menu-divider"></div>
+          <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Recent Workspaces</div>
+          <div id="headerRecentWorkspacesList" style="display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
+          <div class="workspace-menu-divider"></div>
+          <button type="button" class="workspace-menu-item" id="headerCloseWorkspaceBtn" onclick="closeCurrentWorkspace(); closeWorkspaceMenu();" style="color:var(--status-blocked);">
+            <span>✕</span> <span>Close / Return to Launcher</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-gradient" id="headerNewWorkstreamBtn" onclick="openCreateTaskDrawer()"
         title="Add new workstream item, task, or milestone">+ New Workstream</button>
-      <button class="btn" onclick="emailWorkstreamTeam()" title="Send email briefing to team members">✉️ Email
-        Team</button>
-      <button class="btn btn-gradient" onclick="exportJSON()">Export JSON</button>
-      <label class="btn" style="cursor: pointer;">
-        Import JSON
-        <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="importJSON(event)">
-      </label>
-      <button class="btn" onclick="resetSampleData()" title="Reset workspace to default sample data">↺ Reset
-        Data</button>
+      <button class="btn" id="headerHierarchyBtn" onclick="openTaskHierarchyModal()" title="Configure workstream type hierarchy levels">⚙️ Hierarchy</button>
+      <button class="btn btn-gradient" id="headerExportBtn" onclick="exportJSON()">Export JSON</button>
       <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
     </div>
   </header>
@@ -1775,8 +2154,13 @@
       <button id="sidebarExpandBtn" class="sidebar-expand-btn" onclick="toggleSidebar()" style="display: none;">▶ Expand
         Navigation</button>
 
+      <!-- VIEW 0: Workspace Welcome & File Launcher -->
+      <div id="view-launcher" class="view-pane">
+        <div class="launcher-wrapper" id="launcherWrapper"></div>
+      </div>
+
       <!-- VIEW 1: Portfolio Hierarchy with Hero Objective Banner -->
-      <div id="view-tree" class="view-pane active">
+      <div id="view-tree" class="view-pane">
         <!-- Dynamic Top-Level Hero Objective & Contextual Roll-Up Banner -->
         <div id="heroObjectiveContainer"></div>
 
@@ -1816,31 +2200,39 @@
         <div class="gantt-container" id="ganttChartContainer"></div>
       </div>
 
-      <!-- VIEW 3: Kanban Board (COA 3: Group By Switcher Toolbar + LOE Swimlanes) -->
+      <!-- VIEW 3: Kanban Board (Group By Hierarchy Switcher + Type Filter) -->
       <div id="view-kanban" class="view-pane">
         <div class="hero-card"
           style="padding: 16px; background: var(--bg-card); border-radius: 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <div>
             <h3 style="font-size: 16px; font-weight: 800;">📋 Operational Kanban Board</h3>
-            <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">Matrix view grouped by parent
-              workstreams, team leads, or item types.</p>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">Matrix view grouped by hierarchy level, assigned leads, or item types.</p>
           </div>
-          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
             <span
-              style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px; margin-right:4px;">GROUP
-              BY:</span>
-            <button class="btn" id="kanbanBtn-project" onclick="setKanbanGroupBy('project')"
-              style="font-size:11px; padding:4px 10px;"
-              title="Group into horizontal swimlanes by Parent Workstream (LOE)">📁 Parent Workstream (LOE)</button>
-            <button class="btn" id="kanbanBtn-lead" onclick="setKanbanGroupBy('lead')"
-              style="font-size:11px; padding:4px 10px;" title="Group into swimlanes by Assigned Leader / Team Member">👤
-              Assigned Lead</button>
-            <button class="btn" id="kanbanBtn-type" onclick="setKanbanGroupBy('type')"
-              style="font-size:11px; padding:4px 10px;" title="Group into swimlanes by Workstream Type">🏷️ Item
-              Type</button>
-            <button class="btn" id="kanbanBtn-flat" onclick="setKanbanGroupBy('flat')"
-              style="font-size:11px; padding:4px 10px;" title="Flat 4-column overview without swimlanes">🌐 Flat
-              Board</button>
+              style="font-size:11px; font-weight:800; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.5px;">GROUP BY:</span>
+            <select id="kanbanGroupBySelect" onchange="setKanbanGroupBy(this.value)" class="form-input" style="font-size:11px; padding:3px 8px; height:28px;">
+              <option value="project" selected>📁 By Project</option>
+              <option value="objective">🎯 By Objective</option>
+              <option value="key_result">📊 By Key Result</option>
+              <option value="lead">👤 By Assigned Lead</option>
+              <option value="type">🏷️ By Item Type</option>
+              <option value="flat">🌐 Flat Board</option>
+            </select>
+
+            <div style="position:relative;">
+              <button class="btn" id="kanbanFilterBtn" onclick="toggleKanbanFilterPopover(event)" style="font-size:11px; padding:4px 10px;" title="Filter card types">
+                🌪️ Filter Types <span id="kanbanFilterBadge" class="kanban-count-badge" style="margin-left:3px;">4</span>
+              </button>
+              <div id="kanbanFilterPopover" class="dropdown-popover" style="display:none;" onclick="event.stopPropagation()">
+                <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Visible Card Types</div>
+                <div id="kanbanFilterCheckboxes" style="display:flex; flex-direction:column; gap:6px;"></div>
+                <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid var(--border-color); font-size:11px;">
+                  <button type="button" class="btn" onclick="resetKanbanTypeFilter()" style="padding:2px 8px; font-size:10px;">Reset Default</button>
+                  <button type="button" class="btn btn-gradient" onclick="toggleKanbanFilterPopover(event)" style="padding:2px 10px; font-size:10px;">Done</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1858,8 +2250,18 @@
               </h3>
               <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">Assigned program leads, engineers, and key operational contact cards.</p>
             </div>
-            <div style="display:flex; gap:8px; align-items:center;">
-              <button class="btn btn-gradient" onclick="openPersonnelModal()"
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button class="btn btn-gradient" onclick="copyDisplayedTeamEmails()"
+                style="font-size:12px; padding:6px 14px; font-weight:700;"
+                title="Copy all displayed team member email addresses to clipboard">
+                📋 Copy Displayed Emails
+              </button>
+              <button class="btn" onclick="copyFormattedTeamEmails()"
+                style="font-size:12px; padding:6px 14px;"
+                title="Copy emails categorized by To (Primary) and Cc (Support)">
+                ✉️ Copy To / Cc
+              </button>
+              <button class="btn" onclick="openPersonnelModal()"
                 style="font-size:12px; padding:6px 14px; font-weight:700;"
                 title="Add new team member to workspace personnel roster">
                 ➕ Add Team Member
@@ -1871,8 +2273,15 @@
               </button>
             </div>
           </div>
+
+          <!-- Team Roster Filter Bar -->
+          <div id="teamTagFilterBar" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:14px; padding-top:12px; border-top:1px solid var(--border-color);">
+            <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Filter by Tag:</span>
+            <div id="teamTagFilterChips" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+          </div>
+
           <div id="teamRadarContainer"
-            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 14px;">
+            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 14px;">
           </div>
         </div>
       </div>
@@ -1909,18 +2318,27 @@
        WAYPOINT CORE JAVASCRIPT ENGINE (STEP 3B: COMPLETE FULL-FEATURED ENGINE)
        ========================================================================== -->
   <script>
-    const SCHEMA_VERSION = 1;
-    const CACHE_KEY = "WAYPOINT_WORKSPACE_CACHE_V8";
+    const SCHEMA_VERSION = 2;
+    const CACHE_KEY = "WAYPOINT_WORKSPACE_CACHE_V11";
+    const RECENT_HISTORY_KEY = "WAYPOINT_RECENT_WORKSPACES_V1";
 
     let state = {
       schemaVersion: SCHEMA_VERSION,
       lastUpdated: new Date().toISOString(),
       classification: "UNCLASSIFIED",
       enums: {
-        type: ["objective", "key_result", "project", "task", "milestone"],
-        status: ["Not Started", "In Progress", "Blocked", "Done"],
+        type: ["project", "objective", "key_result", "task", "milestone"],
+        status: ["Not Started", "In Progress", "Blocked", "Completed"],
         health: ["Green", "Yellow", "Red"]
       },
+      hierarchy: [
+        { level: 0, type: "project", label: "Project", icon: "📁" },
+        { level: 1, type: "objective", label: "Objective", icon: "🎯" },
+        { level: 2, type: "key_result", label: "Key Result", icon: "📊" },
+        { level: 3, type: "task", label: "Task", icon: "📋" }
+      ],
+      memberFlags: ["primary", "support", "inactive"],
+      teamRoster: [],
       tasks: []
     };
 
@@ -1928,42 +2346,311 @@
     let searchQuery = "";
     let showBlockedOnly = false;
     let isWorkspaceDirty = false;
+    let currentTreeSort = "dueDate";
+    let kanbanGroupBy = "project";
+    let kanbanActiveTypeFilters = new Set(["objective", "key_result", "task", "milestone"]);
+    let teamActiveTagFilter = "all";
+
+    // --- HYBRID ID & UUID ENGINE ---
+    function generateUUID() {
+      if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+        try { return crypto.randomUUID(); } catch (e) { }
+      }
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function generateDisplayId(type, existingTasks = state.tasks) {
+      const prefixMap = {
+        project: "PRJ",
+        objective: "OBJ",
+        key_result: "KR",
+        task: "TSK",
+        milestone: "MS"
+      };
+      const prefix = prefixMap[type] || (type ? type.substr(0, 3).toUpperCase() : "ITM");
+      let count = 0;
+      function countPrefix(tasks) {
+        if (!Array.isArray(tasks)) return;
+        tasks.forEach(t => {
+          const dId = t.displayId || t.id || "";
+          if (dId.startsWith(prefix)) count++;
+          if (t.subTasks) countPrefix(t.subTasks);
+        });
+      }
+      countPrefix(existingTasks);
+      return `${prefix}-${(count + 1).toString().padStart(3, '0')}`;
+    }
+
+    function generateMemberDisplayId(existingMembers = state.teamRoster) {
+      const count = (Array.isArray(existingMembers) ? existingMembers.length : 0) + 1;
+      return `TM-${count.toString().padStart(3, '0')}`;
+    }
+
+    function isTaskCompleted(st) {
+      return st === "Completed" || st === "Done";
+    }
 
     function toggleBlockedFilter() {
       showBlockedOnly = !showBlockedOnly;
       renderAll();
     }
 
-    function emailWorkstreamTeam(taskId) {
-      let targetTask = state.tasks[0];
-      if (taskId) {
-        const found = findTaskRecursive(state.tasks, taskId);
-        if (found) targetTask = found;
+    // --- TOAST NOTIFICATIONS ---
+    function showClipboardToast(msg) {
+      const existing = document.querySelector(".clipboard-toast");
+      if (existing) existing.remove();
+
+      const toast = document.createElement("div");
+      toast.className = "clipboard-toast";
+      toast.innerHTML = `<span>📋</span> <span>${msg}</span>`;
+      document.body.appendChild(toast);
+      setTimeout(() => { if (toast && toast.parentNode) toast.remove(); }, 2600);
+    }
+
+    // --- RICH TEXT EDITOR ENGINE (WINDOW-SCOPED) ---
+    let savedNotesSelectionRange = null;
+
+    window.saveNotesSelection = function() {
+      const editor = document.getElementById("drawerFormNotesEditor");
+      if (!editor) return;
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0 && editor.contains(sel.anchorNode)) {
+        savedNotesSelectionRange = sel.getRangeAt(0).cloneRange();
+      }
+    };
+
+    window.restoreNotesSelection = function() {
+      const editor = document.getElementById("drawerFormNotesEditor");
+      if (!editor || !savedNotesSelectionRange) return;
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(savedNotesSelectionRange);
+      }
+    };
+
+    window.execRichTextCommand = function(cmd, val = null) {
+      const editor = document.getElementById("drawerFormNotesEditor");
+      if (!editor) return;
+      editor.focus();
+      window.restoreNotesSelection();
+
+      if (cmd === "hiliteColor" || cmd === "highlight") {
+        const color = val || "rgba(56, 189, 248, 0.35)";
+        let ok = false;
+        try { ok = document.execCommand("hiliteColor", false, color); } catch (e) { }
+        if (!ok) {
+          try { document.execCommand("backColor", false, color); } catch (e) { }
+        }
+      } else if (cmd === "formatBlock") {
+        const tag = (val || "P").replace(/[<>]/g, "").toUpperCase();
+        try {
+          document.execCommand("formatBlock", false, tag);
+        } catch (e) {
+          try { document.execCommand("formatBlock", false, `<${tag}>`); } catch (err) { }
+        }
+      } else {
+        try {
+          document.execCommand(cmd, false, val);
+        } catch (e) { }
       }
 
-      const resolved = resolveCascadingProps(targetTask, null);
-      const teamMembers = resolved.effectiveTeamMembers || [];
+      window.saveNotesSelection();
+    };
 
-      if (teamMembers.length === 0) {
-        alert("No team member email addresses found for this workstream.");
-        return;
+    // --- SORTING ENGINE ---
+    function setTreeSort(val) {
+      currentTreeSort = val;
+      renderAll();
+    }
+
+    function sortTasks(tasks, sortBy = currentTreeSort) {
+      if (!Array.isArray(tasks)) return [];
+      const copy = [...tasks];
+      copy.sort((a, b) => {
+        if (sortBy === "dueDate") {
+          if (!a.dueDate && !b.dueDate) return 0;
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return new Date(a.dueDate) - new Date(b.dueDate);
+        }
+        if (sortBy === "title") {
+          return (a.title || "").localeCompare(b.title || "");
+        }
+        if (sortBy === "status") {
+          const statusOrder = { "Blocked": 0, "In Progress": 1, "Not Started": 2, "Completed": 3, "Done": 3 };
+          return (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
+        }
+        if (sortBy === "health") {
+          const healthOrder = { "Red": 0, "Yellow": 1, "Green": 2 };
+          return (healthOrder[a.health] ?? 99) - (healthOrder[b.health] ?? 99);
+        }
+        if (sortBy === "progress") {
+          return (b.progress || 0) - (a.progress || 0);
+        }
+        return 0;
+      });
+      return copy;
+    }
+
+    // --- HIERARCHY ENGINE ---
+    function getTaskDepth(taskId, tasks = state.tasks, currentDepth = 0) {
+      if (!taskId || !Array.isArray(tasks)) return -1;
+      for (const t of tasks) {
+        if (t.id === taskId || t.uuid === taskId || t.displayId === taskId) return currentDepth;
+        if (t.subTasks && t.subTasks.length > 0) {
+          const res = getTaskDepth(taskId, t.subTasks, currentDepth + 1);
+          if (res !== -1) return res;
+        }
       }
+      return -1;
+    }
 
-      const emails = teamMembers.map(tm => tm.email).filter(e => e && e.includes("@")).join(",");
-      const classLevel = state.classification || 'UNCLASSIFIED';
-      const subject = encodeURIComponent(`[${classLevel}] Status Update: ${resolved.title}`);
+    function getHierarchyTypeForDepth(depth) {
+      const hierarchy = (state.hierarchy && state.hierarchy.length > 0)
+        ? state.hierarchy
+        : [
+            { level: 0, type: "project" },
+            { level: 1, type: "objective" },
+            { level: 2, type: "key_result" },
+            { level: 3, type: "task" }
+          ];
 
-      let bodyText = `CLASSIFICATION: ${classLevel}\n`;
-      bodyText += `WORKSTREAM: ${resolved.title}\n`;
-      bodyText += `STATUS: ${resolved.status}\n`;
-      bodyText += `PROGRESS: ${resolved.progress || 0}%\n`;
-      if (resolved.effectiveVision) bodyText += `END-STATE VISION: ${resolved.effectiveVision}\n`;
-      if (resolved.definitionOfDone) bodyText += `DEFINITION OF DONE: ${resolved.definitionOfDone}\n`;
-      bodyText += `TIMELINE DATES: ${resolved.startDate || 'N/A'} to ${resolved.dueDate || 'N/A'}\n\n`;
-      bodyText += `---\nSent via Waypoint Portfolio Engine.`;
+      if (depth < 0) return hierarchy[0].type;
+      if (depth < hierarchy.length) return hierarchy[depth].type;
+      return hierarchy[hierarchy.length - 1].type;
+    }
 
-      const mailtoUrl = `mailto:${emails}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
-      window.location.href = mailtoUrl;
+    function openTaskHierarchyModal() {
+      const modal = document.getElementById("taskHierarchyModal");
+      if (!modal) return;
+      renderHierarchyLevels();
+      modal.classList.add("open");
+    }
+
+    function closeTaskHierarchyModal() {
+      const modal = document.getElementById("taskHierarchyModal");
+      if (modal) modal.classList.remove("open");
+    }
+
+    function renderHierarchyLevels() {
+      const container = document.getElementById("hierarchyLevelsContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const types = ["project", "objective", "key_result", "task", "milestone"];
+
+      state.hierarchy.forEach((h, idx) => {
+        const row = document.createElement("div");
+        row.style.cssText = "display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:6px; border:1px solid var(--border-color);";
+        const levelLabel = idx === 0 ? "Level 0 (Top-Level Default)" : (idx === state.hierarchy.length - 1 ? `Level ${idx}+ (Deepest Sub-Items)` : `Level ${idx} (Layer ${idx})`);
+
+        row.innerHTML = `
+          <div style="width:165px; font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">
+            ${levelLabel}
+          </div>
+          <select class="form-input hierarchy-level-select" data-index="${idx}" style="flex:1; padding:4px 8px; font-size:12px;">
+            ${types.map(tp => `<option value="${tp}" ${tp === h.type ? 'selected' : ''}>${tp.toUpperCase().replace('_', ' ')}</option>`).join('')}
+          </select>
+          <div style="display:flex; gap:4px;">
+            <button type="button" class="btn" onclick="moveHierarchyLevel(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="font-size:10px; padding:2px 6px;">▲</button>
+            <button type="button" class="btn" onclick="moveHierarchyLevel(${idx}, 1)" ${idx === state.hierarchy.length - 1 ? 'disabled' : ''} style="font-size:10px; padding:2px 6px;">▼</button>
+            ${state.hierarchy.length > 2 ? `<button type="button" class="btn" onclick="removeHierarchyLevel(${idx})" style="font-size:10px; padding:2px 6px; color:var(--status-blocked);">✕</button>` : ''}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function moveHierarchyLevel(idx, dir) {
+      const target = idx + dir;
+      if (target < 0 || target >= state.hierarchy.length) return;
+      const tmp = state.hierarchy[idx];
+      state.hierarchy[idx] = state.hierarchy[target];
+      state.hierarchy[target] = tmp;
+      state.hierarchy.forEach((h, i) => h.level = i);
+      renderHierarchyLevels();
+    }
+
+    function addHierarchyLevelRow() {
+      const newIdx = state.hierarchy.length;
+      state.hierarchy.push({
+        level: newIdx,
+        type: "task",
+        label: "Task",
+        icon: "📋"
+      });
+      renderHierarchyLevels();
+    }
+
+    function removeHierarchyLevel(idx) {
+      if (state.hierarchy.length <= 2) return;
+      state.hierarchy.splice(idx, 1);
+      state.hierarchy.forEach((h, i) => h.level = i);
+      renderHierarchyLevels();
+    }
+
+    function resetDefaultHierarchy() {
+      state.hierarchy = [
+        { level: 0, type: "project", label: "Project", icon: "📁" },
+        { level: 1, type: "objective", label: "Objective", icon: "🎯" },
+        { level: 2, type: "key_result", label: "Key Result", icon: "📊" },
+        { level: 3, type: "task", label: "Task", icon: "📋" }
+      ];
+      renderHierarchyLevels();
+    }
+
+    function saveTaskHierarchyConfig() {
+      const selects = document.querySelectorAll(".hierarchy-level-select");
+      selects.forEach((sel, i) => {
+        if (state.hierarchy[i]) {
+          state.hierarchy[i].type = sel.value;
+          state.hierarchy[i].label = sel.value.replace('_', ' ');
+        }
+      });
+      saveToCache();
+      closeTaskHierarchyModal();
+      updateKanbanGroupByOptions();
+      renderAll();
+      showClipboardToast("Task Hierarchy Configuration Saved!");
+    }
+
+    function updateKanbanGroupByOptions() {
+      const sel = document.getElementById("kanbanGroupBySelect");
+      if (!sel) return;
+      const currentVal = sel.value;
+      sel.innerHTML = "";
+
+      const icons = { project: "📁", objective: "🎯", key_result: "📊", task: "📋", milestone: "◆" };
+
+      state.hierarchy.forEach(h => {
+        const opt = document.createElement("option");
+        opt.value = h.type;
+        opt.innerText = `${icons[h.type] || '📁'} By ${h.label ? (h.label.charAt(0).toUpperCase() + h.label.slice(1)) : h.type}`;
+        if (h.type === currentVal) opt.selected = true;
+        sel.appendChild(opt);
+      });
+
+      const optLead = document.createElement("option");
+      optLead.value = "lead";
+      optLead.innerText = "👤 By Assigned Lead";
+      if (currentVal === "lead") optLead.selected = true;
+      sel.appendChild(optLead);
+
+      const optType = document.createElement("option");
+      optType.value = "type";
+      optType.innerText = "🏷️ By Item Type";
+      if (currentVal === "type") optType.selected = true;
+      sel.appendChild(optType);
+
+      const optFlat = document.createElement("option");
+      optFlat.value = "flat";
+      optFlat.innerText = "🌐 Flat Board";
+      if (currentVal === "flat") optFlat.selected = true;
+      sel.appendChild(optFlat);
     }
 
     function scrollToMilestone(milestoneId) {
@@ -2012,147 +2699,622 @@
       }
     }
 
+    function migrateState(s) {
+      if (!s) return;
+      if (!s.hierarchy || !Array.isArray(s.hierarchy) || s.hierarchy.length === 0) {
+        s.hierarchy = [
+          { level: 0, type: "project", label: "Project", icon: "📁" },
+          { level: 1, type: "objective", label: "Objective", icon: "🎯" },
+          { level: 2, type: "key_result", label: "Key Result", icon: "📊" },
+          { level: 3, type: "task", label: "Task", icon: "📋" }
+        ];
+      }
+      if (!s.memberFlags || !Array.isArray(s.memberFlags)) {
+        s.memberFlags = ["primary", "support", "inactive"];
+      }
+      if (s.enums) {
+        s.enums.status = ["Not Started", "In Progress", "Blocked", "Completed"];
+      }
+
+      if (!Array.isArray(s.teamRoster)) {
+        s.teamRoster = [];
+      }
+      if (s.teamRoster.length === 0 && s.tasks && s.tasks[0] && Array.isArray(s.tasks[0].teamMembers)) {
+        s.teamRoster = JSON.parse(JSON.stringify(s.tasks[0].teamMembers));
+      }
+
+      // Hybrid ID Migration for Team Members
+      s.teamRoster.forEach((m, idx) => {
+        if (!m.uuid) m.uuid = generateUUID();
+        if (!m.displayId) m.displayId = m.id || `TM-${(idx + 1).toString().padStart(3, '0')}`;
+        if (!m.id) m.id = m.displayId;
+        if (!Array.isArray(m.flags)) {
+          m.flags = idx < 2 ? ["primary"] : (idx === s.teamRoster.length - 1 ? ["inactive"] : ["support"]);
+        }
+        if (m.notes === undefined) {
+          m.notes = "";
+        }
+      });
+
+      // Hybrid ID Migration for Tasks
+      let prefixCounters = { project: 0, objective: 0, key_result: 0, task: 0, milestone: 0 };
+      const prefixMap = { project: "PRJ", objective: "OBJ", key_result: "KR", task: "TSK", milestone: "MS" };
+
+      function walkHybrid(tasks) {
+        if (!Array.isArray(tasks)) return;
+        tasks.forEach(t => {
+          if (!t.uuid) t.uuid = generateUUID();
+          if (!t.displayId) {
+            t.displayId = t.id || `${prefixMap[t.type] || 'ITM'}-${((prefixCounters[t.type] || 0) + 1).toString().padStart(3, '0')}`;
+            prefixCounters[t.type] = (prefixCounters[t.type] || 0) + 1;
+          }
+          if (!t.id) t.id = t.displayId;
+
+          if (t.status === "Done") {
+            t.status = "Completed";
+          }
+          if (t.status === "Completed") {
+            t.progress = 100;
+          }
+          if (t.subTasks) walkHybrid(t.subTasks);
+        });
+      }
+      if (Array.isArray(s.tasks)) walkHybrid(s.tasks);
+    }
+
     // --- INITIALIZATION ---
     window.addEventListener("DOMContentLoaded", async () => {
+      initGlobalDragAndDrop();
       await loadInitialData();
       setClassification(state.classification || "UNCLASSIFIED");
+      updateKanbanGroupByOptions();
       renderAll();
     });
 
     async function loadInitialData() {
-      // Purge legacy cache keys
-      ["WAYPOINT_WORKSPACE_CACHE_V1", "WAYPOINT_WORKSPACE_CACHE_V2", "WAYPOINT_WORKSPACE_CACHE_V3", "WAYPOINT_WORKSPACE_CACHE_V4", "WAYPOINT_WORKSPACE_CACHE_V5", "WAYPOINT_WORKSPACE_CACHE_V6", "WAYPOINT_WORKSPACE_CACHE_V7"].forEach(k => {
+      // Purge legacy cache keys V1 through V11
+      ["WAYPOINT_WORKSPACE_CACHE_V1", "WAYPOINT_WORKSPACE_CACHE_V2", "WAYPOINT_WORKSPACE_CACHE_V3", "WAYPOINT_WORKSPACE_CACHE_V4", "WAYPOINT_WORKSPACE_CACHE_V5", "WAYPOINT_WORKSPACE_CACHE_V6", "WAYPOINT_WORKSPACE_CACHE_V7", "WAYPOINT_WORKSPACE_CACHE_V8", "WAYPOINT_WORKSPACE_CACHE_V9", "WAYPOINT_WORKSPACE_CACHE_V10", "WAYPOINT_WORKSPACE_CACHE_V11"].forEach(k => {
         try { localStorage.removeItem(k); } catch (e) { }
       });
 
-      // 1. Seed sample data synchronously FIRST so state is never empty
-      seedSampleData();
-
-      // 2. Check V8 cache
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (validateWorkspaceSchema(parsed) && Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
-            state = parsed;
-            return;
-          }
-        } catch (e) {
-          console.error("Failed to parse cached workspace", e);
-        }
-      }
-
-      // 3. Optional fetch for web servers
-      try {
-        const response = await fetch("./waypoint.json");
-        if (response.ok) {
-          const parsed = await response.json();
-          if (validateWorkspaceSchema(parsed) && Array.isArray(parsed.tasks) && parsed.tasks.length > 0) {
-            state = parsed;
-            saveToCache();
-          }
-        }
-      } catch (err) { }
+      // Initialize clean empty state (NO default JSON content loaded on page load!)
+      resetEmptyState();
     }
 
-    function seedSampleData() {
+    function resetEmptyState() {
       state = {
         schemaVersion: SCHEMA_VERSION,
         lastUpdated: new Date().toISOString(),
         classification: "UNCLASSIFIED",
         enums: {
-          type: ["objective", "key_result", "project", "task", "milestone"],
-          status: ["Not Started", "In Progress", "Blocked", "Done"],
+          type: ["project", "objective", "key_result", "task", "milestone"],
+          status: ["Not Started", "In Progress", "Blocked", "Completed"],
           health: ["Green", "Yellow", "Red"]
         },
+        hierarchy: [
+          { level: 0, type: "project", label: "Project", icon: "📁" },
+          { level: 1, type: "objective", label: "Objective", icon: "🎯" },
+          { level: 2, type: "key_result", label: "Key Result", icon: "📊" },
+          { level: 3, type: "task", label: "Task", icon: "📋" }
+        ],
+        memberFlags: ["primary", "support", "inactive"],
+        teamRoster: [],
+        tasks: []
+      };
+    }
+
+    function getBuiltinSampleData() {
+      return {
+        schemaVersion: SCHEMA_VERSION,
+        lastUpdated: new Date().toISOString(),
+        classification: "UNCLASSIFIED",
+        enums: {
+          type: ["project", "objective", "key_result", "task", "milestone"],
+          status: ["Not Started", "In Progress", "Blocked", "Completed"],
+          health: ["Green", "Yellow", "Red"]
+        },
+        hierarchy: [
+          { level: 0, type: "project", label: "Project", icon: "📁" },
+          { level: 1, type: "objective", label: "Objective", icon: "🎯" },
+          { level: 2, type: "key_result", label: "Key Result", icon: "📊" },
+          { level: 3, type: "task", label: "Task", icon: "📋" }
+        ],
+        memberFlags: ["primary", "support", "inactive"],
         teamRoster: [
-          { id: "tm-101", name: "Marcus White", role: "Executive Sponsor / VP of Technology", email: "marcus.white@example.com", officePhone: "555-0100", cellPhone: "555-111-2222" },
-          { id: "tm-102", name: "Jane A. Smith", role: "Program Director", email: "jane.smith@example.com", officePhone: "555-0150", cellPhone: "555-222-3333" },
-          { id: "tm-103", name: "John Doe", role: "Deputy Program Manager", email: "john.doe@example.com", officePhone: "555-0199", cellPhone: "555-333-4444" },
-          { id: "tm-104", name: "Alice Johnson", role: "Cyber Operations Lead", email: "alice.johnson@example.com", officePhone: "555-0188", cellPhone: "555-444-5555" },
-          { id: "tm-105", name: "E. Wright", role: "Lead Software Engineer", email: "e.wright@example.com", officePhone: "555-0177", cellPhone: "555-555-6666" },
-          { id: "tm-106", name: "M. Chen", role: "Systems Administrator", email: "m.chen@example.com", officePhone: "555-0166", cellPhone: "555-666-7777" }
+          { id: "TM-001", displayId: "TM-001", uuid: "b8d362b8-bb59-4c03-84bf-afde1ad14dfe", name: "Marcus White", role: "Executive Sponsor / VP of Technology", email: "marcus.white@example.com", officePhone: "555-0100", cellPhone: "555-111-2222", flags: ["primary"], notes: "Portfolio executive sponsor; quarterly briefings required." },
+          { id: "TM-002", displayId: "TM-002", uuid: "3a87cb5b-80df-4be2-ba6c-fb3026725bb2", name: "Jane A. Smith", role: "Program Director", email: "jane.smith@example.com", officePhone: "555-0150", cellPhone: "555-222-3333", flags: ["primary"], notes: "Primary operational contact for Zero-Trust and architecture milestones." },
+          { id: "TM-003", displayId: "TM-003", uuid: "29e94db9-82bc-448f-aa6a-605ea667fc86", name: "John Doe", role: "Deputy Program Manager", email: "john.doe@example.com", officePhone: "555-0199", cellPhone: "555-333-4444", flags: ["primary"], notes: "Leads decision support engine (Waypoint) delivery and timeline sync." },
+          { id: "TM-004", displayId: "TM-004", uuid: "1a8f9c12-3456-4789-a012-3456789abcde", name: "Alice Johnson", role: "Cyber Operations Lead", email: "alice.johnson@example.com", officePhone: "555-0188", cellPhone: "555-444-5555", flags: ["support"], notes: "Coordinates security review gates and ATO paperwork with accrediting officers." },
+          { id: "TM-005", displayId: "TM-005", uuid: "5c839f84-9382-41a3-b291-019382746193", name: "E. Wright", role: "Lead Software Engineer", email: "e.wright@example.com", officePhone: "555-0177", cellPhone: "555-555-6666", flags: ["support"], notes: "Frontend architect for single-file zero-dependency offline web stack." },
+          { id: "TM-006", displayId: "TM-006", uuid: "76984ed1-433d-4d3b-867a-54a9be317072", name: "M. Chen", role: "Systems Administrator", email: "m.chen@example.com", officePhone: "555-0166", cellPhone: "555-666-7777", flags: ["support"], notes: "Network routing, enclave firewall rules, and policy mapping lead." },
+          { id: "TM-007", displayId: "TM-007", uuid: "0d3271ce-d008-499f-b3ff-9b194029736c", name: "Robert Miller", role: "Former Compliance Officer", email: "robert.miller@example.com", officePhone: "555-0144", cellPhone: "555-999-0000", flags: ["inactive"], notes: "Departed organization FY26 Q2; retained for historical audit trail." }
         ],
         tasks: [
           {
-            id: "t-001",
-            type: "objective",
+            id: "PRJ-001",
+            displayId: "PRJ-001",
+            uuid: "c9e473a1-772b-4e89-9a1f-0b2e4f6d8a9c",
+            type: "project",
             title: "Operation Sentinel Dawn — Cyber Modernization Portfolio",
             status: "In Progress",
             health: "Yellow",
             progress: 68,
-            leadId: "tm-101",
+            leadId: "TM-001",
             endStateVision: "Establish fully resilient, zero-trust digital networks and air-gapped decision support nodes across all operational units by FY28.",
             definitionOfDone: "All operational command nodes functional on zero-trust architecture with security ATO sign-off.",
             startDate: "2026-09-01",
             dueDate: "2027-09-30",
             notes: "Primary strategic initiative modernizing enterprise infrastructure and offline decision tools.",
             teamMembers: [
-              { id: "tm-101", name: "Marcus White", role: "Executive Sponsor / VP of Technology", email: "marcus.white@example.com", officePhone: "555-0100", cellPhone: "555-111-2222" },
-              { id: "tm-102", name: "Jane A. Smith", role: "Program Director", email: "jane.smith@example.com", officePhone: "555-0150", cellPhone: "555-222-3333" },
-              { id: "tm-103", name: "John Doe", role: "Deputy Program Manager", email: "john.doe@example.com", officePhone: "555-0199", cellPhone: "555-333-4444" },
-              { id: "tm-104", name: "Alice Johnson", role: "Cyber Operations Lead", email: "alice.johnson@example.com", officePhone: "555-0188", cellPhone: "555-444-5555" },
-              { id: "tm-105", name: "E. Wright", role: "Lead Software Engineer", email: "e.wright@example.com", officePhone: "555-0177", cellPhone: "555-555-6666" },
-              { id: "tm-106", name: "M. Chen", role: "Systems Administrator", email: "m.chen@example.com", officePhone: "555-0166", cellPhone: "555-666-7777" }
+              { id: "TM-001", displayId: "TM-001", uuid: "b8d362b8-bb59-4c03-84bf-afde1ad14dfe", name: "Marcus White", role: "Executive Sponsor / VP of Technology", email: "marcus.white@example.com", officePhone: "555-0100", cellPhone: "555-111-2222", flags: ["primary"] },
+              { id: "TM-002", displayId: "TM-002", uuid: "3a87cb5b-80df-4be2-ba6c-fb3026725bb2", name: "Jane A. Smith", role: "Program Director", email: "jane.smith@example.com", officePhone: "555-0150", cellPhone: "555-222-3333", flags: ["primary"] },
+              { id: "TM-003", displayId: "TM-003", uuid: "29e94db9-82bc-448f-aa6a-605ea667fc86", name: "John Doe", role: "Deputy Program Manager", email: "john.doe@example.com", officePhone: "555-0199", cellPhone: "555-333-4444", flags: ["primary"] },
+              { id: "TM-004", displayId: "TM-004", uuid: "1a8f9c12-3456-4789-a012-3456789abcde", name: "Alice Johnson", role: "Cyber Operations Lead", email: "alice.johnson@example.com", officePhone: "555-0188", cellPhone: "555-444-5555", flags: ["support"] },
+              { id: "TM-005", displayId: "TM-005", uuid: "5c839f84-9382-41a3-b291-019382746193", name: "E. Wright", role: "Lead Software Engineer", email: "e.wright@example.com", officePhone: "555-0177", cellPhone: "555-555-6666", flags: ["support"] },
+              { id: "TM-006", displayId: "TM-006", uuid: "76984ed1-433d-4d3b-867a-54a9be317072", name: "M. Chen", role: "Systems Administrator", email: "m.chen@example.com", officePhone: "555-0166", cellPhone: "555-666-7777", flags: ["support"] },
+              { id: "TM-007", displayId: "TM-007", uuid: "0d3271ce-d008-499f-b3ff-9b194029736c", name: "Robert Miller", role: "Former Compliance Officer", email: "robert.miller@example.com", officePhone: "555-0144", cellPhone: "555-999-0000", flags: ["inactive"] }
             ],
             subTasks: [
               {
-                id: "t-002",
-                type: "project",
+                id: "OBJ-001",
+                displayId: "OBJ-001",
+                uuid: "d8392182-3829-4829-a839-281938291029",
+                type: "objective",
                 title: "Sub-Project A: Zero-Trust Network Architecture (ZTNA)",
                 status: "In Progress",
                 health: "Green",
                 progress: 75,
-                leadId: "tm-102",
+                leadId: "TM-002",
                 startDate: "2026-09-05",
                 dueDate: "2026-12-15",
                 notes: "Deploying identity provider integration and micro-segmentation security policies across network nodes.",
                 subTasks: [
-                  { id: "t-101", type: "task", title: "Identity Provider (IdP) & SSO Integration", status: "Done", assigneeId: "tm-104", definitionOfDone: "Single sign-on authentication verified on testbed environment with 100% pass rate.", startDate: "2026-09-06", dueDate: "2026-09-20", estimatedDuration: "2 weeks", blocked: false, notes: "Single sign-on authentication verified on testbed." },
-                  { id: "t-102", type: "task", title: "Micro-Segmentation Security Policy Mapping", status: "In Progress", assigneeId: "tm-106", definitionOfDone: "100% of server-to-client traffic flows mapped and firewall rules configured across base enclaves.", startDate: "2026-09-21", dueDate: "2026-10-18", estimatedDuration: "4 weeks", blocked: false, notes: "Mapping server-to-client traffic flows across base enclaves." },
-                  { id: "m-101", type: "milestone", title: "Zero-Trust Baseline Architecture Sign-Off", status: "In Progress", assigneeId: "tm-102", definitionOfDone: "Formal baseline architecture review document signed off by Cyber Security Directorate.", dueDate: "2026-10-30", notes: "Formal review gate with Cyber Security Directorate." }
+                  { id: "KR-001", displayId: "KR-001", uuid: "e8392819-3829-4920-b829-192039485728", type: "key_result", title: "Identity Provider (IdP) & SSO Integration", status: "Completed", assigneeId: "TM-004", definitionOfDone: "Single sign-on authentication verified on testbed environment with 100% pass rate.", startDate: "2026-09-06", dueDate: "2026-09-20", progress: 100, estimatedDuration: "2 weeks", blocked: false, notes: "Single sign-on authentication verified on testbed." },
+                  { id: "TSK-001", displayId: "TSK-001", uuid: "f9283920-4920-4019-c819-203948572910", type: "task", title: "Micro-Segmentation Security Policy Mapping", status: "In Progress", assigneeId: "TM-006", definitionOfDone: "100% of server-to-client traffic flows mapped and firewall rules configured across base enclaves.", startDate: "2026-09-21", dueDate: "2026-10-18", progress: 60, estimatedDuration: "4 weeks", blocked: false, notes: "Mapping server-to-client traffic flows across base enclaves." },
+                  { id: "MS-001", displayId: "MS-001", uuid: "a1829304-5829-4729-b829-394857291029", type: "milestone", title: "Zero-Trust Baseline Architecture Sign-Off", status: "In Progress", assigneeId: "TM-002", definitionOfDone: "Formal baseline architecture review document signed off by Cyber Security Directorate.", dueDate: "2026-10-30", progress: 40, notes: "Formal review gate with Cyber Security Directorate." }
                 ]
               },
               {
-                id: "t-003",
-                type: "project",
+                id: "OBJ-002",
+                displayId: "OBJ-002",
+                uuid: "b2938495-6930-4820-c930-495867382910",
+                type: "objective",
                 title: "Sub-Project B: Offline Decision Support Engine (Waypoint)",
                 status: "In Progress",
                 health: "Green",
                 progress: 82,
-                leadId: "tm-103",
+                leadId: "TM-003",
                 startDate: "2026-09-10",
                 dueDate: "2026-11-15",
                 notes: "Single-file HTML5/CSS3/JS offline portfolio management engine with zero external dependencies.",
                 subTasks: [
-                  { id: "t-201", type: "task", title: "Single-File HTML5 Glassmorphic UI Framework", status: "Done", assigneeId: "tm-105", definitionOfDone: "Single-file HTML5 UI framework created, styled, and verified offline with zero CDN calls.", startDate: "2026-09-10", dueDate: "2026-09-20", estimatedDuration: "10 days", blocked: false, notes: "High-contrast midnight theme, glassmorphic panels, and security classification banners." },
-                  { id: "t-202", type: "task", title: "Cascading Inheritance & Recursive Tree Resolver", status: "Done", assigneeId: "tm-105", definitionOfDone: "Cascading resolver unit tests passing for team roster and vision inheritance down sub-task branches.", startDate: "2026-09-20", dueDate: "2026-09-28", estimatedDuration: "8 days", blocked: false, notes: "Automatic inheritance of teamMembers and endStateVision down subTask branches." },
-                  { id: "t-203", type: "task", title: "Interactive Gantt Timeline & Schedule Engine", status: "In Progress", assigneeId: "tm-105", definitionOfDone: "Timeline view charts date axes, project bars, and milestone diamonds accurately.", startDate: "2026-09-29", dueDate: "2026-10-15", estimatedDuration: "2 weeks", blocked: false, notes: "Time axis rendering days/weeks/months with project bars and milestone diamonds." },
-                  { id: "m-201", type: "milestone", title: "Full Prototype Briefing & Field Test", status: "In Progress", assigneeId: "tm-103", definitionOfDone: "Offline prototype briefing delivered to Program Director with full JSON import/export validation.", dueDate: "2026-11-01", notes: "Demonstrate offline JSON import/export and executive tree rendering." }
+                  { id: "KR-002", displayId: "KR-002", uuid: "c3849506-7940-4930-d040-506978493021", type: "key_result", title: "Single-File HTML5 Glassmorphic UI Framework", status: "Completed", assigneeId: "TM-005", definitionOfDone: "Single-file HTML5 UI framework created, styled, and verified offline with zero CDN calls.", startDate: "2026-09-10", dueDate: "2026-09-20", progress: 100, estimatedDuration: "10 days", blocked: false, notes: "High-contrast midnight theme, glassmorphic panels, and security classification banners." },
+                  { id: "TSK-002", displayId: "TSK-002", uuid: "d4950617-8051-4041-e151-617089504132", type: "task", title: "Cascading Inheritance & Recursive Tree Resolver", status: "Completed", assigneeId: "TM-005", definitionOfDone: "Cascading resolver unit tests passing for team roster and vision inheritance down sub-task branches.", startDate: "2026-09-20", dueDate: "2026-09-28", progress: 100, estimatedDuration: "8 days", blocked: false, notes: "Automatic inheritance of teamMembers and endStateVision down subTask branches." },
+                  { id: "TSK-003", displayId: "TSK-003", uuid: "e5061728-9162-4152-f262-728190615243", type: "task", title: "Interactive Gantt Timeline & Schedule Engine", status: "In Progress", assigneeId: "TM-005", definitionOfDone: "Timeline view charts date axes, project bars, and milestone diamonds accurately.", startDate: "2026-09-29", dueDate: "2026-10-15", progress: 50, estimatedDuration: "2 weeks", blocked: false, notes: "Time axis rendering days/weeks/months with project bars and milestone diamonds." },
+                  { id: "MS-002", displayId: "MS-002", uuid: "f6172839-0273-4263-a373-839201726354", type: "milestone", title: "Full Prototype Briefing & Field Test", status: "In Progress", assigneeId: "TM-003", definitionOfDone: "Offline prototype briefing delivered to Program Director with full JSON import/export validation.", dueDate: "2026-11-01", progress: 30, notes: "Demonstrate offline JSON import/export and executive tree rendering." }
                 ]
               },
               {
-                id: "t-004",
-                type: "project",
+                id: "OBJ-003",
+                displayId: "OBJ-003",
+                uuid: "a7283940-1384-4374-b484-940312837465",
+                type: "objective",
                 title: "Sub-Project C: Cyber Authority to Operate (ATO) Package",
                 status: "Blocked",
                 health: "Red",
                 progress: 35,
-                leadId: "tm-104",
+                leadId: "TM-004",
                 startDate: "2026-09-12",
                 dueDate: "2026-11-30",
                 notes: "Formal cyber risk assessment, vulnerability scanning, and approval package.",
                 subTasks: [
-                  { id: "t-301", type: "task", title: "Static Application Security Testing (SAST) Audit", status: "Done", assigneeId: "tm-104", definitionOfDone: "SAST scan report clean with zero high or critical security findings.", startDate: "2026-09-15", dueDate: "2026-09-22", estimatedDuration: "1 week", blocked: false, notes: "Confirmed zero external network calls, CDNs, or dynamic script injections." },
-                  { id: "t-302", type: "task", title: "Obtain Cyber Security Approval Signature", status: "Blocked", assigneeId: "tm-104", definitionOfDone: "Designated Approving Authority signature affixed to official ATO memorandum.", startDate: "2026-09-22", dueDate: "2026-10-15", estimatedDuration: "3 weeks", blocked: true, delegatedToId: "tm-104", delegatedOnDate: "2026-09-22", delegatedDueDate: "2026-10-05", notes: "Designated Approving Authority on leave until Oct 5th." },
-                  { id: "m-301", type: "milestone", title: "ATO Package Formal Submission", status: "Not Started", assigneeId: "tm-104", definitionOfDone: "Complete compliance binder submitted to Accrediting Authority.", dueDate: "2026-11-15", notes: "Submit complete compliance binder to Accrediting Authority." }
+                  { id: "KR-003", displayId: "KR-003", uuid: "b8394051-2495-4485-c595-051423948576", type: "key_result", title: "Static Application Security Testing (SAST) Audit", status: "Completed", assigneeId: "TM-004", definitionOfDone: "SAST scan report clean with zero high or critical security findings.", startDate: "2026-09-15", dueDate: "2026-09-22", progress: 100, estimatedDuration: "1 week", blocked: false, notes: "Confirmed zero external network calls, CDNs, or dynamic script injections." },
+                  { id: "TSK-004", displayId: "TSK-004", uuid: "c9405162-3506-4596-d606-162534059687", type: "task", title: "Obtain Cyber Security Approval Signature", status: "Blocked", assigneeId: "TM-004", definitionOfDone: "Designated Approving Authority signature affixed to official ATO memorandum.", startDate: "2026-09-22", dueDate: "2026-10-15", progress: 20, estimatedDuration: "3 weeks", blocked: true, delegatedToId: "TM-004", delegatedOnDate: "2026-09-22", delegatedDueDate: "2026-10-05", notes: "Designated Approving Authority on leave until Oct 5th." },
+                  { id: "MS-003", displayId: "MS-003", uuid: "d0516273-4617-4607-e717-273645160798", type: "milestone", title: "ATO Package Formal Submission", status: "Not Started", assigneeId: "TM-004", definitionOfDone: "Complete compliance binder submitted to Accrediting Authority.", dueDate: "2026-11-15", progress: 0, notes: "Submit complete compliance binder to Accrediting Authority." }
                 ]
               }
             ]
           }
         ]
       };
-      saveToCache();
+    }
+
+    function seedSampleData() {
+      loadBuiltinExample();
+    }
+
+    function resetSampleData() {
+      if (confirm("Load default built-in example dataset (Operation Sentinel Dawn)?")) {
+        loadBuiltinExample();
+      }
+    }
+
+    // --- WORKSPACE & FILE MANAGEMENT ENGINE (LAUNCHER, RECENTS & GLOBAL DROP) ---
+    function loadWorkspaceFromObject(parsed, sourceLabel = "Workspace File") {
+      if (!validateWorkspaceSchema(parsed)) {
+        alert(`INVALID FILE: Schema validation failed!\nEnsure schemaVersion is ${SCHEMA_VERSION} and root 'tasks' array contains EXACTLY ONE primary root-level workstream item.`);
+        return false;
+      }
+      state = parsed;
+      migrateState(state);
+      isWorkspaceDirty = false;
+      activeFilterId = null;
+      saveToCache(false);
+      saveToRecentWorkspaces(state, sourceLabel);
+      setClassification(state.classification || "UNCLASSIFIED");
+      updateKanbanGroupByOptions();
+      switchView("tree");
+      renderAll();
+      showClipboardToast(`Loaded "${state.tasks[0]?.title || sourceLabel}"`);
+      return true;
+    }
+
+    function loadJSONFile(file) {
+      if (!file) return;
+      if (!file.name.endsWith(".json") && file.type && !file.type.includes("json")) {
+        alert("Please select or drop a valid .json file.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          loadWorkspaceFromObject(parsed, file.name);
+        } catch (err) {
+          alert("ERROR: Failed to parse JSON file!\n" + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function loadBuiltinExample() {
+      const sample = getBuiltinSampleData();
+      loadWorkspaceFromObject(sample, "Operation Sentinel Dawn (Built-In)");
+    }
+
+    function createBlankWorkspace() {
+      const newUuid = generateUUID();
+      const blankState = {
+        schemaVersion: SCHEMA_VERSION,
+        lastUpdated: new Date().toISOString(),
+        classification: "UNCLASSIFIED",
+        enums: {
+          type: ["project", "objective", "key_result", "task", "milestone"],
+          status: ["Not Started", "In Progress", "Blocked", "Completed"],
+          health: ["Green", "Yellow", "Red"]
+        },
+        hierarchy: [
+          { level: 0, type: "project", label: "Project", icon: "📁" },
+          { level: 1, type: "objective", label: "Objective", icon: "🎯" },
+          { level: 2, type: "key_result", label: "Key Result", icon: "📊" },
+          { level: 3, type: "task", label: "Task", icon: "📋" }
+        ],
+        memberFlags: ["primary", "support", "inactive"],
+        teamRoster: [
+          {
+            id: "TM-001",
+            displayId: "TM-001",
+            uuid: generateUUID(),
+            name: "Program Director",
+            role: "Portfolio Lead",
+            email: "director@example.com",
+            officePhone: "",
+            cellPhone: "",
+            flags: ["primary"],
+            notes: "Lead director for portfolio"
+          }
+        ],
+        tasks: [
+          {
+            id: "PRJ-001",
+            displayId: "PRJ-001",
+            uuid: newUuid,
+            type: "project",
+            title: "New Strategic Portfolio",
+            status: "In Progress",
+            health: "Green",
+            progress: 0,
+            leadId: "TM-001",
+            endStateVision: "",
+            definitionOfDone: "",
+            startDate: new Date().toISOString().split("T")[0],
+            dueDate: new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0],
+            notes: "",
+            subTasks: []
+          }
+        ]
+      };
+      loadWorkspaceFromObject(blankState, "New Strategic Portfolio");
+      openInspector("PRJ-001", true);
+    }
+
+    function closeCurrentWorkspace() {
+      if (isWorkspaceDirty) {
+        if (!confirm("You have unsaved changes in this workspace. Close anyway? (Make sure you exported your JSON file if needed).")) {
+          return;
+        }
+      }
+      resetEmptyState();
+      try { localStorage.removeItem(CACHE_KEY); } catch (e) { }
+      isWorkspaceDirty = false;
+      activeFilterId = null;
+      closeInspector();
+      setClassification(state.classification || "UNCLASSIFIED");
+      switchView("launcher");
+      renderAll();
+      showClipboardToast("Workspace closed. Welcome to Waypoint!");
+    }
+
+    function getRecentWorkspaces() {
+      try {
+        const raw = localStorage.getItem(RECENT_HISTORY_KEY);
+        if (!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function countAllTasks(tasks) {
+      let count = 0;
+      function walk(list) {
+        if (!Array.isArray(list)) return;
+        list.forEach(t => { count++; if (t.subTasks) walk(t.subTasks); });
+      }
+      walk(tasks);
+      return count;
+    }
+
+    function saveToRecentWorkspaces(workspaceData, sourceLabel = "Workspace") {
+      if (!workspaceData || !Array.isArray(workspaceData.tasks) || workspaceData.tasks.length === 0) return;
+      try {
+        const title = workspaceData.tasks[0]?.title || "Untitled Workspace";
+        const list = getRecentWorkspaces();
+        const filtered = list.filter(item => item.title !== title);
+        const entry = {
+          id: generateUUID(),
+          title: title,
+          classification: workspaceData.classification || "UNCLASSIFIED",
+          itemCount: countAllTasks(workspaceData.tasks),
+          memberCount: Array.isArray(workspaceData.teamRoster) ? workspaceData.teamRoster.length : 0,
+          updatedAt: new Date().toISOString(),
+          sourceLabel: sourceLabel || "Workspace File",
+          data: JSON.parse(JSON.stringify(workspaceData))
+        };
+        filtered.unshift(entry);
+        const trimmed = filtered.slice(0, 8);
+        localStorage.setItem(RECENT_HISTORY_KEY, JSON.stringify(trimmed));
+        renderHeaderRecentList();
+      } catch (e) {
+        console.error("Failed to save to recent workspaces", e);
+      }
+    }
+
+    function openRecentWorkspace(recentId) {
+      const list = getRecentWorkspaces();
+      const found = list.find(item => item.id === recentId);
+      if (found && found.data) {
+        loadWorkspaceFromObject(found.data, found.sourceLabel || found.title);
+      } else {
+        alert("Could not load recent workspace.");
+      }
+    }
+
+    function removeRecentWorkspace(recentId, e) {
+      if (e) e.stopPropagation();
+      try {
+        const list = getRecentWorkspaces().filter(item => item.id !== recentId);
+        localStorage.setItem(RECENT_HISTORY_KEY, JSON.stringify(list));
+        renderWorkspaceLauncher();
+        renderHeaderRecentList();
+        showClipboardToast("Removed from recent history.");
+      } catch (err) { }
+    }
+
+    function clearRecentHistory() {
+      if (confirm("Clear all recent workspace history?")) {
+        try { localStorage.removeItem(RECENT_HISTORY_KEY); } catch (e) { }
+        renderWorkspaceLauncher();
+        renderHeaderRecentList();
+        showClipboardToast("Recent history cleared.");
+      }
+    }
+
+    function renderWorkspaceLauncher() {
+      const wrapper = document.getElementById("launcherWrapper");
+      if (!wrapper) return;
+      const recents = getRecentWorkspaces();
+
+      let recentsHtml = "";
+      if (recents.length > 0) {
+        recentsHtml = `
+          <div class="launcher-recent-section">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h3 style="font-size:15px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                <span>🕒</span> <span>Recent Workspaces</span>
+              </h3>
+              <button type="button" class="btn" onclick="clearRecentHistory()" style="font-size:11px; padding:3px 8px; color:var(--text-dim);">Clear History</button>
+            </div>
+            <div class="recent-cards-grid">
+              ${recents.map(r => `
+                <div class="recent-item-card" onclick="openRecentWorkspace('${r.id}')" style="cursor:pointer;" title="Click to open ${r.title}">
+                  <div style="flex:1; min-width:240px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                      <span class="badge ${r.classification === 'CUI' ? 'badge-blocked' : 'badge-completed'}" style="font-size:9px; padding:1px 6px;">${r.classification}</span>
+                      <span style="font-size:13px; font-weight:800; color:var(--text-main);">${r.title}</span>
+                    </div>
+                    <div style="font-size:11px; color:var(--text-muted); display:flex; gap:12px; flex-wrap:wrap;">
+                      <span>📁 ${r.itemCount} Workstream Items</span>
+                      <span>👥 ${r.memberCount} Personnel</span>
+                      <span>🕒 ${new Date(r.updatedAt).toLocaleDateString([], { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })}</span>
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:6px; align-items:center;" onclick="event.stopPropagation()">
+                    <button type="button" class="btn btn-gradient" onclick="openRecentWorkspace('${r.id}')" style="font-size:11px; padding:4px 12px; font-weight:700;">▶ Open</button>
+                    <button type="button" class="btn" onclick="removeRecentWorkspace('${r.id}', event)" style="font-size:11px; padding:4px 8px; color:var(--text-dim);" title="Remove from list">✕</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        recentsHtml = `
+          <div class="launcher-recent-section" style="text-align:center; padding:24px; color:var(--text-muted);">
+            <div style="font-size:24px; margin-bottom:6px;">🕒</div>
+            <div style="font-size:13px; font-weight:700;">No Recent Workspaces</div>
+            <div style="font-size:11px; margin-top:2px;">Load the built-in example or open a JSON file to see your history here.</div>
+          </div>
+        `;
+      }
+
+      wrapper.innerHTML = `
+        <div class="launcher-hero-card">
+          <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:20px; padding:3px 12px; margin-bottom:12px;">
+            <span style="font-size:10px; font-weight:800; color:var(--accent); letter-spacing:0.5px;">STANDALONE AIR-GAPPED PORTFOLIO INTELLIGENCE</span>
+          </div>
+          <h1 style="font-size:26px; font-weight:900; color:var(--text-main); letter-spacing:-0.5px; margin-bottom:8px;">
+            Welcome to Waypoint
+          </h1>
+          <p style="font-size:13px; color:var(--text-muted); max-width:620px; margin:0 auto 6px auto; line-height:1.5;">
+            Offline executive decision support, interactive Gantt scheduling, and portfolio hierarchy management. Load a workspace to begin.
+          </p>
+        </div>
+
+        <div class="launcher-grid">
+          <!-- Card 1: 1-Click Built-in Example -->
+          <div class="launcher-action-card" style="border-top:3px solid var(--accent);">
+            <div>
+              <div style="font-size:32px; margin-bottom:10px;">🚀</div>
+              <div style="font-size:16px; font-weight:800; color:var(--text-main); margin-bottom:4px;">Built-in Example</div>
+              <div class="badge badge-completed" style="font-size:9px; margin-bottom:8px; display:inline-block;">Operation Sentinel Dawn</div>
+              <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+                One-click interactive demonstration with full OKR hierarchy, Gantt timeline, Kanban swimlanes, and personnel directory.
+              </p>
+            </div>
+            <button type="button" class="btn btn-gradient" onclick="loadBuiltinExample()" style="width:100%; padding:10px; font-size:13px; font-weight:800;" title="Load built-in example dataset with 1 click">
+              🚀 Load Built-in Example
+            </button>
+          </div>
+
+          <!-- Card 2: Drag & Drop / File Picker -->
+          <div class="launcher-action-card" style="border-top:3px solid #818cf8;">
+            <div>
+              <div style="font-size:32px; margin-bottom:10px;">📥</div>
+              <div style="font-size:16px; font-weight:800; color:var(--text-main); margin-bottom:4px;">Open JSON Workspace</div>
+              <div class="badge" style="font-size:9px; margin-bottom:8px; display:inline-block; color:var(--accent); background:rgba(56,189,248,0.1);">Drag & Drop Supported</div>
+              <div class="launcher-drop-zone" id="launcherDropZone" onclick="document.getElementById('launcherDropFileInput').click()">
+                <div style="font-size:22px;">📂</div>
+                <div style="font-weight:700; font-size:12px; color:var(--text-main);">Drag & Drop .JSON File Here</div>
+                <div style="font-size:10px; color:var(--text-muted);">or click to browse local drive</div>
+                <input type="file" id="launcherDropFileInput" accept=".json" style="display:none;" onchange="importJSON(event)">
+              </div>
+            </div>
+            <button type="button" class="btn" onclick="document.getElementById('launcherDropFileInput').click()" style="width:100%; padding:9px; font-size:12px; font-weight:700;">
+              Browse Local File...
+            </button>
+          </div>
+
+          <!-- Card 3: Create Blank Portfolio -->
+          <div class="launcher-action-card" style="border-top:3px solid #10b981;">
+            <div>
+              <div style="font-size:32px; margin-bottom:10px;">➕</div>
+              <div style="font-size:16px; font-weight:800; color:var(--text-main); margin-bottom:4px;">Create Blank Workspace</div>
+              <div class="badge badge-completed" style="font-size:9px; margin-bottom:8px; display:inline-block;">Start Fresh</div>
+              <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">
+                Start an empty project portfolio with custom OKR ladder, strategic vision, tactical DoD criteria, and clean team roster.
+              </p>
+            </div>
+            <button type="button" class="btn" onclick="createBlankWorkspace()" style="width:100%; padding:10px; font-size:13px; font-weight:700; border-color:rgba(16,185,129,0.4); color:var(--status-done);">
+              ➕ Create Blank Workspace
+            </button>
+          </div>
+        </div>
+
+        ${recentsHtml}
+      `;
+
+      const dropZone = document.getElementById("launcherDropZone");
+      if (dropZone) {
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add("drag-active"); };
+        dropZone.ondragleave = () => { dropZone.classList.remove("drag-active"); };
+        dropZone.ondrop = (e) => {
+          e.preventDefault();
+          dropZone.classList.remove("drag-active");
+          if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            loadJSONFile(e.dataTransfer.files[0]);
+          }
+        };
+      }
+    }
+
+    function renderHeaderRecentList() {
+      const container = document.getElementById("headerRecentWorkspacesList");
+      if (!container) return;
+      const recents = getRecentWorkspaces();
+      if (recents.length === 0) {
+        container.innerHTML = `<span style="font-size:11px; color:var(--text-dim); padding:4px 8px;">No recent files</span>`;
+        return;
+      }
+      container.innerHTML = recents.map(r => `
+        <button type="button" class="workspace-menu-item" onclick="openRecentWorkspace('${r.id}'); closeWorkspaceMenu();" style="padding:4px 8px; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+          <span style="font-size:12px;">📁</span>
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;" title="${r.title}">${r.title}</span>
+        </button>
+      `).join('');
+    }
+
+    function toggleWorkspaceMenu(e) {
+      if (e) e.stopPropagation();
+      const pop = document.getElementById("workspaceMenuPopover");
+      if (!pop) return;
+      const isOpening = pop.style.display === "none" || !pop.style.display;
+      pop.style.display = isOpening ? "block" : "none";
+      if (isOpening) renderHeaderRecentList();
+    }
+
+    function closeWorkspaceMenu() {
+      const pop = document.getElementById("workspaceMenuPopover");
+      if (pop) pop.style.display = "none";
+    }
+
+    function initGlobalDragAndDrop() {
+      let dragCounter = 0;
+      window.addEventListener("dragenter", (e) => {
+        e.preventDefault();
+        dragCounter++;
+        const overlay = document.getElementById("globalDropOverlay");
+        if (overlay) overlay.classList.add("active");
+      });
+
+      window.addEventListener("dragleave", (e) => {
+        e.preventDefault();
+        dragCounter--;
+        if (dragCounter <= 0) {
+          dragCounter = 0;
+          const overlay = document.getElementById("globalDropOverlay");
+          if (overlay) overlay.classList.remove("active");
+        }
+      });
+
+      window.addEventListener("dragover", (e) => {
+        e.preventDefault();
+      });
+
+      window.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dragCounter = 0;
+        const overlay = document.getElementById("globalDropOverlay");
+        if (overlay) overlay.classList.remove("active");
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          loadJSONFile(e.dataTransfer.files[0]);
+        }
+      });
+
+      window.addEventListener("click", () => {
+        closeWorkspaceMenu();
+      });
     }
 
     function validateWorkspaceSchema(data) {
@@ -2167,6 +3329,20 @@
       const statusEl = document.getElementById("saveStatusText");
       const saveTag = document.querySelector(".save-tag");
       if (!statusEl) return;
+
+      if (!state.tasks || state.tasks.length === 0) {
+        statusEl.innerText = "No Workspace";
+        if (saveTag) {
+          saveTag.style.borderColor = "var(--border-color)";
+          saveTag.style.color = "var(--text-dim)";
+          const dot = saveTag.querySelector(".pulse-dot");
+          if (dot) {
+            dot.style.background = "var(--text-dim)";
+            dot.style.boxShadow = "none";
+          }
+        }
+        return;
+      }
 
       if (isWorkspaceDirty) {
         statusEl.innerText = "Unsaved Changes";
@@ -2194,10 +3370,11 @@
     }
 
     function saveToCache(isUserMutation = true) {
-      if (!state || !Array.isArray(state.tasks)) return;
+      if (!state || !Array.isArray(state.tasks) || state.tasks.length === 0) return;
       state.lastUpdated = new Date().toISOString();
       try {
         localStorage.setItem(CACHE_KEY, JSON.stringify(state));
+        saveToRecentWorkspaces(state, state.tasks[0]?.title || "Active Workspace");
         if (isUserMutation) {
           isWorkspaceDirty = true;
         }
@@ -2217,11 +3394,16 @@
 
     // --- JSON IMPORT / EXPORT ---
     function exportJSON() {
+      if (!state.tasks || state.tasks.length === 0) {
+        alert("No active workspace to export.");
+        return;
+      }
       saveToCache(false);
       isWorkspaceDirty = false;
       updateSaveStatusUI();
 
-      const filename = `waypoint_${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+      const titleSlug = (state.tasks[0]?.title || "waypoint").toLowerCase().replace(/[^a-z0-9]+/g, "_").slice(0, 30);
+      const filename = `${titleSlug}_${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
@@ -2229,31 +3411,15 @@
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
+
+      saveToRecentWorkspaces(state, filename);
+      showClipboardToast(`Exported ${filename}`);
     }
 
     function importJSON(event) {
-      const file = event.target.files[0];
+      const file = event.target.files && event.target.files[0];
       if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (!validateWorkspaceSchema(parsed)) {
-            alert(`INVALID FILE: Schema validation failed!\nEnsure schemaVersion is ${SCHEMA_VERSION} and root 'tasks' array contains EXACTLY ONE primary root-level workstream item.`);
-            return;
-          }
-          state = parsed;
-          isWorkspaceDirty = false;
-          saveToCache(false);
-          setClassification(state.classification || "UNCLASSIFIED");
-          renderAll();
-          alert("Workspace cleanly loaded!");
-        } catch (err) {
-          alert("ERROR: Failed to parse JSON file!\n" + err.message);
-        }
-      };
-      reader.readAsText(file);
+      loadJSONFile(file);
       event.target.value = "";
     }
 
@@ -2287,21 +3453,31 @@
 
     function findTeamMember(id, resolvedTask) {
       if (!id) return null;
-      // 1. Search effective team members
-      if (resolvedTask && Array.isArray(resolvedTask.effectiveTeamMembers)) {
-        const match = resolvedTask.effectiveTeamMembers.find(tm => tm.id === id);
+      // 1. Search global state.teamRoster
+      if (Array.isArray(state.teamRoster)) {
+        const match = state.teamRoster.find(tm => tm && (tm.id === id || tm.uuid === id || tm.displayId === id));
         if (match) return match;
       }
-      // 2. Search root workspace team members
+      // 2. Search effective team members
+      if (resolvedTask && Array.isArray(resolvedTask.effectiveTeamMembers)) {
+        const match = resolvedTask.effectiveTeamMembers.find(tm => tm && (tm.id === id || tm.uuid === id || tm.displayId === id));
+        if (match) return match;
+      }
+      // 3. Search root workspace team members
       const rootMembers = (state.tasks && state.tasks[0] && state.tasks[0].teamMembers) || [];
-      const match = rootMembers.find(tm => tm.id === id);
-      if (match) return match;
+      const matchRoot = rootMembers.find(tm => tm && (tm.id === id || tm.uuid === id || tm.displayId === id));
+      if (matchRoot) return matchRoot;
 
-      return { id: id, name: id, role: "Team Member" };
+      // 4. Search all collected team members from across workspace
+      const allMembers = collectAllTeamMembers();
+      const matchAll = allMembers.find(tm => tm && (tm.id === id || tm.uuid === id || tm.displayId === id));
+      if (matchAll) return matchAll;
+
+      return null;
     }
 
     // --- CLASSIFICATION TOGGLE ---
-    function setClassification(val) {
+    function setClassification(val, isUserChange = false) {
       state.classification = val;
       const top = document.getElementById("topBanner");
       const bottom = document.getElementById("bottomBanner");
@@ -2313,7 +3489,9 @@
       if (select) select.value = val;
       if (bottomText) bottomText.innerText = val;
 
-      saveToCache();
+      if (isUserChange) {
+        saveToCache(true);
+      }
     }
 
     function toggleTheme() {
@@ -2350,8 +3528,69 @@
       renderAll();
     }
 
+    function updateLayoutForWorkspaceState() {
+      const isWorkspaceEmpty = !state.tasks || state.tasks.length === 0;
+      const sidebar = document.getElementById("appSidebar");
+      const expandBtn = document.getElementById("sidebarExpandBtn");
+      const newBtn = document.getElementById("headerNewWorkstreamBtn");
+      const hierBtn = document.getElementById("headerHierarchyBtn");
+      const expBtn = document.getElementById("headerExportBtn");
+      const navTabs = document.getElementById("navTabs");
+      const searchInput = document.getElementById("globalSearch");
+
+      if (isWorkspaceEmpty) {
+        if (sidebar) sidebar.style.display = "none";
+        if (expandBtn) expandBtn.style.display = "none";
+        if (newBtn) newBtn.style.display = "none";
+        if (hierBtn) hierBtn.style.display = "none";
+        if (expBtn) expBtn.style.display = "none";
+        if (navTabs) {
+          navTabs.style.pointerEvents = "none";
+          navTabs.style.opacity = "0.35";
+        }
+        if (searchInput) {
+          searchInput.disabled = true;
+          searchInput.value = "";
+          searchInput.placeholder = "Load a workspace to search...";
+        }
+      } else {
+        if (sidebar) sidebar.style.display = "";
+        if (sidebar && sidebar.classList.contains("collapsed")) {
+          if (expandBtn) expandBtn.style.display = "inline-flex";
+        } else {
+          if (expandBtn) expandBtn.style.display = "none";
+        }
+        if (newBtn) newBtn.style.display = "inline-flex";
+        if (hierBtn) hierBtn.style.display = "inline-flex";
+        if (expBtn) expBtn.style.display = "inline-flex";
+        if (navTabs) {
+          navTabs.style.pointerEvents = "auto";
+          navTabs.style.opacity = "1";
+        }
+        if (searchInput) {
+          searchInput.disabled = false;
+          searchInput.placeholder = "Search workspace...";
+        }
+      }
+      updateSaveStatusUI();
+    }
+
     // --- RENDER ALL VIEWS ---
     function renderAll() {
+      updateLayoutForWorkspaceState();
+      const isWorkspaceEmpty = !state.tasks || state.tasks.length === 0;
+      if (isWorkspaceEmpty) {
+        switchView("launcher");
+        renderWorkspaceLauncher();
+        return;
+      }
+
+      // If currently on launcher, switch to tree
+      const activePane = document.querySelector(".view-pane.active");
+      if (!activePane || activePane.id === "view-launcher") {
+        switchView("tree");
+      }
+
       renderSidebarTree();
       renderHeroObjective();
       renderProgressiveTree();
@@ -2438,7 +3677,7 @@
       function walk(tasks) {
         tasks.forEach(t => {
           totalItems++;
-          if (t.status === "Done") doneItems++;
+          if (isTaskCompleted(t.status)) doneItems++;
           if (t.status === "Blocked" || t.blocked) blockedCount++;
           if (t.type === "milestone" && t.dueDate) milestoneList.push(t);
           if (t.subTasks) walk(t.subTasks);
@@ -2447,7 +3686,7 @@
       walk([targetTask]);
 
       milestoneList.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
-      const nextMilestone = milestoneList.find(m => m.status !== "Done") || milestoneList[0];
+      const nextMilestone = milestoneList.find(m => !isTaskCompleted(m.status)) || milestoneList[0];
 
       const completionPct = totalItems === 0 ? 0 : Math.round((doneItems / totalItems) * 100);
 
@@ -2468,7 +3707,7 @@
       }
 
       const card = document.createElement("div");
-      card.className = "hero-objective-card";
+      card.className = "hero-objective-card" + (isTaskCompleted(resolved.status) ? " is-completed" : "");
       card.id = `node-${resolved.id}`;
       card.style.cursor = "pointer";
       card.onclick = () => openInspector(findTaskResolved(resolved.id));
@@ -2485,7 +3724,6 @@
             </div>
           </div>
           <div style="display:flex; gap:8px; align-items:center;" onclick="event.stopPropagation()">
-            <button class="btn" onclick="emailWorkstreamTeam('${resolved.id}')" style="font-size:12px; padding:4px 10px;" title="Send email briefing to team">✉️ Email Team</button>
             <span class="badge badge-${(resolved.status || 'notstarted').toLowerCase().replace(/\s+/g, '')}">${resolved.status}</span>
             <div class="row-add-slot">
               <button class="btn-subitem-chip" onclick="openCreateTaskDrawer('${resolved.id}')" title="Add sub-item under ${resolved.title}">➕ Add Sub-Item</button>
@@ -2494,7 +3732,7 @@
         </div>
 
         <div style="font-size:12px; color:var(--text-muted); display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-top:2px;">
-          <span>👤 Lead: <strong>${leadMember ? leadMember.name : (resolved.leadId || 'Unassigned')}</strong></span>
+          <span>👤 Lead: <strong>${leadMember ? leadMember.name : 'Unassigned'}</strong></span>
           <span>📅 Timeline: ${resolved.startDate || 'N/A'} → ${resolved.dueDate || 'N/A'}</span>
         </div>
 
@@ -2643,24 +3881,37 @@
         container.appendChild(banner);
       }
 
-      // Render Section Header
+      // Render Section Header with Sibling Sorting Selector
       const headerLabel = document.createElement("div");
       headerLabel.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;";
       headerLabel.innerHTML = `
         <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);">
           Breakdown & Sub-Workstreams under "${focusedTask.title}"
         </div>
-        ${targetItems.length > 0 ? `
-          <div style="display:flex; gap:6px; align-items:center;">
-            <button class="btn" onclick="collapseAllNodes()" style="font-size:10px; padding:3px 10px;" title="Collapse all sub-element tree rows">▶ Collapse All</button>
-            <button class="btn" onclick="expandAllNodes()" style="font-size:10px; padding:3px 10px;" title="Expand all sub-element tree rows">▼ Expand All</button>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:5px;">
+            <span style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Sort:</span>
+            <select id="treeSortSelect" onchange="setTreeSort(this.value)" class="form-input" style="font-size:11px; padding:2px 8px; height:26px; width:auto; border-radius:6px;">
+              <option value="dueDate" ${currentTreeSort === 'dueDate' ? 'selected' : ''}>📅 Due Date</option>
+              <option value="title" ${currentTreeSort === 'title' ? 'selected' : ''}>🔤 Title (A-Z)</option>
+              <option value="status" ${currentTreeSort === 'status' ? 'selected' : ''}>📊 Status</option>
+              <option value="health" ${currentTreeSort === 'health' ? 'selected' : ''}>🚦 Health (RAG)</option>
+              <option value="progress" ${currentTreeSort === 'progress' ? 'selected' : ''}>📈 Progress %</option>
+            </select>
           </div>
-        ` : ''}
+          ${targetItems.length > 0 ? `
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button class="btn" onclick="collapseAllNodes()" style="font-size:10px; padding:3px 10px;" title="Collapse all sub-element tree rows">▶ Collapse All</button>
+              <button class="btn" onclick="expandAllNodes()" style="font-size:10px; padding:3px 10px;" title="Expand all sub-element tree rows">▼ Expand All</button>
+            </div>
+          ` : ''}
+        </div>
       `;
       container.appendChild(headerLabel);
 
-      if (targetItems.length > 0) {
-        targetItems.forEach(child => {
+      const sortedTargetItems = sortTasks(targetItems);
+      if (sortedTargetItems.length > 0) {
+        sortedTargetItems.forEach(child => {
           container.appendChild(createProgressiveTreeNode(child, resolvedFocused));
         });
 
@@ -2692,6 +3943,7 @@
       const isContainer = (resolved.type === "objective" || resolved.type === "project" || resolved.type === "key_result");
       const hasSubtasks = resolved.subTasks && resolved.subTasks.length > 0;
       const isTreeExpanded = expandedNodeIds.has(resolved.id);
+      const isCompleted = isTaskCompleted(resolved.status);
 
       const wrapper = document.createElement("div");
       wrapper.style.display = "flex";
@@ -2702,7 +3954,7 @@
         // Executive Container Card (Clean 1-Line Node)
         const card = document.createElement("div");
         card.id = `node-${resolved.id}`;
-        card.className = "exec-card collapsed-card";
+        card.className = "exec-card collapsed-card" + (isCompleted ? " is-completed" : "");
         card.onclick = (e) => { e.stopPropagation(); openInspector(resolved); };
 
         const leadMember = findTeamMember(resolved.effectiveLeadId || resolved.leadId, resolved);
@@ -2719,6 +3971,7 @@
               ` : `<span style="width:22px; height:22px; display:inline-block;"></span>`}
               <span class="rag-dot ${healthClass}"></span>
               <span class="type-tag">${resolved.type}</span>
+              <span class="badge" style="font-size:10px; font-family:monospace; font-weight:700; color:var(--accent); background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25);" title="Display Code: ${resolved.displayId || resolved.id}">${resolved.displayId || resolved.id}</span>
               <span style="font-size:15px; font-weight:800; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" onclick="openInspector(findTaskResolved('${resolved.id}'))" title="Click for Inspector Drawer">${resolved.title}</span>
             </div>
 
@@ -2729,7 +3982,7 @@
                   <div class="progress-bar-fill" style="width:${resolved.progress || 0}%;"></div>
                 </div>
               </div>
-              <span style="font-size:12px; color:var(--text-muted);">👤 ${leadMember ? leadMember.name.split(' ')[0] + ' ' + (leadMember.name.split(' ').slice(-1)[0] || '') : 'Unassigned'}</span>
+              <span style="font-size:12px; color:var(--text-muted);">👤 ${leadMember ? leadMember.name : 'Unassigned'}</span>
               <span class="badge ${statusClass}">${resolved.status}</span>
               <div class="row-add-slot">
                 <button class="btn-subitem-chip" onclick="event.stopPropagation(); openCreateTaskDrawer('${resolved.id}')" title="Add sub-item under ${resolved.title}">➕ Add Sub-Item</button>
@@ -2743,7 +3996,8 @@
           const subContainer = document.createElement("div");
           subContainer.className = "subtree-container";
           subContainer.style.display = isTreeExpanded ? "flex" : "none";
-          resolved.subTasks.forEach(child => {
+          const sortedSub = sortTasks(resolved.subTasks);
+          sortedSub.forEach(child => {
             subContainer.appendChild(createProgressiveTreeNode(child, resolved));
           });
 
@@ -2775,7 +4029,7 @@
         // Task / Milestone Action Row (Clean 1-Line Node)
         const row = document.createElement("div");
         row.id = `node-${resolved.id}`;
-        row.className = "action-item-row";
+        row.className = "action-item-row" + (isCompleted ? " is-completed" : "");
         row.onclick = (e) => { e.stopPropagation(); openInspector(resolved); };
 
         const assigneeMember = findTeamMember(resolved.assigneeId, resolved);
@@ -2793,12 +4047,13 @@
               ` : `<span style="width:22px; height:22px; display:inline-block;"></span>`}
 
               <span class="type-tag">${icon} ${resolved.type}</span>
+              <span class="badge" style="font-size:10px; font-family:monospace; color:var(--text-muted); background:rgba(255,255,255,0.06); border:1px solid var(--border-color);" title="Display Code: ${resolved.displayId || resolved.id}">${resolved.displayId || resolved.id}</span>
               <span class="action-item-title">${resolved.title}</span>
               ${blockedBadge}
             </div>
 
             <div style="display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-muted); flex-shrink:0;">
-              <span>👤 ${assigneeMember ? assigneeMember.name : (resolved.assigneeId || 'Unassigned')}</span>
+              <span>👤 ${assigneeMember ? assigneeMember.name : 'Unassigned'}</span>
               <span>📅 Due: ${resolved.dueDate || 'N/A'}</span>
               <span class="badge ${statusClass}">${resolved.status}</span>
               <div class="row-add-slot">
@@ -2813,7 +4068,8 @@
           const subContainer = document.createElement("div");
           subContainer.className = "subtree-container";
           subContainer.style.display = isTreeExpanded ? "flex" : "none";
-          resolved.subTasks.forEach(child => {
+          const sortedSub = sortTasks(resolved.subTasks);
+          sortedSub.forEach(child => {
             subContainer.appendChild(createProgressiveTreeNode(child, resolved));
           });
           wrapper.appendChild(subContainer);
@@ -2824,8 +4080,9 @@
     }
 
     function findTaskRecursive(tasks, id) {
+      if (!id || !Array.isArray(tasks)) return null;
       for (const t of tasks) {
-        if (t.id === id) return t;
+        if (t.id === id || t.uuid === id || t.displayId === id) return t;
         if (t.subTasks && t.subTasks.length > 0) {
           const found = findTaskRecursive(t.subTasks, id);
           if (found) return found;
@@ -3136,12 +4393,84 @@
       };
     }
 
-    // --- KANBAN BOARD RENDERER (COA 3: GROUP BY SWITCHER & LOE SWIMLANES) ---
-    let kanbanGroupBy = "project";
+    // --- KANBAN BOARD RENDERER (GROUP BY HIERARCHY SWITCHER, POPOVER FILTER & LOE SWIMLANES) ---
     let collapsedSwimlaneIds = new Set();
+
+    function toggleKanbanFilterPopover(e) {
+      if (e) e.stopPropagation();
+      const pop = document.getElementById("kanbanFilterPopover");
+      if (!pop) return;
+      const isOpening = pop.style.display === "none" || !pop.style.display;
+      pop.style.display = isOpening ? "block" : "none";
+      if (isOpening) renderKanbanFilterCheckboxes();
+    }
+
+    function renderKanbanFilterCheckboxes() {
+      const container = document.getElementById("kanbanFilterCheckboxes");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const availableTypes = state.hierarchy.map(h => ({
+        type: h.type,
+        label: h.label || (h.type.charAt(0).toUpperCase() + h.type.slice(1).replace('_', ' ')),
+        icon: h.icon || "📋"
+      }));
+      availableTypes.push({ type: "milestone", label: "Milestone", icon: "◆" });
+
+      availableTypes.forEach(({ type, label, icon }) => {
+        const isChecked = kanbanActiveTypeFilters.has(type);
+        const row = document.createElement("label");
+        row.style.cssText = "display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;";
+        row.innerHTML = `
+          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleKanbanTypeFilter('${type}', this.checked)">
+          <span>${icon} ${label}</span>
+        `;
+        container.appendChild(row);
+      });
+
+      const badge = document.getElementById("kanbanFilterBadge");
+      if (badge) badge.innerText = kanbanActiveTypeFilters.size;
+    }
+
+    function toggleKanbanTypeFilter(type, checked) {
+      if (checked) {
+        kanbanActiveTypeFilters.add(type);
+      } else {
+        kanbanActiveTypeFilters.delete(type);
+      }
+      const badge = document.getElementById("kanbanFilterBadge");
+      if (badge) badge.innerText = kanbanActiveTypeFilters.size;
+      renderKanbanBoard();
+    }
+
+    function resetKanbanTypeFilter() {
+      kanbanActiveTypeFilters = new Set(["objective", "key_result", "task", "milestone"]);
+      renderKanbanFilterCheckboxes();
+      renderKanbanBoard();
+    }
+
+    window.addEventListener("click", () => {
+      const pop = document.getElementById("kanbanFilterPopover");
+      if (pop && pop.style.display === "block") pop.style.display = "none";
+    });
 
     function setKanbanGroupBy(mode) {
       kanbanGroupBy = mode;
+      const sel = document.getElementById("kanbanGroupBySelect");
+      if (sel && sel.value !== mode) sel.value = mode;
+
+      // Automatically update the filter to only show items below that hierarchy level
+      const hIdx = state.hierarchy.findIndex(h => h.type === mode);
+      if (hIdx !== -1) {
+        const typesBelow = new Set();
+        for (let i = hIdx + 1; i < state.hierarchy.length; i++) {
+          typesBelow.add(state.hierarchy[i].type);
+        }
+        typesBelow.add("milestone");
+        kanbanActiveTypeFilters = typesBelow;
+        const badge = document.getElementById("kanbanFilterBadge");
+        if (badge) badge.innerText = kanbanActiveTypeFilters.size;
+      }
       renderKanbanBoard();
     }
 
@@ -3159,32 +4488,34 @@
       if (!container) return;
       container.innerHTML = "";
 
-      // Update Toolbar Button Active Styles
-      ["project", "lead", "type", "flat"].forEach(m => {
-        const btn = document.getElementById(`kanbanBtn-${m}`);
-        if (btn) {
-          if (m === kanbanGroupBy) {
-            btn.classList.add("btn-gradient");
-          } else {
-            btn.classList.remove("btn-gradient");
-          }
-        }
-      });
+      const sel = document.getElementById("kanbanGroupBySelect");
+      if (sel && sel.value !== kanbanGroupBy) sel.value = kanbanGroupBy;
 
-      // 1. Gather all tasks with parent context
+      const badge = document.getElementById("kanbanFilterBadge");
+      if (badge) badge.innerText = kanbanActiveTypeFilters.size;
+
+      // 1. Gather all tasks with ancestor chain context
       const flatTasks = [];
-      function collect(tasks, parentResolved = null) {
+      function collect(tasks, parentResolved = null, ancestorChain = []) {
         tasks.forEach(t => {
           const resolved = resolveCascadingProps(t, parentResolved);
           const parentTitle = parentResolved ? parentResolved.title : "Top-Level Portfolio Focus";
           const parentId = parentResolved ? parentResolved.id : "root";
-          flatTasks.push({ resolved, parentTitle, parentId });
-          if (t.subTasks) collect(t.subTasks, resolved);
+          const currentChain = [...ancestorChain, { id: t.id, title: t.title, type: t.type }];
+
+          // Only include cards whose type is allowed by the active filter
+          if (kanbanActiveTypeFilters.has(resolved.type)) {
+            flatTasks.push({ resolved, parentTitle, parentId, ancestorChain: currentChain });
+          }
+
+          if (t.subTasks && t.subTasks.length > 0) {
+            collect(t.subTasks, resolved, currentChain);
+          }
         });
       }
       collect(state.tasks);
 
-      const columns = ["Not Started", "In Progress", "Blocked", "Done"];
+      const columns = ["Not Started", "In Progress", "Blocked", "Completed"];
 
       // 2. Build Sticky Status Column Headers
       const stickyHeader = document.createElement("div");
@@ -3195,7 +4526,7 @@
 
         let colorStyle = "var(--text-main)";
         if (colName === "Blocked") colorStyle = "var(--status-blocked)";
-        else if (colName === "Done") colorStyle = "var(--status-done)";
+        else if (colName === "Completed") colorStyle = "var(--status-done)";
         else if (colName === "In Progress") colorStyle = "var(--status-inprogress)";
 
         head.innerHTML = `
@@ -3206,30 +4537,43 @@
       });
       container.appendChild(stickyHeader);
 
-      const globalColCounts = { "Not Started": 0, "In Progress": 0, "Blocked": 0, "Done": 0 };
+      const globalColCounts = { "Not Started": 0, "In Progress": 0, "Blocked": 0, "Completed": 0 };
 
       // 3. Group Tasks into Swimlane Categories
       const groupsMap = new Map();
+      const isHierarchyLevel = state.hierarchy.some(h => h.type === kanbanGroupBy);
 
       flatTasks.forEach(item => {
-        const { resolved, parentTitle, parentId } = item;
+        const { resolved, parentTitle, parentId, ancestorChain } = item;
         let groupKey = "default";
         let groupTitle = "All Workstreams";
         let groupIcon = "🌐";
 
-        if (kanbanGroupBy === "project") {
-          groupKey = parentId;
-          groupTitle = `LOE: ${parentTitle}`;
-          groupIcon = "📁";
+        if (isHierarchyLevel) {
+          // Find ancestor matching kanbanGroupBy (excluding self)
+          const matchingAncestor = ancestorChain.slice(0, -1).reverse().find(a => a.type === kanbanGroupBy);
+          if (matchingAncestor) {
+            groupKey = matchingAncestor.id;
+            groupTitle = `${matchingAncestor.title}`;
+            const hMeta = state.hierarchy.find(h => h.type === kanbanGroupBy);
+            groupIcon = hMeta ? (hMeta.icon || "📁") : "📁";
+          } else {
+            groupKey = `other-${kanbanGroupBy}`;
+            const hMeta = state.hierarchy.find(h => h.type === kanbanGroupBy);
+            const levelLabel = hMeta ? (hMeta.label || hMeta.type) : kanbanGroupBy;
+            groupTitle = `Other Workstreams (Outside ${levelLabel})`;
+            groupIcon = "📁";
+          }
         } else if (kanbanGroupBy === "lead") {
           const leadMember = findTeamMember(resolved.assigneeId || resolved.effectiveLeadId, resolved);
           groupKey = leadMember ? leadMember.id : "unassigned";
-          groupTitle = `Leader: ${leadMember ? leadMember.name + ' (' + (leadMember.role.split('/')[0] || '').trim() + ')' : 'Unassigned'}`;
+          groupTitle = `Leader: ${leadMember ? leadMember.name + (leadMember.role ? ' (' + (leadMember.role.split('/')[0] || '').trim() + ')' : '') : 'Unassigned'}`;
           groupIcon = "👤";
         } else if (kanbanGroupBy === "type") {
           groupKey = resolved.type;
-          groupTitle = `Workstream Type: ${resolved.type.toUpperCase()}`;
-          groupIcon = resolved.type === "milestone" ? "◆" : (resolved.type === "objective" || resolved.type === "project" ? "📁" : "📋");
+          const hMeta = state.hierarchy.find(h => h.type === resolved.type);
+          groupTitle = `Workstream Type: ${(hMeta && hMeta.label ? hMeta.label : resolved.type).toUpperCase()}`;
+          groupIcon = resolved.type === "milestone" ? "◆" : (hMeta ? (hMeta.icon || "📁") : "📋");
         } else {
           groupKey = "flat";
           groupTitle = "All Workspace Workstreams";
@@ -3246,17 +4590,18 @@
       groupsMap.forEach((group, groupId) => {
         const isCollapsed = collapsedSwimlaneIds.has(groupId);
 
-        const groupCols = { "Not Started": [], "In Progress": [], "Blocked": [], "Done": [] };
+        const groupCols = { "Not Started": [], "In Progress": [], "Blocked": [], "Completed": [] };
         group.items.forEach(it => {
-          const st = it.resolved.blocked ? "Blocked" : (it.resolved.status || "Not Started");
-          if (groupCols[st]) groupCols[st].push(it);
-          else groupCols["Not Started"].push(it);
+          let st = it.resolved.blocked ? "Blocked" : (it.resolved.status || "Not Started");
+          if (st === "Done") st = "Completed";
+          if (!groupCols[st]) st = "Not Started";
+          groupCols[st].push(it);
 
           if (globalColCounts[st] !== undefined) globalColCounts[st]++;
         });
 
         const totalCount = group.items.length;
-        const doneCount = groupCols["Done"].length;
+        const doneCount = groupCols["Completed"].length;
         const blockedCount = groupCols["Blocked"].length;
         const progressPct = totalCount === 0 ? 0 : Math.round((doneCount / totalCount) * 100);
 
@@ -3274,7 +4619,7 @@
           </div>
           <div style="display:flex; align-items:center; gap:16px; font-size:12px; color:var(--text-muted);">
             ${blockedCount > 0 ? `<span style="color:var(--status-blocked); font-weight:800;">⚠️ ${blockedCount} Blocked</span>` : ''}
-            <span>${doneCount}/${totalCount} Complete (${progressPct}%)</span>
+            <span>${doneCount}/${totalCount} Completed (${progressPct}%)</span>
             <div class="progress-bar-track" style="width:60px; margin:0;">
               <div class="progress-bar-fill" style="width:${progressPct}%;"></div>
             </div>
@@ -3321,9 +4666,10 @@
 
             colItems.forEach(({ resolved, parentTitle }) => {
               const assigneeMember = findTeamMember(resolved.assigneeId || resolved.effectiveLeadId, resolved);
+              const isCompleted = isTaskCompleted(resolved.status);
 
               const card = document.createElement("div");
-              card.className = "kanban-card";
+              card.className = "kanban-card" + (isCompleted ? " is-completed" : "");
               card.setAttribute("draggable", "true");
               card.setAttribute("data-id", resolved.id);
 
@@ -3346,14 +4692,17 @@
 
               card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <span class="type-tag">${resolved.type}</span>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="type-tag">${resolved.type}</span>
+                    <span class="badge" style="font-size:9px; font-family:monospace; font-weight:700; color:var(--accent); background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.2);">${resolved.displayId || resolved.id}</span>
+                  </div>
                   ${resolved.health ? `<span class="rag-dot rag-${resolved.health.toLowerCase()}"></span>` : ''}
                 </div>
                 ${kanbanGroupBy !== "project" ? `<div class="kanban-card-parent-tag" title="Parent: ${parentTitle}">📁 ${parentTitle}</div>` : ''}
                 <div style="font-weight:700; font-size:13px; color:var(--text-main);">${resolved.title}</div>
                 ${dodHtml}
                 <div style="font-size:11px; color:var(--text-muted); display:flex; justify-content:space-between; margin-top:4px;">
-                  <span>👤 ${assigneeMember ? assigneeMember.name.split(' ')[0] + ' ' + (assigneeMember.name.split(' ').slice(-1)[0] || '') : 'Unassigned'}</span>
+                  <span>👤 ${assigneeMember ? assigneeMember.name : 'Unassigned'}</span>
                   <span>📅 ${resolved.dueDate || 'N/A'}</span>
                 </div>
                 <div class="progress-bar-track">
@@ -3386,15 +4735,22 @@
       if (newStatus === "Blocked") {
         task.status = "Blocked";
         task.blocked = true;
-      } else {
-        task.status = newStatus;
+      } else if (newStatus === "Completed" || newStatus === "Done") {
+        task.status = "Completed";
         task.blocked = false;
-        if (newStatus === "Done") {
-          task.progress = 100;
-        } else if (newStatus === "Not Started" && (task.progress === undefined || task.progress === 100)) {
-          task.progress = 0;
-        }
+        task.progress = 100;
+      } else if (newStatus === "In Progress") {
+        task.status = "In Progress";
+        task.blocked = false;
+        if (task.progress >= 100) task.progress = 50;
+      } else if (newStatus === "Not Started") {
+        task.status = "Not Started";
+        task.blocked = false;
+        if (task.progress === undefined || task.progress === 100) task.progress = 0;
       }
+
+      saveToCache();
+      renderAll();
 
       saveToCache();
       renderAll();
@@ -3526,6 +4882,23 @@
     }
 
     function renderInlineDrawerView(body, rawTask, resolvedTask) {
+      // 0. Hybrid Identity (Display ID + Immutable GUID)
+      const displayId = rawTask.displayId || rawTask.id || "N/A";
+      const uuid = rawTask.uuid || "N/A";
+      const hybridIdHtml = `
+        <div class="inspector-section" style="padding:10px 12px; margin-bottom:12px; background:var(--bg-glass); border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">DISPLAY ID:</span>
+            <span class="badge" style="font-size:11px; font-family:monospace; font-weight:700; color:var(--accent); background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25);">${displayId}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:10px; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">UUID:</span>
+            <span style="font-size:10px; font-family:monospace; color:var(--text-muted); background:var(--bg-input); padding:2px 6px; border-radius:4px; border:1px solid var(--border-color); max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${uuid}">${uuid}</span>
+            <button type="button" class="btn" onclick="navigator.clipboard.writeText('${uuid}'); showClipboardToast('Copied UUID to clipboard!');" style="font-size:10px; padding:2px 6px;" title="Copy UUID to clipboard">📋</button>
+          </div>
+        </div>
+      `;
+
       // 1. Team Roster & Contacts (only display if explicitly defined on this task entity)
       let teamHtml = "";
       if (Array.isArray(rawTask.teamMembers) && rawTask.teamMembers.length > 0) {
@@ -3611,69 +4984,90 @@
         </div>
       `;
 
-      function execRichTextCommand(cmd, val = null) {
-        const editor = document.getElementById("drawerFormNotesEditor");
-        if (editor) editor.focus();
-
-        if (cmd === "hiliteColor" || cmd === "highlight") {
-          const color = val || "rgba(56, 189, 248, 0.35)";
-          let ok = false;
-          try { ok = document.execCommand("hiliteColor", false, color); } catch (e) { }
-          if (!ok) {
-            try { document.execCommand("backColor", false, color); } catch (e) { }
-          }
-        } else if (cmd === "formatBlock") {
-          const tag = (val || "P").replace(/[<>]/g, "").toUpperCase();
-          try {
-            document.execCommand("formatBlock", false, tag);
-          } catch (e) {
-            try { document.execCommand("formatBlock", false, `<${tag}>`); } catch (err) { }
-          }
-        } else {
-          try {
-            document.execCommand(cmd, false, val);
-          } catch (e) { }
-        }
-
-        if (editor) editor.focus();
-      }
-
       // 6. Notes (only display if explicitly defined on this task entity)
       let notesHtml = "";
       if (rawTask.notes) {
         notesHtml = `
           <div class="inspector-section">
-            <span class="inspector-section-label">Notes & Operational Briefing</span>
+            <span class="inspector-section-label">Notes</span>
             <div class="contact-card-box rich-text-display">${rawTask.notes}</div>
           </div>
         `;
       }
 
-      body.innerHTML = statusHtml + visionHtml + dodHtml + scheduleHtml + teamHtml + notesHtml;
+      body.innerHTML = hybridIdHtml + statusHtml + visionHtml + dodHtml + scheduleHtml + teamHtml + notesHtml;
+    }
+
+    function handleDrawerStatusChange(status) {
+      const progInput = document.getElementById("drawerFormProgress");
+      const progVal = document.getElementById("drawerFormProgressVal");
+      if (status === "Completed") {
+        if (progInput) progInput.value = 100;
+        if (progVal) progVal.innerText = "100%";
+      } else if (status === "Not Started") {
+        if (progInput && Number(progInput.value) === 100) {
+          progInput.value = 0;
+          if (progVal) progVal.innerText = "0%";
+        }
+      }
+    }
+
+    function handleDrawerProgressChange(val) {
+      const num = Number(val);
+      const progVal = document.getElementById("drawerFormProgressVal");
+      if (progVal) progVal.innerText = num + "%";
+      const statusSelect = document.getElementById("drawerFormStatus");
+      if (statusSelect) {
+        if (num === 100) {
+          statusSelect.value = "Completed";
+        } else if (statusSelect.value === "Completed" && num < 100) {
+          statusSelect.value = "In Progress";
+        }
+      }
     }
 
     function renderInlineDrawerForm(container, task = null, defaultParentId = "") {
       const isNew = !task;
       const t = task || {};
 
+      // Determine default type based on hierarchy depth ladder:
+      // Depth 0 = Project, Depth 1 = Objective, Depth 2 = Key Result, Depth 3+ = Task
+      const parentDepth = defaultParentId ? getTaskDepth(defaultParentId) : -1;
+      const defaultTypeForNew = getHierarchyTypeForDepth(parentDepth + 1);
+      const selectedType = isNew ? defaultTypeForNew : (t.type || 'task');
+
+      let typeOptionsHtml = state.hierarchy.map(h => {
+        const label = h.label || (h.type.charAt(0).toUpperCase() + h.type.slice(1).replace('_', ' '));
+        return `<option value="${h.type}" ${selectedType === h.type ? 'selected' : ''}>${h.icon || '📋'} ${label}</option>`;
+      }).join('');
+      typeOptionsHtml += `<option value="milestone" ${selectedType === 'milestone' ? 'selected' : ''}>◆ Milestone (Target Event)</option>`;
+
+      const displayId = t.displayId || t.id || "(Will be generated)";
+      const uuid = t.uuid || "(Will be generated)";
+
       container.innerHTML = `
         <form id="drawerInlineForm" onsubmit="saveDrawerForm(event)" style="display:flex; flex-direction:column; gap:12px;">
           <input type="hidden" id="drawerFormId" value="${t.id || ''}">
+          <input type="hidden" id="drawerFormUuid" value="${t.uuid || ''}">
+          <input type="hidden" id="drawerFormDisplayId" value="${t.displayId || ''}">
+
+          ${!isNew ? `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-glass); padding:6px 10px; border-radius:6px; border:1px solid var(--border-color); font-size:11px;">
+              <div><strong style="color:var(--text-muted);">CODE:</strong> <span style="font-family:monospace; color:var(--accent); font-weight:700;">${displayId}</span></div>
+              <div><strong style="color:var(--text-muted);">UUID:</strong> <span style="font-family:monospace; color:var(--text-dim);">${uuid.substr(0, 18)}...</span></div>
+            </div>
+          ` : ''}
 
           <div style="display:flex; gap:10px;">
             <div style="flex:1;">
               <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Item Type</label>
               <select id="drawerFormType" class="form-input" required style="width:100%; margin-top:4px;">
-                <option value="objective" ${t.type === 'objective' ? 'selected' : ''}>Objective (Top-Level Goal)</option>
-                <option value="project" ${t.type === 'project' ? 'selected' : ''}>Project / Sub-Project</option>
-                <option value="key_result" ${t.type === 'key_result' ? 'selected' : ''}>Key Result</option>
-                <option value="task" ${(!t.type || t.type === 'task') ? 'selected' : ''}>Task (Action Item)</option>
-                <option value="milestone" ${t.type === 'milestone' ? 'selected' : ''}>Milestone (Target Event)</option>
+                ${typeOptionsHtml}
               </select>
             </div>
             <div style="flex:1;">
               <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Parent Workstream (LOE)</label>
-              <select id="drawerFormParent" class="form-input" style="width:100%; margin-top:4px;"></select>
+              <select id="drawerFormParent" class="form-input" style="width:100%; margin-top:4px;" onchange="if(${isNew}) { const d = getTaskDepth(this.value); document.getElementById('drawerFormType').value = getHierarchyTypeForDepth(d + 1); }"></select>
             </div>
           </div>
 
@@ -3685,11 +5079,11 @@
           <div style="display:flex; gap:10px;">
             <div style="flex:1;">
               <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Status</label>
-              <select id="drawerFormStatus" class="form-input" style="width:100%; margin-top:4px;">
+              <select id="drawerFormStatus" class="form-input" style="width:100%; margin-top:4px;" onchange="handleDrawerStatusChange(this.value)">
                 <option value="Not Started" ${(t.status === 'Not Started') ? 'selected' : ''}>Not Started</option>
                 <option value="In Progress" ${(!t.status || t.status === 'In Progress') ? 'selected' : ''}>In Progress</option>
                 <option value="Blocked" ${(t.status === 'Blocked') ? 'selected' : ''}>Blocked</option>
-                <option value="Done" ${(t.status === 'Done') ? 'selected' : ''}>Done</option>
+                <option value="Completed" ${(t.status === 'Completed' || t.status === 'Done') ? 'selected' : ''}>Completed</option>
               </select>
             </div>
             <div style="flex:1;">
@@ -3707,7 +5101,7 @@
               <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Completion Progress</label>
               <span id="drawerFormProgressVal" style="font-weight:800; color:var(--accent); font-size:12px;">${t.progress || 0}%</span>
             </div>
-            <input type="range" id="drawerFormProgress" min="0" max="100" value="${t.progress || 0}" class="form-input" style="width:100%; margin-top:4px;" oninput="document.getElementById('drawerFormProgressVal').innerText = this.value + '%'">
+            <input type="range" id="drawerFormProgress" min="0" max="100" value="${t.progress || 0}" class="form-input" style="width:100%; margin-top:4px;" oninput="handleDrawerProgressChange(this.value)">
           </div>
 
           <div style="display:flex; gap:10px;">
@@ -3732,23 +5126,23 @@
           </div>
 
           <div>
-            <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Notes & Operational Briefing (Rich Text)</label>
+            <label class="form-label" style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Notes (Rich Text)</label>
             <div class="rich-text-wrapper" style="margin-top:4px;">
               <div class="rich-text-toolbar" onmousedown="event.preventDefault()">
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('strikeThrough')" title="Strikethrough"><s>S</s></button>
                 <span class="rt-divider"></span>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('formatBlock', 'h3')" title="Heading"><b>H3</b></button>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('insertUnorderedList')" title="Bullet List">• List</button>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('insertOrderedList')" title="Numbered List">1. List</button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('formatBlock', 'h3')" title="Heading"><b>H3</b></button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('insertUnorderedList')" title="Bullet List">• List</button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('insertOrderedList')" title="Numbered List">1. List</button>
                 <span class="rt-divider"></span>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('hiliteColor', 'rgba(56, 189, 248, 0.35)')" title="Highlight Text">🖍️ Highlight</button>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('formatBlock', 'blockquote')" title="Blockquote">❝ Quote</button>
-                <button type="button" class="rt-btn" onclick="execRichTextCommand('removeFormat')" title="Clear Formatting">🧹 Clear</button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('hiliteColor', 'rgba(56, 189, 248, 0.35)')" title="Highlight Text">🖍️ Highlight</button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('formatBlock', 'blockquote')" title="Blockquote">❝ Quote</button>
+                <button type="button" class="rt-btn" onclick="window.execRichTextCommand('removeFormat')" title="Clear Formatting">🧹 Clear</button>
               </div>
-              <div id="drawerFormNotesEditor" class="rich-text-editor" contenteditable="true" placeholder="Key operational context, briefing notes, lists, or requirements...">${t.notes || ''}</div>
+              <div id="drawerFormNotesEditor" class="rich-text-editor" contenteditable="true" placeholder="Key operational context, briefing notes, lists, or requirements..." oninput="window.saveNotesSelection()" onmouseup="window.saveNotesSelection()" onkeyup="window.saveNotesSelection()">${t.notes || ''}</div>
             </div>
           </div>
 
@@ -3781,9 +5175,9 @@
       const parentId = document.getElementById("drawerFormParent").value;
       const title = document.getElementById("drawerFormTitle").value.trim();
       const type = document.getElementById("drawerFormType").value;
-      const status = document.getElementById("drawerFormStatus").value;
+      let status = document.getElementById("drawerFormStatus").value;
       const health = document.getElementById("drawerFormHealth").value;
-      const progress = parseInt(document.getElementById("drawerFormProgress").value, 10) || 0;
+      let progress = parseInt(document.getElementById("drawerFormProgress").value, 10) || 0;
       const startDate = document.getElementById("drawerFormStartDate").value;
       const dueDate = document.getElementById("drawerFormDueDate").value;
       const leadId = document.getElementById("drawerFormLead").value;
@@ -3793,6 +5187,15 @@
       const notes = notesEditor ? notesEditor.innerHTML.trim() : "";
 
       if (!title) return;
+
+      // Status & Progress Coupling:
+      if (status === "Completed" && progress < 100) {
+        progress = 100;
+      } else if (progress === 100 && status !== "Blocked") {
+        status = "Completed";
+      } else if (status === "Completed" && progress < 100) {
+        status = "In Progress";
+      }
 
       if (id) {
         // Update item
@@ -3808,6 +5211,9 @@
           existing.definitionOfDone = definitionOfDone;
           existing.notes = notes;
 
+          if (!existing.uuid) existing.uuid = document.getElementById("drawerFormUuid")?.value || generateUUID();
+          if (!existing.displayId) existing.displayId = document.getElementById("drawerFormDisplayId")?.value || existing.id || generateDisplayId(type);
+
           if (type === "task" || type === "milestone") {
             existing.assigneeId = leadId;
             delete existing.leadId;
@@ -3819,7 +5225,7 @@
           // Check if parent changed
           function removeChild(tasks, targetId) {
             for (let i = 0; i < tasks.length; i++) {
-              if (tasks[i].id === targetId) return tasks.splice(i, 1)[0];
+              if (tasks[i].id === targetId || tasks[i].uuid === targetId || tasks[i].displayId === targetId) return tasks.splice(i, 1)[0];
               if (tasks[i].subTasks && tasks[i].subTasks.length > 0) {
                 const res = removeChild(tasks[i].subTasks, targetId);
                 if (res) return res;
@@ -3830,7 +5236,7 @@
 
           function findCurrentParentId(tasks, targetId, currP = "") {
             for (const t of tasks) {
-              if (t.id === targetId) return currP;
+              if (t.id === targetId || t.uuid === targetId || t.displayId === targetId) return currP;
               if (t.subTasks && t.subTasks.length > 0) {
                 const res = findCurrentParentId(t.subTasks, targetId, t.id);
                 if (res !== undefined) return res;
@@ -3863,10 +5269,13 @@
         renderAll();
         openInspector(id, false);
       } else {
-        // Create new item
-        const newId = `${type.substr(0, 1)}-${Date.now().toString().substr(-6)}`;
+        // Create new item with Hybrid UUID & Display ID
+        const newUuid = generateUUID();
+        const newDisplayId = generateDisplayId(type);
         const newItem = {
-          id: newId,
+          id: newDisplayId,
+          uuid: newUuid,
+          displayId: newDisplayId,
           type,
           title,
           status,
@@ -3909,7 +5318,7 @@
         isDrawerInlineEdit = false;
         saveToCache();
         renderAll();
-        openInspector(newId, false);
+        openInspector(newDisplayId, false);
       }
     }
 
@@ -4000,9 +5409,11 @@
 
       const members = collectAllTeamMembers();
       members.forEach(tm => {
+        const isInactive = Array.isArray(tm.flags) && tm.flags.includes("inactive");
         const opt = document.createElement("option");
         opt.value = tm.id;
-        opt.innerText = `${tm.name} (${(tm.role || 'Member').split('/')[0].trim()})`;
+        opt.innerText = `${tm.name} (${(tm.role || 'Member').split('/')[0].trim()})${isInactive ? ' [Inactive]' : ''}`;
+        if (isInactive) opt.style.color = "var(--text-dim)";
         if (tm.id === selectedLeadId) opt.selected = true;
         selectEl.appendChild(opt);
       });
@@ -4061,7 +5472,7 @@
       renderAll();
     }
 
-    // --- TEAM ROSTER RENDERER & PERSONNEL CRUD ---
+    // --- TEAM ROSTER RENDERER & PERSONNEL CRUD (TAGS, NOTES & EMAIL EXPORT) ---
     function collectAllTeamMembers() {
       const memberMap = new Map();
       if (state && Array.isArray(state.teamRoster)) {
@@ -4082,28 +5493,88 @@
       return Array.from(memberMap.values());
     }
 
+    function setTeamTagFilter(tag) {
+      teamActiveTagFilter = tag;
+      renderTeamRadar();
+    }
+
+    function renderTeamTagFilterChips() {
+      const container = document.getElementById("teamTagFilterChips");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const allFlags = ["all", ...(Array.isArray(state.memberFlags) ? state.memberFlags : ["primary", "support", "inactive"])];
+
+      allFlags.forEach(flag => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        const isActive = teamActiveTagFilter === flag;
+        chip.style.cssText = `
+          padding: 3px 12px;
+          border-radius: 20px;
+          font-size: 11px;
+          cursor: pointer;
+          font-weight: ${isActive ? '800' : '600'};
+          background: ${isActive ? 'var(--accent)' : 'var(--bg-glass)'};
+          color: ${isActive ? '#ffffff' : 'var(--text-muted)'};
+          border: 1px solid ${isActive ? 'var(--accent)' : 'var(--border-color)'};
+          transition: all 0.2s ease;
+        `;
+        chip.innerText = flag === "all" ? "🌐 ALL" : flag.toUpperCase();
+        chip.onclick = () => setTeamTagFilter(flag);
+        container.appendChild(chip);
+      });
+    }
+
     function renderTeamRadar() {
       const container = document.getElementById("teamRadarContainer") || document.getElementById("mainPageTeamRosterContainer");
       if (!container) return;
       container.innerHTML = "";
 
-      const members = collectAllTeamMembers();
+      renderTeamTagFilterChips();
+
+      let members = collectAllTeamMembers();
+      if (teamActiveTagFilter !== "all") {
+        members = members.filter(m => Array.isArray(m.flags) && m.flags.includes(teamActiveTagFilter));
+      }
 
       if (members.length === 0) {
-        container.innerHTML = `<p style="color:var(--text-muted); padding:10px 0;">No personnel in roster yet. Click "Add Team Member" above to add team members.</p>`;
+        container.innerHTML = `<p style="color:var(--text-muted); padding:10px 0; grid-column:1/-1;">No personnel matching the current filter. Click "Add Team Member" above or select another tag.</p>`;
         return;
       }
 
       members.forEach(tm => {
+        const isInactive = Array.isArray(tm.flags) && tm.flags.includes("inactive");
         const card = document.createElement("div");
-        card.className = "contact-card-box";
+        card.className = "contact-card-box" + (isInactive ? " member-card-inactive" : "");
         card.style.cssText = "padding:14px; display:flex; flex-direction:column; justify-content:space-between; gap:10px;";
+
+        let flagsHtml = "";
+        if (Array.isArray(tm.flags) && tm.flags.length > 0) {
+          flagsHtml = `<div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:6px;">` +
+            tm.flags.map(f => {
+              const cls = f === "primary" ? "flag-primary" : (f === "support" ? "flag-support" : (f === "inactive" ? "flag-inactive" : ""));
+              return `<span class="member-flag-badge ${cls}">${f.toUpperCase()}</span>`;
+            }).join('') + `</div>`;
+        }
+
+        let notesHtml = tm.notes ? `
+          <div class="member-notes-box">
+            <span style="font-weight:700; color:var(--text-main);">📝 Notes:</span> ${tm.notes}
+          </div>
+        ` : "";
+
         card.innerHTML = `
           <div>
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
               <div>
-                <div style="font-size:14px; font-weight:800; color:var(--text-main);">👤 ${tm.name}</div>
+                <div style="font-size:14px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:6px;">
+                  <span>👤 ${tm.name}</span>
+                  <span class="badge" style="font-size:10px; font-family:monospace; font-weight:700; color:var(--accent); background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.25);" title="Display Code: ${tm.displayId || tm.id}">${tm.displayId || tm.id}</span>
+                  ${isInactive ? `<span class="badge badge-blocked" style="font-size:9px; padding:1px 6px;">INACTIVE</span>` : ''}
+                </div>
                 <div style="font-size:11px; color:var(--accent); font-weight:700; margin-top:2px;">${tm.role}</div>
+                ${flagsHtml}
               </div>
               <div style="display:flex; gap:4px; flex-shrink:0;">
                 <button class="btn" onclick="event.stopPropagation(); openPersonnelModal('${tm.id}')" style="font-size:10px; padding:2px 6px;" title="Edit ${tm.name}">✏️</button>
@@ -4116,10 +5587,126 @@
               <div>🏢 DSN: ${tm.officePhone || 'N/A'}</div>
               <div>📱 Cell: ${tm.cellPhone || 'N/A'}</div>
             </div>
+            ${notesHtml}
           </div>
         `;
         container.appendChild(card);
       });
+    }
+
+    function fallbackCopyText(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) { }
+      document.body.removeChild(ta);
+    }
+
+    function copyDisplayedTeamEmails() {
+      let members = collectAllTeamMembers();
+      if (teamActiveTagFilter !== "all") {
+        members = members.filter(m => Array.isArray(m.flags) && m.flags.includes(teamActiveTagFilter));
+      }
+      const emails = members
+        .filter(m => !(Array.isArray(m.flags) && m.flags.includes("inactive")))
+        .map(m => m.email)
+        .filter(e => e && e.includes("@"));
+
+      if (emails.length === 0) {
+        showClipboardToast("No valid active emails found in displayed list.");
+        return;
+      }
+
+      const str = emails.join("; ");
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(str).then(() => {
+          showClipboardToast(`Copied ${emails.length} active email address(es) to clipboard!`);
+        }).catch(() => {
+          fallbackCopyText(str);
+          showClipboardToast(`Copied ${emails.length} active email address(es) to clipboard!`);
+        });
+      } else {
+        fallbackCopyText(str);
+        showClipboardToast(`Copied ${emails.length} active email address(es) to clipboard!`);
+      }
+    }
+
+    function copyFormattedTeamEmails() {
+      let members = collectAllTeamMembers();
+      if (teamActiveTagFilter !== "all") {
+        members = members.filter(m => Array.isArray(m.flags) && m.flags.includes(teamActiveTagFilter));
+      }
+      const activeMembers = members.filter(m => !(Array.isArray(m.flags) && m.flags.includes("inactive")) && m.email && m.email.includes("@"));
+
+      const toEmails = [];
+      const ccEmails = [];
+
+      activeMembers.forEach(m => {
+        const flags = Array.isArray(m.flags) ? m.flags : [];
+        if (flags.includes("support")) {
+          ccEmails.push(m.email);
+        } else {
+          toEmails.push(m.email);
+        }
+      });
+
+      if (toEmails.length === 0 && ccEmails.length === 0) {
+        showClipboardToast("No valid active emails found in displayed list.");
+        return;
+      }
+
+      const text = `To: ${toEmails.join("; ")}\nCc: ${ccEmails.join("; ")}`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showClipboardToast(`Copied To (${toEmails.length}) & Cc (${ccEmails.length}) emails!`);
+        }).catch(() => {
+          fallbackCopyText(text);
+          showClipboardToast(`Copied To (${toEmails.length}) & Cc (${ccEmails.length}) emails!`);
+        });
+      } else {
+        fallbackCopyText(text);
+        showClipboardToast(`Copied To (${toEmails.length}) & Cc (${ccEmails.length}) emails!`);
+      }
+    }
+
+    function renderPersonnelFlagsCheckboxes(selectedFlags = []) {
+      const container = document.getElementById("personnelFormFlagsContainer");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const flagsList = Array.isArray(state.memberFlags) ? state.memberFlags : ["primary", "support", "inactive"];
+
+      flagsList.forEach(flag => {
+        const isChecked = selectedFlags.includes(flag);
+        const label = document.createElement("label");
+        label.style.cssText = "display:flex; align-items:center; gap:6px; font-size:11px; cursor:pointer; background:var(--bg-glass); padding:4px 8px; border-radius:6px; border:1px solid var(--border-color);";
+        const cls = flag === "primary" ? "flag-primary" : (flag === "support" ? "flag-support" : (flag === "inactive" ? "flag-inactive" : ""));
+        label.innerHTML = `
+          <input type="checkbox" name="personnelFlags" value="${flag}" ${isChecked ? 'checked' : ''}>
+          <span class="member-flag-badge ${cls}">${flag.toUpperCase()}</span>
+        `;
+        container.appendChild(label);
+      });
+    }
+
+    function addNewMemberFlag() {
+      const input = document.getElementById("newFlagInput");
+      if (!input) return;
+      const val = input.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (!val) return;
+      if (!Array.isArray(state.memberFlags)) state.memberFlags = ["primary", "support", "inactive"];
+      if (!state.memberFlags.includes(val)) {
+        state.memberFlags.push(val);
+        saveToCache();
+      }
+      input.value = "";
+      const checkedBoxes = Array.from(document.querySelectorAll('input[name="personnelFlags"]:checked')).map(cb => cb.value);
+      if (!checkedBoxes.includes(val)) checkedBoxes.push(val);
+      renderPersonnelFlagsCheckboxes(checkedBoxes);
+      renderTeamTagFilterChips();
     }
 
     function openPersonnelModal(memberId = null) {
@@ -4131,12 +5718,17 @@
       const emailInput = document.getElementById("personnelFormEmail");
       const officeInput = document.getElementById("personnelFormOffice");
       const cellInput = document.getElementById("personnelFormCell");
+      const notesInput = document.getElementById("personnelFormNotes");
 
       if (!modal) return;
 
+      const hybridBanner = document.getElementById("personnelFormHybridIdBanner");
+      const displayIdText = document.getElementById("personnelDisplayIdText");
+      const uuidText = document.getElementById("personnelUuidText");
+
       if (memberId) {
         const members = collectAllTeamMembers();
-        const found = members.find(m => m.id === memberId);
+        const found = members.find(m => m.id === memberId || m.uuid === memberId || m.displayId === memberId);
         if (found) {
           title.innerText = `✏️ Edit Team Member: ${found.name}`;
           formId.value = found.id;
@@ -4145,6 +5737,15 @@
           emailInput.value = found.email || "";
           officeInput.value = found.officePhone || "";
           cellInput.value = found.cellPhone || "";
+          if (notesInput) notesInput.value = found.notes || "";
+          renderPersonnelFlagsCheckboxes(found.flags || []);
+
+          if (hybridBanner && displayIdText && uuidText) {
+            displayIdText.innerText = found.displayId || found.id || "N/A";
+            uuidText.innerText = found.uuid || "N/A";
+            uuidText.title = found.uuid || "";
+            hybridBanner.style.display = "flex";
+          }
         }
       } else {
         title.innerText = "👤 Add New Team Member";
@@ -4154,6 +5755,9 @@
         emailInput.value = "";
         officeInput.value = "";
         cellInput.value = "";
+        if (notesInput) notesInput.value = "";
+        renderPersonnelFlagsCheckboxes(["primary"]);
+        if (hybridBanner) hybridBanner.style.display = "none";
       }
 
       modal.classList.add("open");
@@ -4172,6 +5776,9 @@
       const email = document.getElementById("personnelFormEmail").value.trim();
       const officePhone = document.getElementById("personnelFormOffice").value.trim();
       const cellPhone = document.getElementById("personnelFormCell").value.trim();
+      const notesInput = document.getElementById("personnelFormNotes");
+      const notes = notesInput ? notesInput.value.trim() : "";
+      const flags = Array.from(document.querySelectorAll('input[name="personnelFlags"]:checked')).map(cb => cb.value);
 
       if (!name) return;
 
@@ -4180,25 +5787,36 @@
       }
 
       if (id) {
-        const existing = state.teamRoster.find(m => m.id === id);
+        const existing = state.teamRoster.find(m => m.id === id || m.uuid === id || m.displayId === id);
         if (existing) {
+          if (!existing.uuid) existing.uuid = generateUUID();
+          if (!existing.displayId) existing.displayId = existing.id || generateMemberDisplayId(state.teamRoster);
           existing.name = name;
           existing.role = role;
           existing.email = email;
           existing.officePhone = officePhone;
           existing.cellPhone = cellPhone;
+          existing.notes = notes;
+          existing.flags = flags;
         } else {
-          state.teamRoster.push({ id, name, role, email, officePhone, cellPhone });
+          const uuid = generateUUID();
+          const displayId = generateMemberDisplayId(state.teamRoster);
+          state.teamRoster.push({ id: displayId, uuid, displayId, name, role, email, officePhone, cellPhone, notes, flags });
         }
       } else {
-        const newId = `tm-${Date.now().toString().substr(-6)}`;
+        const uuid = generateUUID();
+        const displayId = generateMemberDisplayId(state.teamRoster);
         state.teamRoster.push({
-          id: newId,
+          id: displayId,
+          uuid,
+          displayId,
           name,
           role,
           email,
           officePhone,
-          cellPhone
+          cellPhone,
+          notes,
+          flags
         });
       }
 
