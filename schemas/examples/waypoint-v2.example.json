@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 2,
+  "lastUpdated": "2026-09-29T21:00:00Z",
+  "classification": "UNCLASSIFIED",
+  "enums": {
+    "type": [
+      "project",
+      "objective",
+      "key_result",
+      "task",
+      "milestone"
+    ],
+    "status": [
+      "Not Started",
+      "In Progress",
+      "Blocked",
+      "Completed"
+    ],
+    "health": [
+      "Green",
+      "Yellow",
+      "Red"
+    ]
+  },
+  "hierarchy": [
+    {
+      "level": 0,
+      "type": "project",
+      "label": "Project",
+      "icon": "📁"
+    },
+    {
+      "level": 1,
+      "type": "objective",
+      "label": "Objective",
+      "icon": "🎯"
+    },
+    {
+      "level": 2,
+      "type": "key_result",
+      "label": "Key Result",
+      "icon": "📊"
+    },
+    {
+      "level": 3,
+      "type": "task",
+      "label": "Task",
+      "icon": "📋"
+    }
+  ],
+  "memberFlags": [
+    "primary",
+    "support",
+    "inactive"
+  ],
+  "teamRoster": [
+    {
+      "id": "TM-001",
+      "name": "Marcus White",
+      "role": "Executive Sponsor / VP of Technology",
+      "email": "marcus.white@example.com",
+      "officePhone": "555-0100",
+      "cellPhone": "555-111-2222",
+      "flags": [
+        "primary"
+      ],
+      "notes": "Portfolio executive sponsor; quarterly briefings required.",
+      "displayId": "TM-001",
+      "uuid": "b8d362b8-bb59-4c03-84bf-afde1ad14dfe"
+    },
+    {
+      "id": "TM-002",
+      "name": "Jane A. Smith",
+      "role": "Program Director",
+      "email": "jane.smith@example.com",
+      "officePhone": "555-0150",
+      "cellPhone": "555-222-3333",
+      "flags": [
+        "primary"
+      ],
+      "notes": "Primary operational contact for Zero-Trust and architecture milestones.",
+      "displayId": "TM-002",
+      "uuid": "6fac524b-c47c-450a-833b-98ca9548ab1f"
+    },
+    {
+      "id": "TM-003",
+      "name": "John Doe",
+      "role": "Deputy Program Manager",
+      "email": "john.doe@example.com",
+      "officePhone": "555-0199",
+      "cellPhone": "555-333-4444",
+      "flags": [
+        "primary"
+      ],
+      "notes": "Leads decision support engine (Waypoint) delivery and timeline sync.",
+      "displayId": "TM-003",
+      "uuid": "2a75b1f7-7c46-46de-b229-17590cb9db41"
+    },
+    {
+      "id": "TM-004",
+      "name": "Alice Johnson",
+      "role": "Cyber Operations Lead",
+      "email": "alice.johnson@example.com",
+      "officePhone": "555-0188",
+      "cellPhone": "555-444-5555",
+      "flags": [
+        "support"
+      ],
+      "notes": "Coordinates security review gates and ATO paperwork with accrediting officers.",
+      "displayId": "TM-004",
+      "uuid": "45b2d941-dda4-479c-a239-329387232603"
+    },
+    {
+      "id": "TM-005",
+      "name": "E. Wright",
+      "role": "Lead Software Engineer",
+      "email": "e.wright@example.com",
+      "officePhone": "555-0177",
+      "cellPhone": "555-555-6666",
+      "flags": [
+        "support"
+      ],
+      "notes": "Frontend architect for single-file zero-dependency offline web stack.",
+      "displayId": "TM-005",
+      "uuid": "9dde7c48-8b98-43fe-850a-105d94e9ff87"
+    },
+    {
+      "id": "TM-006",
+      "name": "M. Chen",
+      "role": "Systems Administrator",
+      "email": "m.chen@example.com",
+      "officePhone": "555-0166",
+      "cellPhone": "555-666-7777",
+      "flags": [
+        "support"
+      ],
+      "notes": "Network routing, enclave firewall rules, and policy mapping lead.",
+      "displayId": "TM-006",
+      "uuid": "76984ed1-433d-4d3b-867a-54a9be317072"
+    },
+    {
+      "id": "TM-007",
+      "name": "Robert Miller",
+      "role": "Former Compliance Officer",
+      "email": "robert.miller@example.com",
+      "officePhone": "555-0144",
+      "cellPhone": "555-999-0000",
+      "flags": [
+        "inactive"
+      ],
+      "notes": "Departed organization FY26 Q2; retained for historical audit trail.",
+      "displayId": "TM-007",
+      "uuid": "0d3271ce-d008-499f-b3ff-9b194029736c"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "PRJ-001",
+      "type": "project",
+      "title": "Operation Sentinel Dawn — Cyber Modernization Portfolio",
+      "status": "In Progress",
+      "health": "Yellow",
+      "progress": 68,
+      "leadId": "TM-001",
+      "endStateVision": "Establish fully resilient, zero-trust digital networks and air-gapped decision support nodes across all operational units by FY28.",
+      "definitionOfDone": "All operational command nodes functional on zero-trust architecture with security ATO sign-off.",
+      "startDate": "2026-09-01",
+      "dueDate": "2027-09-30",
+      "notes": "Primary strategic initiative modernizing enterprise infrastructure and offline decision tools.",
+      "subTasks": [
+        {
+          "id": "OBJ-001",
+          "type": "objective",
+          "title": "Zero-Trust Network Architecture (ZTNA)",
+          "status": "In Progress",
+          "health": "Green",
+          "progress": 75,
+          "leadId": "TM-002",
+          "startDate": "2026-09-05",
+          "dueDate": "2026-12-15",
+          "notes": "Deploying identity provider integration and micro-segmentation security policies across network nodes.",
+          "subTasks": [
+            {
+              "id": "KR-001",
+              "type": "key_result",
+              "title": "Identity Provider (IdP) & SSO Integration",
+              "status": "Completed",
+              "progress": 100,
+              "assigneeId": "TM-004",
+              "definitionOfDone": "Single sign-on authentication verified on testbed environment with 100% pass rate.",
+              "startDate": "2026-09-06",
+              "dueDate": "2026-09-20",
+              "estimatedDuration": "2 weeks",
+              "blocked": false,
+              "notes": "Single sign-on authentication verified on testbed with CAC/PKI certificate pass.",
+              "displayId": "KR-001",
+              "uuid": "6a035cd2-881d-4d91-b82e-b644bcb7c284"
+            },
+            {
+              "id": "TSK-001",
+              "type": "task",
+              "title": "Micro-Segmentation Security Policy Mapping",
+              "status": "In Progress",
+              "progress": 50,
+              "assigneeId": "TM-006",
+              "definitionOfDone": "100% of server-to-client traffic flows mapped and firewall rules configured across base enclaves.",
+              "startDate": "2026-09-21",
+              "dueDate": "2026-10-18",
+              "estimatedDuration": "4 weeks",
+              "blocked": false,
+              "notes": "Mapping server-to-client traffic flows across base enclaves.",
+              "displayId": "TSK-001",
+              "uuid": "27876148-e814-4e79-afee-1e69e28fa0c3"
+            },
+            {
+              "id": "MS-001",
+              "type": "milestone",
+              "title": "Zero-Trust Baseline Architecture Sign-Off",
+              "status": "In Progress",
+              "progress": 0,
+              "assigneeId": "TM-002",
+              "definitionOfDone": "Formal baseline architecture review document signed off by Cyber Security Directorate.",
+              "dueDate": "2026-10-30",
+              "notes": "Formal review gate with Cyber Security Directorate.",
+              "displayId": "MS-001",
+              "uuid": "f27894b5-115d-4e18-b6a3-c5649f6aad3c"
+            }
+          ],
+          "displayId": "OBJ-001",
+          "uuid": "af85913a-9b4d-462c-a679-cc63e32d46ae"
+        },
+        {
+          "id": "OBJ-002",
+          "type": "objective",
+          "title": "Offline Decision Support Engine (Waypoint)",
+          "status": "In Progress",
+          "health": "Green",
+          "progress": 82,
+          "leadId": "TM-003",
+          "startDate": "2026-09-10",
+          "dueDate": "2026-11-15",
+          "notes": "Single-file HTML5/CSS3/JS offline portfolio management engine with zero external dependencies.",
+          "subTasks": [
+            {
+              "id": "KR-002",
+              "type": "key_result",
+              "title": "Single-File HTML5 Glassmorphic UI Framework",
+              "status": "Completed",
+              "progress": 100,
+              "assigneeId": "TM-005",
+              "definitionOfDone": "Single-file HTML5 UI framework created, styled, and verified offline with zero CDN calls.",
+              "startDate": "2026-09-10",
+              "dueDate": "2026-09-20",
+              "estimatedDuration": "10 days",
+              "blocked": false,
+              "notes": "High-contrast midnight theme, glassmorphic panels, and security classification banners.",
+              "displayId": "KR-002",
+              "uuid": "24309766-7d39-4a2c-ae8e-8c79dda7a02a"
+            },
+            {
+              "id": "TSK-002",
+              "type": "task",
+              "title": "Cascading Inheritance & Recursive Tree Resolver",
+              "status": "Completed",
+              "progress": 100,
+              "assigneeId": "TM-005",
+              "definitionOfDone": "Cascading resolver unit tests passing for team roster and vision inheritance down sub-task branches.",
+              "startDate": "2026-09-20",
+              "dueDate": "2026-09-28",
+              "estimatedDuration": "8 days",
+              "blocked": false,
+              "notes": "Automatic inheritance of teamMembers and endStateVision down subTask branches.",
+              "displayId": "TSK-002",
+              "uuid": "e5acf59e-9c95-4a8d-905d-cd144365038c"
+            },
+            {
+              "id": "TSK-003",
+              "type": "task",
+              "title": "Interactive Gantt Timeline & Schedule Engine",
+              "status": "In Progress",
+              "progress": 60,
+              "assigneeId": "TM-005",
+              "definitionOfDone": "Timeline view charts date axes, project bars, and milestone markers accurately.",
+              "startDate": "2026-09-29",
+              "dueDate": "2026-10-15",
+              "estimatedDuration": "2 weeks",
+              "blocked": false,
+              "notes": "Time axis rendering days/weeks/months with project bars and milestone diamonds.",
+              "displayId": "TSK-003",
+              "uuid": "311697b1-df4d-4616-a1f2-0fc5f69dd873"
+            },
+            {
+              "id": "MS-002",
+              "type": "milestone",
+              "title": "Full Prototype Briefing & Field Test",
+              "status": "In Progress",
+              "progress": 0,
+              "assigneeId": "TM-003",
+              "definitionOfDone": "Offline prototype briefing delivered to Program Director with full JSON import/export validation.",
+              "dueDate": "2026-11-01",
+              "notes": "Demonstrate offline JSON import/export and executive tree rendering.",
+              "displayId": "MS-002",
+              "uuid": "4beb7761-cc58-4829-80dd-8edf1770762f"
+            }
+          ],
+          "displayId": "OBJ-002",
+          "uuid": "71c9ed3b-75e4-486d-8076-d05e2855c5b2"
+        },
+        {
+          "id": "OBJ-003",
+          "type": "objective",
+          "title": "Cyber Authority to Operate (ATO) Package",
+          "status": "Blocked",
+          "health": "Red",
+          "progress": 35,
+          "leadId": "TM-004",
+          "startDate": "2026-09-12",
+          "dueDate": "2026-11-30",
+          "notes": "Formal cyber risk assessment, vulnerability scanning, and approval package.",
+          "subTasks": [
+            {
+              "id": "KR-003",
+              "type": "key_result",
+              "title": "Static Application Security Testing (SAST) Audit",
+              "status": "Completed",
+              "progress": 100,
+              "assigneeId": "TM-004",
+              "definitionOfDone": "SAST scan report clean with zero high or critical security findings.",
+              "startDate": "2026-09-15",
+              "dueDate": "2026-09-22",
+              "estimatedDuration": "1 week",
+              "blocked": false,
+              "notes": "Confirmed zero external network calls, CDNs, or dynamic script injections.",
+              "displayId": "KR-003",
+              "uuid": "5ad25023-6ffb-4533-a151-2663c20d4039"
+            },
+            {
+              "id": "TSK-004",
+              "type": "task",
+              "title": "Obtain Cyber Security Approval Signature",
+              "status": "Blocked",
+              "progress": 20,
+              "assigneeId": "TM-004",
+              "definitionOfDone": "Designated Approving Authority signature affixed to official ATO memorandum.",
+              "startDate": "2026-09-22",
+              "dueDate": "2026-10-15",
+              "estimatedDuration": "3 weeks",
+              "blocked": true,
+              "delegatedToId": "TM-004",
+              "delegatedOnDate": "2026-09-22",
+              "delegatedDueDate": "2026-10-05",
+              "notes": "Designated Approving Authority on leave until Oct 5th.",
+              "displayId": "TSK-004",
+              "uuid": "d26ca803-cca8-4476-8f44-27df58db0b90"
+            },
+            {
+              "id": "MS-003",
+              "type": "milestone",
+              "title": "ATO Package Formal Submission",
+              "status": "Not Started",
+              "progress": 0,
+              "assigneeId": "TM-004",
+              "definitionOfDone": "Complete compliance binder submitted to Accrediting Authority.",
+              "dueDate": "2026-11-15",
+              "notes": "Submit complete compliance binder to Accrediting Authority.",
+              "displayId": "MS-003",
+              "uuid": "fddaa99a-9af0-446c-8e11-a69c0fe2d9f2"
+            }
+          ],
+          "displayId": "OBJ-003",
+          "uuid": "61ca3f77-c45c-4fb0-957d-56c7c940f4fa"
+        }
+      ],
+      "displayId": "PRJ-001",
+      "uuid": "a49135e4-9231-4cf3-8b2d-1d723f2dee6b"
+    }
+  ]
+}

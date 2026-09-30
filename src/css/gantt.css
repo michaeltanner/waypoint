@@ -91,3 +91,17 @@
     .gantt-handle:hover {
       fill: var(--accent);
     }
+
+    /* Mobile Responsive Timeline / Gantt */
+    @media (max-width: 768px) {
+      .frappe-gantt-label-col {
+        width: 140px;
+      }
+      .frappe-gantt-label-row {
+        font-size: 11px;
+        padding-right: 6px;
+      }
+      .frappe-gantt-wrapper {
+        height: 500px;
+      }
+    }

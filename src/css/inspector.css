@@ -201,3 +201,38 @@
       padding: 1px 5px;
       border-radius: 4px;
     }
+
+    /* Mobile Responsive Inspector Drawer */
+    @media (max-width: 640px) {
+      .inspector-panel {
+        width: 100vw;
+        max-width: 100vw;
+        right: -100vw;
+        border-left: none;
+        box-shadow: none;
+      }
+      .inspector-panel.open {
+        right: 0;
+      }
+      .inspector-panel.maximized {
+        width: 100vw;
+        max-width: 100vw;
+      }
+      #drawerMaximizeBtn {
+        display: none !important;
+      }
+      .inspector-head {
+        padding: 12px 14px;
+      }
+      .inspector-content {
+        padding: 14px 12px;
+        gap: 14px;
+      }
+      .rich-text-toolbar {
+        gap: 3px;
+      }
+      .rt-btn {
+        padding: 3px 6px;
+        font-size: 11px;
+      }
+    }

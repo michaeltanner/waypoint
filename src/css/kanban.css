@@ -148,3 +148,43 @@
       text-overflow: ellipsis;
       max-width: 100%;
     }
+
+    /* Mobile Responsive Kanban (Touch Swiping & Scroll Snap) */
+    @media (max-width: 768px) {
+      .kanban-sticky-header {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        scrollbar-width: none;
+        padding: 6px 0;
+      }
+      .kanban-sticky-header::-webkit-scrollbar {
+        display: none;
+      }
+      .kanban-status-head {
+        flex: 0 0 78vw;
+        max-width: 300px;
+        scroll-snap-align: center;
+        box-sizing: border-box;
+      }
+      .kanban-swimlane-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        padding-bottom: 8px;
+        scrollbar-width: thin;
+      }
+      .kanban-col {
+        flex: 0 0 78vw;
+        max-width: 300px;
+        scroll-snap-align: center;
+        box-sizing: border-box;
+      }
+      .kanban-swimlane {
+        padding: 10px;
+      }
+    }

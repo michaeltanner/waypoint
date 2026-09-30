@@ -179,6 +179,13 @@ Waypoint uses a single-root nested JSON structure (`schemaVersion: 2`) with a hy
 }
 ```
 
+### Schema Evolution & Backwards-Compatibility Policy
+Waypoint enforces a strict backwards-compatibility policy. Whenever a new `schemaVersion` is introduced:
+- A migration translator (`convertV(N-1)toVN`) is implemented in both the browser runtime ([`src/js/core/converter.js`](src/js/core/converter.js)) and standalone CLI ([`scripts/convert-schema.js`](scripts/convert-schema.js)).
+- Legacy workspace files are automatically upgraded in memory upon opening in Waypoint without user friction.
+- Formal JSON Schema specifications and example files are archived in [`schemas/`](schemas/).
+- See [`schemas/README.md`](schemas/README.md) and [`AGENTS.md`](AGENTS.md) for full protocol instructions.
+
 ---
 
 ## Feature Backlog & Roadmap

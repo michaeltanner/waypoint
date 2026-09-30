@@ -583,3 +583,59 @@
       font-size: 13px;
       color: var(--text-main);
     }
+
+    /* Mobile Responsive Tree & Hierarchy */
+    @media (max-width: 768px) {
+      .hero-objective-card {
+        padding: 16px;
+      }
+      .hero-objective-title {
+        font-size: 18px;
+      }
+      .hero-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .stat-card {
+        padding: 10px;
+      }
+      .stat-card div:first-child {
+        font-size: 18px !important;
+      }
+      .subtree-container {
+        margin-left: 8px;
+        padding-left: 8px;
+        border-left: 1px dashed rgba(255, 255, 255, 0.15);
+      }
+      .action-row-header {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .action-row-header > div:last-child {
+        width: 100%;
+        justify-content: flex-start !important;
+      }
+      .exec-card-top {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .row-add-slot {
+        width: auto;
+      }
+      .clipboard-toast {
+        bottom: 40px;
+        right: 16px;
+        left: 16px;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .hero-metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      .vision-callout-box {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+    }

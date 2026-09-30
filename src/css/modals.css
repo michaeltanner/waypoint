@@ -108,3 +108,20 @@
       border-color: var(--accent);
       box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
     }
+
+    /* Mobile Responsive Modals */
+    @media (max-width: 600px) {
+      .modal-overlay {
+        padding: 8px;
+      }
+      .modal-card {
+        max-height: 96vh;
+        border-radius: 8px;
+      }
+      .modal-head {
+        padding: 12px 14px;
+      }
+      .modal-body {
+        padding: 14px;
+      }
+    }

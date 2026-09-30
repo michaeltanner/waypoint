@@ -4,13 +4,26 @@ let workspaceOpenedTime = null;
 
 // --- WORKSPACE & FILE MANAGEMENT ENGINE (LAUNCHER, RECENTS & GLOBAL DROP) ---
     function loadWorkspaceFromObject(parsed, sourceLabel = "Workspace File") {
+      let wasMigrated = false;
+      if (parsed && typeof parsed === "object" && (parsed.schemaVersion === 1 || !parsed.schemaVersion)) {
+        try {
+          if (typeof convertV1toV2 === "function") {
+            parsed = convertV1toV2(parsed);
+            wasMigrated = true;
+          }
+        } catch (err) {
+          alert(`MIGRATION ERROR: Failed to auto-upgrade Schema v1 workspace:\n${err.message}`);
+          return false;
+        }
+      }
+
       if (!validateWorkspaceSchema(parsed)) {
         alert(`INVALID FILE: Schema validation failed!\nEnsure schemaVersion is ${SCHEMA_VERSION} and root 'tasks' array contains EXACTLY ONE primary root-level workstream item.`);
         return false;
       }
       state = parsed;
       migrateState(state);
-      isWorkspaceDirty = false;
+      isWorkspaceDirty = wasMigrated;
       activeFilterId = null;
       saveToCache(false);
       saveToRecentWorkspaces(state, sourceLabel);
@@ -18,7 +31,11 @@ let workspaceOpenedTime = null;
       updateKanbanGroupByOptions();
       switchView("tree");
       renderAll();
-      showClipboardToast(`Loaded "${state.tasks[0]?.title || sourceLabel}"`);
+      if (wasMigrated) {
+        showClipboardToast(`Auto-upgraded "${state.tasks[0]?.title || sourceLabel}" from Schema v1 to v2!`, "⚡");
+      } else {
+        showClipboardToast(`Loaded "${state.tasks[0]?.title || sourceLabel}"`);
+      }
       return true;
     }
 

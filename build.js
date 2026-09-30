@@ -33,6 +33,7 @@ const CSS_FILES = [
 const JS_FILES = [
   'core/schema.js',
   'core/sample-data.js',
+  'core/converter.js',
   'core/hierarchy.js',
   'core/storage.js',
   'core/navigation.js',

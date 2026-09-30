@@ -441,13 +441,13 @@
     }
 
 
-    /* Responsive Header Scaling without Horizontal Scrollbars */
+    /* Responsive Header & Layout Scaling (COA #1: Mobile-Adaptive Shell) */
     @media (max-width: 960px) {
       .brand-text {
         display: none;
       }
       .nav-tab {
-        padding: 6px 10px;
+        padding: 6px 12px;
         font-size: 12px;
         gap: 5px;
       }
@@ -462,12 +462,16 @@
       .header-left-zone {
         gap: 8px;
       }
+      main.main-content {
+        padding: 16px;
+        gap: 16px;
+      }
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 768px) {
       header {
         flex-wrap: wrap;
-        padding: 8px 12px;
+        padding: 8px 10px;
         gap: 8px;
       }
       .header-left-zone {
@@ -478,15 +482,70 @@
         display: inline-block;
         font-size: 16px;
       }
+      .header-file-group {
+        gap: 4px;
+      }
+      .header-file-group .btn {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+      .header-divider {
+        display: none;
+      }
       .nav-tabs {
         width: 100%;
-        justify-content: space-around;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        justify-content: flex-start;
+        gap: 6px;
+        padding: 4px 2px;
+      }
+      .nav-tabs::-webkit-scrollbar {
+        display: none;
       }
       .nav-tab {
-        flex: 1;
-        justify-content: center;
-        padding: 6px 4px;
-        font-size: 11px;
+        flex: 0 0 auto;
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      main.main-content {
+        padding: 12px 10px;
+        gap: 12px;
+      }
+      .status-workspace-title {
+        max-width: 140px;
+      }
+      #teamRadarContainer {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .brand-text {
+        display: none;
+      }
+      header {
+        padding: 6px 8px;
+        gap: 6px;
+      }
+      .header-file-group .btn {
+        padding: 5px 6px;
+        font-size: 10.5px;
+      }
+      .status-bar-center {
+        display: none;
+      }
+      .bottom-status-bar {
+        padding: 3px 8px;
+      }
+      .status-workspace-title {
+        max-width: 110px;
+        font-size: 10px;
+      }
+      .status-bar-right {
+        gap: 6px;
+        font-size: 10px;
       }
     }
 

@@ -355,7 +355,7 @@
 
         card.innerHTML = `
           <div class="exec-card-top" style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:12px;">
-            <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+            <div class="tree-node-main" style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
               ${hasSubtasks ? `
                 <button class="accordion-toggle-btn" onclick="toggleAccordionNode('${resolved.id}', event)" title="${isTreeExpanded ? 'Collapse sub-elements' : 'Expand sub-elements'}">
                   ${isTreeExpanded ? '▼' : '▶'}
@@ -367,7 +367,7 @@
               <span style="font-size:15px; font-weight:800; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" onclick="openInspector(findTaskResolved('${resolved.id}'))" title="Click for Inspector Drawer">${resolved.title}</span>
             </div>
 
-            <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+            <div class="tree-node-meta" style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
               <div style="font-size:11px; font-weight:700; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
                 <span>${resolved.progress || 0}%</span>
                 <div class="progress-bar-track" style="width:45px; margin:0;">
@@ -431,7 +431,7 @@
 
         row.innerHTML = `
           <div class="action-row-header">
-            <div class="action-title-group" style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+            <div class="action-title-group tree-node-main" style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
               ${hasSubtasks ? `
                 <button class="accordion-toggle-btn" onclick="toggleAccordionNode('${resolved.id}', event)" title="${isTreeExpanded ? 'Collapse sub-elements' : 'Expand sub-elements'}">
                   ${isTreeExpanded ? '▼' : '▶'}
@@ -444,7 +444,7 @@
               ${blockedBadge}
             </div>
 
-            <div style="display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-muted); flex-shrink:0;">
+            <div class="tree-node-meta" style="display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-muted); flex-shrink:0;">
               <span>👤 ${assigneeMember ? assigneeMember.name : 'Unassigned'}</span>
               <span>📅 Due: ${resolved.dueDate || 'N/A'}</span>
               <span class="badge ${statusClass}">${resolved.status}</span>

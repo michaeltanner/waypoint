@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Waypoint Workspace Schema v1",
+  "description": "Historical Schema v1 specification for Waypoint portfolio and task management (initial release).",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "lastUpdated",
+    "classification",
+    "enums",
+    "tasks"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Fixed schema version identifier (1)."
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of last workspace modification."
+    },
+    "classification": {
+      "type": "string",
+      "description": "Security classification marking (e.g. UNCLASSIFIED, CUI, SECRET)."
+    },
+    "enums": {
+      "type": "object",
+      "required": ["type", "status", "health"],
+      "properties": {
+        "type": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Allowed workstream item types."
+        },
+        "status": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Allowed workstream item statuses (includes 'Done' in v1)."
+        },
+        "health": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "description": "Single-root array containing the primary workstream.",
+      "items": {
+        "$ref": "#/definitions/taskItemV1"
+      }
+    }
+  },
+  "definitions": {
+    "teamMemberV1": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "example": "tm-101" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "email": { "type": "string" },
+        "officePhone": { "type": "string" },
+        "cellPhone": { "type": "string" }
+      }
+    },
+    "taskItemV1": {
+      "type": "object",
+      "required": ["id", "type", "title", "status", "health", "progress"],
+      "properties": {
+        "id": { "type": "string", "example": "t-001" },
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "status": { "type": "string", "enum": ["Not Started", "In Progress", "Blocked", "Done"] },
+        "health": { "type": "string", "enum": ["Green", "Yellow", "Red"] },
+        "progress": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "leadId": { "type": "string" },
+        "assigneeId": { "type": "string" },
+        "startDate": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "endStateVision": { "type": "string" },
+        "definitionOfDone": { "type": "string" },
+        "notes": { "type": "string" },
+        "estimatedDuration": { "type": "string" },
+        "blocked": { "type": "boolean" },
+        "teamMembers": {
+          "type": "array",
+          "description": "In v1, team members were embedded under the root task item.",
+          "items": { "$ref": "#/definitions/teamMemberV1" }
+        },
+        "subTasks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/taskItemV1" }
+        }
+      }
+    }
+  }
+}
