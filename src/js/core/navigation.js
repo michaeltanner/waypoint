@@ -75,7 +75,7 @@ function setClassification(val, isUserChange = false) {
   const bottomText = document.getElementById("bottomClassificationText");
 
   if (top) top.className = "classification-banner " + val.toLowerCase();
-  if (bottom) bottom.className = "classification-banner " + val.toLowerCase();
+  if (bottom) bottom.className = "bottom-status-bar " + val.toLowerCase();
   if (select) select.value = val;
   if (bottomText) bottomText.innerText = val;
 
@@ -100,6 +100,9 @@ function switchView(viewId) {
 
   const activePane = document.getElementById(`view-${viewId}`);
   if (activePane) activePane.classList.add("active");
+  if (viewId === "json" && typeof renderJsonSourceView === "function") {
+    renderJsonSourceView();
+  }
 }
 
 function onSearchInput(val) {
@@ -109,36 +112,26 @@ function onSearchInput(val) {
 
 function updateLayoutForWorkspaceState() {
   const isWorkspaceEmpty = !state.tasks || state.tasks.length === 0;
-  const newBtn = document.getElementById("headerNewWorkstreamBtn");
-  const hierBtn = document.getElementById("headerHierarchyBtn");
-  const expBtn = document.getElementById("headerExportBtn");
+  const saveBtn = document.getElementById("headerSaveBtn");
+  const saveAsBtn = document.getElementById("headerSaveAsBtn");
+  const closeBtn = document.getElementById("headerCloseBtn");
   const navTabs = document.getElementById("navTabs");
-  const searchInput = document.getElementById("globalSearch");
 
   if (isWorkspaceEmpty) {
-    if (newBtn) newBtn.style.display = "none";
-    if (hierBtn) hierBtn.style.display = "none";
-    if (expBtn) expBtn.style.display = "none";
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.style.opacity = "0.35"; saveBtn.style.pointerEvents = "none"; }
+    if (saveAsBtn) { saveAsBtn.disabled = true; saveAsBtn.style.opacity = "0.35"; saveAsBtn.style.pointerEvents = "none"; }
+    if (closeBtn) { closeBtn.disabled = true; closeBtn.style.opacity = "0.35"; closeBtn.style.pointerEvents = "none"; }
     if (navTabs) {
       navTabs.style.pointerEvents = "none";
       navTabs.style.opacity = "0.35";
     }
-    if (searchInput) {
-      searchInput.disabled = true;
-      searchInput.value = "";
-      searchInput.placeholder = "Load a workspace to search...";
-    }
   } else {
-    if (newBtn) newBtn.style.display = "inline-flex";
-    if (hierBtn) hierBtn.style.display = "inline-flex";
-    if (expBtn) expBtn.style.display = "inline-flex";
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.style.opacity = "1"; saveBtn.style.pointerEvents = "auto"; }
+    if (saveAsBtn) { saveAsBtn.disabled = false; saveAsBtn.style.opacity = "1"; saveAsBtn.style.pointerEvents = "auto"; }
+    if (closeBtn) { closeBtn.disabled = false; closeBtn.style.opacity = "1"; closeBtn.style.pointerEvents = "auto"; }
     if (navTabs) {
       navTabs.style.pointerEvents = "auto";
       navTabs.style.opacity = "1";
-    }
-    if (searchInput) {
-      searchInput.disabled = false;
-      searchInput.placeholder = "Search workspace...";
     }
   }
   updateSaveStatusUI();

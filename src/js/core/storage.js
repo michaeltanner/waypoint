@@ -1,3 +1,7 @@
+let currentFileHandle = null;
+let lastSavedToDiskTime = null;
+let workspaceOpenedTime = null;
+
 // --- WORKSPACE & FILE MANAGEMENT ENGINE (LAUNCHER, RECENTS & GLOBAL DROP) ---
     function loadWorkspaceFromObject(parsed, sourceLabel = "Workspace File") {
       if (!validateWorkspaceSchema(parsed)) {
@@ -97,20 +101,29 @@
       openInspector("PRJ-001", true);
     }
 
-    function closeCurrentWorkspace() {
+    function requestCloseWorkspace() {
+      if (!state.tasks || state.tasks.length === 0) return;
       if (isWorkspaceDirty) {
-        if (!confirm("You have unsaved changes in this workspace. Close anyway? (Make sure you exported your JSON file if needed).")) {
+        if (!confirm("You have unsaved changes in this workspace. Close anyway without saving? Any unsaved edits will be lost.")) {
           return;
         }
       }
+      closeCurrentWorkspace();
+    }
+
+    function closeCurrentWorkspace() {
       resetEmptyState();
       try { localStorage.removeItem(CACHE_KEY); } catch (e) { }
       isWorkspaceDirty = false;
+      currentFileHandle = null;
+      lastSavedToDiskTime = null;
+      workspaceOpenedTime = null;
       activeFilterId = null;
       closeInspector();
       setClassification(state.classification || "UNCLASSIFIED");
       switchView("launcher");
       renderAll();
+      updateSaveStatusUI();
       showClipboardToast("Workspace closed. Welcome to Waypoint!");
     }
 
@@ -200,17 +213,29 @@ function validateWorkspaceSchema(data) {
 
     function updateSaveStatusUI() {
       const statusEl = document.getElementById("saveStatusText");
-      const saveTag = document.querySelector(".save-tag");
+      const saveTag = document.getElementById("bottomSaveTag") || document.querySelector(".save-tag");
+      const titleEl = document.getElementById("bottomWorkspaceTitle");
+
+      if (titleEl) {
+        if (!state.tasks || state.tasks.length === 0) {
+          titleEl.innerText = "No Workspace Loaded";
+        } else {
+          const rootTitle = state.tasks[0]?.title || "Active Workspace";
+          titleEl.innerText = rootTitle + (isWorkspaceDirty ? " *" : "");
+          titleEl.title = rootTitle;
+        }
+      }
+
       if (!statusEl) return;
 
       if (!state.tasks || state.tasks.length === 0) {
         statusEl.innerText = "No Workspace";
         if (saveTag) {
-          saveTag.style.borderColor = "var(--border-color)";
-          saveTag.style.color = "var(--text-dim)";
+          saveTag.style.borderColor = "rgba(255,255,255,0.15)";
+          saveTag.style.color = "rgba(255,255,255,0.6)";
           const dot = saveTag.querySelector(".pulse-dot");
           if (dot) {
-            dot.style.background = "var(--text-dim)";
+            dot.style.background = "rgba(255,255,255,0.4)";
             dot.style.boxShadow = "none";
           }
         }
@@ -221,22 +246,33 @@ function validateWorkspaceSchema(data) {
         statusEl.innerText = "Unsaved Changes";
         if (saveTag) {
           saveTag.style.borderColor = "rgba(245, 158, 11, 0.6)";
-          saveTag.style.color = "#f59e0b";
+          saveTag.style.color = "#fcd34d";
           const dot = saveTag.querySelector(".pulse-dot");
           if (dot) {
             dot.style.background = "#f59e0b";
             dot.style.boxShadow = "0 0 8px #f59e0b";
           }
         }
-      } else {
-        statusEl.innerText = "Saved " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      } else if (lastSavedToDiskTime) {
+        statusEl.innerText = "Saved " + lastSavedToDiskTime;
         if (saveTag) {
-          saveTag.style.borderColor = "var(--border-color)";
-          saveTag.style.color = "var(--text-muted)";
+          saveTag.style.borderColor = "rgba(255,255,255,0.2)";
+          saveTag.style.color = "rgba(255,255,255,0.85)";
           const dot = saveTag.querySelector(".pulse-dot");
           if (dot) {
             dot.style.background = "var(--status-done)";
             dot.style.boxShadow = "0 0 8px var(--status-done)";
+          }
+        }
+      } else {
+        statusEl.innerText = "Opened " + (workspaceOpenedTime || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        if (saveTag) {
+          saveTag.style.borderColor = "rgba(255,255,255,0.2)";
+          saveTag.style.color = "rgba(255,255,255,0.85)";
+          const dot = saveTag.querySelector(".pulse-dot");
+          if (dot) {
+            dot.style.background = "var(--accent)";
+            dot.style.boxShadow = "0 0 8px var(--accent)";
           }
         }
       }
@@ -265,28 +301,119 @@ function validateWorkspaceSchema(data) {
       }
     }
 
+    async function handleSaveWorkspace() {
+      if (!state.tasks || state.tasks.length === 0) {
+        alert("No active workspace to save.");
+        return;
+      }
+      if (currentFileHandle) {
+        try {
+          const writable = await currentFileHandle.createWritable();
+          await writable.write(JSON.stringify(state, null, 2));
+          await writable.close();
+          lastSavedToDiskTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          isWorkspaceDirty = false;
+          saveToCache(false);
+          updateSaveStatusUI();
+          showClipboardToast(`Saved changes to "${currentFileHandle.name}"`);
+          return;
+        } catch (err) {
+          console.warn("Direct save to file handle failed, prompting Save As", err);
+        }
+      }
+      await handleSaveAsWorkspace();
+    }
+
+    async function handleSaveAsWorkspace() {
+      if (!state.tasks || state.tasks.length === 0) {
+        alert("No active workspace to save.");
+        return;
+      }
+      const titleSlug = (state.tasks[0]?.title || "waypoint").toLowerCase().replace(/[^a-z0-9]+/g, "_").slice(0, 30);
+      const defaultFilename = `${titleSlug}.json`;
+
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: defaultFilename,
+            types: [{
+              description: 'JSON Files',
+              accept: { 'application/json': ['.json'] }
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(JSON.stringify(state, null, 2));
+          await writable.close();
+          currentFileHandle = handle;
+          lastSavedToDiskTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          isWorkspaceDirty = false;
+          saveToCache(false);
+          saveToRecentWorkspaces(state, handle.name);
+          updateSaveStatusUI();
+          showClipboardToast(`Saved workspace as "${handle.name}"`);
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            // User cancelled OS save dialog. Do not save, do not toast.
+            return;
+          }
+          console.warn("showSaveFilePicker failed or not allowed, using browser download", err);
+        }
+      }
+
+      exportJSON();
+    }
+
     // --- JSON IMPORT / EXPORT ---
     function exportJSON() {
       if (!state.tasks || state.tasks.length === 0) {
         alert("No active workspace to export.");
         return;
       }
-      saveToCache(false);
-      isWorkspaceDirty = false;
-      updateSaveStatusUI();
 
       const titleSlug = (state.tasks[0]?.title || "waypoint").toLowerCase().replace(/[^a-z0-9]+/g, "_").slice(0, 30);
-      const filename = `${titleSlug}_${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+      const filename = `${titleSlug}.json`;
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute("href", dataStr);
       downloadAnchor.setAttribute("download", filename);
       document.body.appendChild(downloadAnchor);
+
+      // Trigger browser download dialog
       downloadAnchor.click();
       downloadAnchor.remove();
 
-      saveToRecentWorkspaces(state, filename);
-      showClipboardToast(`Exported ${filename}`);
+      // Defer updating saved state until after the user dismisses the OS Save dialog
+      const markSaved = () => {
+        lastSavedToDiskTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        isWorkspaceDirty = false;
+        saveToCache(false);
+        saveToRecentWorkspaces(state, filename);
+        updateSaveStatusUI();
+        showClipboardToast(`Saved to "${filename}"`);
+      };
+
+      let resolved = false;
+      const onFocus = () => {
+        window.removeEventListener("focus", onFocus);
+        if (!resolved) {
+          resolved = true;
+          markSaved();
+        }
+      };
+
+      // Listen for window regaining focus when modal file dialog finishes
+      setTimeout(() => {
+        window.addEventListener("focus", onFocus, { once: true });
+        // Fallback timer in case browser did not blur
+        setTimeout(() => {
+          if (!resolved) {
+            resolved = true;
+            window.removeEventListener("focus", onFocus);
+            markSaved();
+          }
+        }, 1200);
+      }, 300);
     }
 
     function importJSON(event) {
@@ -304,3 +431,7 @@ function validateWorkspaceSchema(data) {
         return event.returnValue;
       }
     });
+window.requestCloseWorkspace = requestCloseWorkspace;
+window.closeCurrentWorkspace = closeCurrentWorkspace;
+window.handleSaveWorkspace = handleSaveWorkspace;
+window.handleSaveAsWorkspace = handleSaveAsWorkspace;

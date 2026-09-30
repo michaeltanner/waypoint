@@ -42,6 +42,7 @@ const JS_FILES = [
   'views/gantt.js',
   'views/kanban.js',
   'views/roster.js',
+  'views/json-view.js',
   'components/inspector.js',
   'core/init.js'
 ];

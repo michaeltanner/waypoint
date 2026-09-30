@@ -32,32 +32,6 @@
     </div>
   </div>
 
-  <!-- Task Hierarchy Configuration Modal -->
-  <div id="taskHierarchyModal" class="modal-overlay">
-    <div class="modal-card" style="width:520px; max-width:92vw;">
-      <div class="modal-head">
-        <h3 style="font-size:16px; font-weight:800; color:var(--text-main);">⚙️ Task Type Hierarchy Configuration</h3>
-        <button type="button" class="btn" onclick="closeTaskHierarchyModal()">✕</button>
-      </div>
-      <div style="padding:20px; display:flex; flex-direction:column; gap:14px;">
-        <p style="font-size:12px; color:var(--text-muted); line-height:1.5;">
-          Configure workstream type levels. Top-level items default to <strong>Level 0</strong>, sub-items default down the ladder.
-        </p>
-        <div id="hierarchyLevelsContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
-        <div style="display:flex; justify-content:flex-start;">
-          <button type="button" class="btn" onclick="addHierarchyLevelRow()" style="font-size:11px; color:var(--accent);">+ Add Level</button>
-        </div>
-        <div style="display:flex; gap:10px; justify-content:space-between; margin-top:8px; padding-top:12px; border-top:1px solid var(--border-color);">
-          <button type="button" class="btn" onclick="resetDefaultHierarchy()">↺ Reset Defaults</button>
-          <div style="display:flex; gap:8px;">
-            <button type="button" class="btn" onclick="closeTaskHierarchyModal()">Cancel</button>
-            <button type="button" class="btn btn-gradient" onclick="saveTaskHierarchyConfig()">💾 Save Hierarchy</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Team Member Personnel CRUD Modal -->
   <div id="personnelModal" class="modal-overlay">
     <div class="modal-card" style="width:500px; max-width:92vw;">
@@ -134,72 +108,63 @@
     </div>
   </div>
 
-  <!-- Header Navigation Toolbar -->
+  <!-- Header Navigation Toolbar (Left-Anchored File Actions) -->
   <header>
-    <div class="brand-group">
-      <div class="brand-logo">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 2L2 19h20L12 2zm0 3.8L18.5 17H5.5L12 5.8zM11 10h2v4h-2zm0 5h2v2h-2z" />
-        </svg>
+    <div class="header-left-zone">
+      <div class="brand-group">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 19h20L12 2zm0 3.8L18.5 17H5.5L12 5.8zM11 10h2v4h-2zm0 5h2v2h-2z" />
+          </svg>
+        </div>
+        <span class="brand-text">WAYPOINT</span>
       </div>
-      <span class="brand-text">WAYPOINT</span>
+
+      <!-- File & Workspace Operations (Left-Anchored) -->
+      <div class="header-file-group">
+        <div style="position:relative;">
+          <button class="btn" id="workspaceMenuBtn" onclick="toggleWorkspaceMenu(event)" title="Open, switch, or manage workspaces">
+            📂 Open ▾
+          </button>
+          <div id="workspaceMenuPopover" class="workspace-menu-popover" onclick="event.stopPropagation()">
+            <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Workspace Actions</div>
+            <button type="button" class="workspace-menu-item" onclick="loadBuiltinExample(); closeWorkspaceMenu();">
+              <span>🚀</span> <span><strong>Load Built-in Example</strong> (Sentinel Dawn)</span>
+            </button>
+            <label class="workspace-menu-item" style="cursor:pointer; margin:0;">
+              <span>📥</span> <span>Open JSON File...</span>
+              <input type="file" id="workspaceMenuFileInput" accept=".json" style="display:none;" onchange="importJSON(event); closeWorkspaceMenu();">
+            </label>
+            <button type="button" class="workspace-menu-item" onclick="createBlankWorkspace(); closeWorkspaceMenu();">
+              <span>➕</span> <span>Create Blank Workspace</span>
+            </button>
+            <div class="workspace-menu-divider"></div>
+            <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Recent Workspaces</div>
+            <div id="headerRecentWorkspacesList" style="display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
+          </div>
+        </div>
+
+        <button class="btn btn-save" id="headerSaveBtn" onclick="handleSaveWorkspace()" title="Save Workspace to disk (Ctrl+S)">
+          💾 Save
+        </button>
+        <button class="btn" id="headerSaveAsBtn" onclick="handleSaveAsWorkspace()" title="Save Workspace As new file (Ctrl+Shift+S)">
+          Save As...
+        </button>
+        <button class="btn btn-close" id="headerCloseBtn" onclick="requestCloseWorkspace()" title="Close current workspace and return to launcher">
+          ✕ Close
+        </button>
+      </div>
+
+      <div class="header-divider"></div>
     </div>
 
     <!-- View Switcher Tabs -->
     <div class="nav-tabs" id="navTabs">
-      <button class="nav-tab active" data-view="tree" onclick="switchView('tree')">📂 Portfolio Hierarchy</button>
+      <button class="nav-tab active" data-view="tree" onclick="switchView('tree')">📂 Hierarchy</button>
       <button class="nav-tab" data-view="gantt" onclick="switchView('gantt')">📅 Timeline</button>
-      <button class="nav-tab" data-view="kanban" onclick="switchView('kanban')">📋 Kanban Board</button>
-      <button class="nav-tab" data-view="team" onclick="switchView('team')">👥 Team Roster</button>
-    </div>
-
-    <!-- Actions & Controls -->
-    <div class="header-controls">
-      <div class="search-wrapper">
-        <svg class="search-icon" viewBox="0 0 24 24">
-          <path
-            d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-        </svg>
-        <input type="text" id="globalSearch" class="search-input" placeholder="Search workspace..."
-          oninput="onSearchInput(this.value)">
-      </div>
-
-      <div class="save-tag">
-        <span class="pulse-dot"></span>
-        <span id="saveStatusText">Saved</span>
-      </div>
-
-      <div style="position:relative;">
-        <button class="btn" id="workspaceMenuBtn" onclick="toggleWorkspaceMenu(event)" title="Open, switch, or manage workspaces">
-          📂 Workspace ▾
-        </button>
-        <div id="workspaceMenuPopover" class="workspace-menu-popover" onclick="event.stopPropagation()">
-          <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Workspace Actions</div>
-          <button type="button" class="workspace-menu-item" onclick="loadBuiltinExample(); closeWorkspaceMenu();">
-            <span>🚀</span> <span><strong>Load Built-in Example</strong> (Sentinel Dawn)</span>
-          </button>
-          <label class="workspace-menu-item" style="cursor:pointer; margin:0;">
-            <span>📥</span> <span>Open JSON File...</span>
-            <input type="file" id="workspaceMenuFileInput" accept=".json" style="display:none;" onchange="importJSON(event); closeWorkspaceMenu();">
-          </label>
-          <button type="button" class="workspace-menu-item" onclick="createBlankWorkspace(); closeWorkspaceMenu();">
-            <span>➕</span> <span>Create Blank Workspace</span>
-          </button>
-          <div class="workspace-menu-divider"></div>
-          <div style="font-size:10px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; letter-spacing:0.5px;">Recent Workspaces</div>
-          <div id="headerRecentWorkspacesList" style="display:flex; flex-direction:column; gap:4px; max-height:160px; overflow-y:auto;"></div>
-          <div class="workspace-menu-divider"></div>
-          <button type="button" class="workspace-menu-item" id="headerCloseWorkspaceBtn" onclick="closeCurrentWorkspace(); closeWorkspaceMenu();" style="color:var(--status-blocked);">
-            <span>✕</span> <span>Close / Return to Launcher</span>
-          </button>
-        </div>
-      </div>
-
-      <button class="btn btn-gradient" id="headerNewWorkstreamBtn" onclick="openCreateTaskDrawer()"
-        title="Add new workstream item, task, or milestone">+ New Workstream</button>
-      <button class="btn" id="headerHierarchyBtn" onclick="openTaskHierarchyModal()" title="Configure workstream type hierarchy levels">⚙️ Hierarchy</button>
-      <button class="btn btn-gradient" id="headerExportBtn" onclick="exportJSON()">Export JSON</button>
-      <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙</button>
+      <button class="nav-tab" data-view="kanban" onclick="switchView('kanban')">📋 Kanban</button>
+      <button class="nav-tab" data-view="team" onclick="switchView('team')">👥 Roster</button>
+      <button class="nav-tab" data-view="json" onclick="switchView('json')">📄 JSON</button>
     </div>
   </header>
 
@@ -341,6 +306,45 @@
         </div>
       </div>
 
+      <!-- VIEW 5: Live Project JSON Source Inspector -->
+      <div id="view-json" class="view-pane">
+        <div class="hero-card"
+          style="padding: 16px 20px; background: var(--bg-card); border-radius: 10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border:1px solid var(--border-color);">
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; display:flex; align-items:center; gap:8px;">
+              <span>📄 Overall Project JSON Source</span>
+              <span id="jsonStatsBadge" class="badge" style="font-size:11px; font-family:monospace; color:var(--accent); background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25);">Live State</span>
+            </h3>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">
+              Real-time serialized data representing the current state of the entire project, hierarchy, tasks, timeline, and team roster.
+            </p>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; user-select:none; padding:5px 10px; border-radius:6px; border:1px solid var(--border-color); background:var(--bg-glass);">
+              <input type="checkbox" id="jsonLineNumbersToggle" checked onchange="toggleJsonLineNumbers(this.checked)" style="cursor:pointer; accent-color:var(--accent);">
+              <span>Line Numbers</span>
+            </label>
+            <button type="button" class="btn btn-gradient" onclick="copyProjectJsonToClipboard()" title="Copy raw JSON to clipboard">
+              📋 Copy JSON
+            </button>
+            <button type="button" class="btn" onclick="renderJsonSourceView()" title="Refresh JSON view">
+              🔄 Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="json-viewer-card" style="background:var(--bg-primary); border:1px solid var(--border-color); border-radius:10px; overflow:hidden; box-shadow:var(--shadow-card); display:flex; flex-direction:column;">
+          <div style="padding:10px 18px; background:rgba(15, 23, 42, 0.6); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-muted);">
+            <span id="jsonMetadataInfo" style="font-weight:600;">portfolio.json</span>
+            <span style="font-family:monospace; color:var(--accent);">UTF-8 • Application/JSON</span>
+          </div>
+          <div class="json-code-wrapper" style="display:flex; max-height:calc(100vh - 290px); overflow:auto; background:var(--bg-primary); position:relative;">
+            <div id="jsonGutter" class="json-gutter"></div>
+            <pre id="projectJsonCodeBlock" style="margin:0; padding:20px 20px 20px 16px; flex:1; min-width:max-content; font-family:'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size:12px; line-height:1.6; color:var(--text-main); white-space:pre; overflow:visible; user-select:text;"></pre>
+          </div>
+        </div>
+      </div>
+
     </main>
 
     <!-- Slide-Out Inspector Drawer Panel (Unified Inspection & In-Line Edit) -->
@@ -364,10 +368,28 @@
 
   </div>
 
-  <!-- Bottom DoD Security Classification Banner -->
-  <div id="bottomBanner" class="classification-banner unclassified">
-    <span class="banner-title" id="bottomClassificationText">UNCLASSIFIED</span>
-  </div>
+  <!-- Bottom Operational Status Bar & DoD Classification Banner -->
+  <footer id="bottomBanner" class="bottom-status-bar unclassified">
+    <!-- Left: Active Workspace Name -->
+    <div class="status-bar-section status-bar-left">
+      <span class="status-workspace-icon">📁</span>
+      <span id="bottomWorkspaceTitle" class="status-workspace-title" title="Active workspace">Operation Sentinel Dawn</span>
+    </div>
+
+    <!-- Center: Security Classification -->
+    <div class="status-bar-section status-bar-center">
+      <span class="banner-title" id="bottomClassificationText">UNCLASSIFIED</span>
+    </div>
+
+    <!-- Right: Save State Indicator & Theme Toggle -->
+    <div class="status-bar-section status-bar-right">
+      <div class="save-tag" id="bottomSaveTag" title="Workspace persistence status">
+        <span class="pulse-dot"></span>
+        <span id="saveStatusText">Saved</span>
+      </div>
+      <button class="btn btn-icon-theme" onclick="toggleTheme()" id="themeBtn" title="Toggle Dark/Light Mode">🌙</button>
+    </div>
+  </footer>
 
   <!-- ==========================================================================
        WAYPOINT CORE JAVASCRIPT ENGINE (STEP 3B: COMPLETE FULL-FEATURED ENGINE)

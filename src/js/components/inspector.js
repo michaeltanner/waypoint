@@ -496,10 +496,10 @@
           }
         }
 
-        isDrawerInlineEdit = false;
         saveToCache();
         renderAll();
-        openInspector(id, false);
+        closeInspector();
+        showClipboardToast(`Saved changes to "${title}"`, "💾");
       } else {
         // Create new item with Hybrid UUID & Display ID
         const newUuid = generateUUID();
@@ -546,11 +546,10 @@
           }
         }
 
-        isDrawerCreateMode = false;
-        isDrawerInlineEdit = false;
         saveToCache();
         renderAll();
-        openInspector(newDisplayId, false);
+        closeInspector();
+        showClipboardToast(`Created "${title}"`, "➕");
       }
     }
 

@@ -1,11 +1,11 @@
 // --- TOAST NOTIFICATIONS ---
-    function showClipboardToast(msg) {
+    function showClipboardToast(msg, icon = '📋') {
       const existing = document.querySelector(".clipboard-toast");
       if (existing) existing.remove();
 
       const toast = document.createElement("div");
       toast.className = "clipboard-toast";
-      toast.innerHTML = `<span>📋</span> <span>${msg}</span>`;
+      toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
       document.body.appendChild(toast);
       setTimeout(() => { if (toast && toast.parentNode) toast.remove(); }, 2600);
     }

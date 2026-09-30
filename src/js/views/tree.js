@@ -18,6 +18,10 @@
       renderGanttTimeline();
       renderKanbanBoard();
       renderTeamRadar();
+      const jsonPane = document.getElementById("view-json");
+      if (jsonPane && jsonPane.classList.contains("active") && typeof renderJsonSourceView === "function") {
+        renderJsonSourceView();
+      }
     }
 
     // --- PROMINENT HERO OBJECTIVE & ROLL-UP METRICS RENDERER ---

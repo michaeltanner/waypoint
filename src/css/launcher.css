@@ -37,16 +37,24 @@
     .workspace-menu-popover {
       position: absolute;
       top: calc(100% + 8px);
-      right: 0;
+      left: 0;
+      right: auto;
       width: 320px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      max-width: min(340px, calc(100vw - 32px));
+      background: #0f172a;
+      border: 1px solid var(--border-glow);
       border-radius: 10px;
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
       padding: 12px;
       z-index: 1000;
       display: none;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(24px);
+    }
+
+    [data-theme="light"] .workspace-menu-popover {
+      background: #ffffff;
+      border-color: rgba(15, 23, 42, 0.15);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
     }
 
     .workspace-menu-item {
