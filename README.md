@@ -1,43 +1,77 @@
 # Waypoint — Standalone Project & Portfolio Engine
 
-Waypoint is a single-file, zero-dependency project and portfolio management application designed for air-gapped, offline, and restricted network environments.
+> **Zero Dependencies** • **100% Air-Gapped & Offline Native** • **Build Time: ~12ms** • **Target: Modern Browsers (Chromium, Edge, Firefox, Safari)**
+
+Waypoint is a single-file, zero-dependency project and portfolio management application engineered specifically for air-gapped, offline, and restricted network defense and enterprise environments.
 
 ## Overview
 
-Waypoint runs entirely inside the browser as a standalone HTML5 application. It requires no backend server, database, node runtime, build pipeline, or internet connection. All data persistence relies on local browser storage (`localStorage`) and standard JSON file import/export.
+Waypoint runs entirely inside the client browser as a standalone HTML5 application. It requires no backend server, database, node runtime, build pipeline, or internet connection. All data persistence relies on local browser storage (`localStorage`) and standard JSON file import/export.
+
+### 🛡️ Air-Gap & Privacy Assurance
+* **Zero Outbound Telemetry / Zero CDNs**: All styling, SVG icons, fonts, and scripts are embedded natively. The application never initiates external network requests (`fetch`/`XHR` are only used for local client-side blob generation).
+* **Client-Only Persistence**: All data stays within browser memory and local user-selected files. No telemetry, third-party analytics, or cloud sync backdoors exist.
+* **Direct File System Access**: Uses the modern HTML5 File System Access API (`window.showSaveFilePicker`) for native disk saving when supported, with seamless automatic fallback to client-side blob download in restricted environments.
+
+---
 
 ## Key Features
 
 ### 1. Portfolio Hierarchy
-Multi-level nested workstream tree supporting Objectives, Projects, Key Results, Tasks, and Milestones. Includes automatic completion percentage rollups, single-root project enforcement, accordion toggles, and filterable blocker indicators.
+Multi-level nested workstream tree supporting Objectives, Projects, Key Results, Tasks, and Milestones. Includes automatic completion percentage rollups, single-root project enforcement, accordion toggles, and filterable blocker indicators. Includes user-configurable hierarchy levels, labels, and icons.
 
 ### 2. Interactive Timeline & Gantt Chart
 Visual schedule display with scale switching across Day, Week, Month, and Year modes. Features interactive drag-and-drop bar rescheduling and side handles for duration adjustments.
 
 ### 3. Kanban Board
-Drag-and-drop operational board organized into Not Started, In Progress, Blocked, and Done columns. Includes swimlane matrix views grouped by Parent Workstream (LOE), Assigned Lead, or Item Type.
+Drag-and-drop operational board organized into Not Started, In Progress, Blocked, and Done columns. Includes swimlane matrix views grouped by Parent Workstream (LOE), Assigned Lead, or Item Type, with real-time type filtering.
 
 ### 4. Dedicated Team Roster
 Separate tab view for workspace personnel management. Tracks team leads, engineering roles, email contacts, and phone numbers with assignment capabilities and cascading team inheritance down task branches.
 
 ### 5. Slide-Out Inspector Drawer
-Detailed item inspection with in-line editing, 85vw expanded reading mode, rich text notes editor (supporting bold, italic, sub-lists, highlights, blockquotes), end-state vision tracking, and tactical Definition of Done (DoD) criteria.
+Detailed item inspection with in-line editing, 85vw expanded reading mode, rich text notes editor (supporting bold, italic, sub-lists, highlights, blockquotes), end-state vision tracking, and tactical Definition of Done (DoD) criteria. Features an anchored, two-row responsive action header.
 
-### 6. Security Banners & Briefing Export
+### 6. Workspace Launcher Hub & Session Persistence
+* **Clean State Launch**: Starts with a clean hub instead of preloading dummy data.
+* **1-Click Built-in Example**: Instant interactive load of the canonical demonstration dataset (*Operation Sentinel Dawn*).
+* **Drag-and-Drop Dropzone**: Drag any `.json` file anywhere onto the page to load immediately.
+* **Recent Workspaces**: Local memory tracks recently opened portfolios with item counts and timestamps for fast switching.
+* **Save / Save As Workflow**: Direct file overwrite via `Ctrl+S`, `Save As...` via `Ctrl+Shift+S`, and visual dirty-state indicators (`*`).
+* **Unsaved Changes Guard**: Closing a workspace triggers an interactive confirmation modal offering **Save & Close**, **Save As & Close**, **Discard & Close**, or **Cancel**.
+
+### 7. Security Banners & Briefing Export
 Top and bottom security classification banners (UNCLASSIFIED, CUI, or custom). High-contrast briefing layout optimized for 1-page browser print and PDF export.
+
+---
+
+## Keyboard Shortcuts
+
+| Shortcut | Action | Scope |
+| :--- | :--- | :--- |
+| `Ctrl + S` | **Save Workspace** (direct overwrite or save-as prompt) | Global |
+| `Ctrl + Shift + S` | **Save Workspace As...** (prompt file destination) | Global |
+| `Escape` | Dismiss active modal dialog or close slide-out inspector | Global |
+| `Ctrl + B` | **Bold** selected text | Rich Text Inspector Editor |
+| `Ctrl + I` | *Italic* selected text | Rich Text Inspector Editor |
+| `Ctrl + U` | <u>Underline</u> selected text | Rich Text Inspector Editor |
+
+---
 
 ## Deployment & Usage
 
-1. Compile the standalone distribution artifact using `node build.js` or `.\build.ps1` (or download the precompiled `build/waypoint.html` release).
-2. Save `build/waypoint.html` to any local directory or offline media drive.
-3. Open `build/waypoint.html` directly in any modern web browser (Google Chrome, Microsoft Edge, Firefox, Safari).
-4. The application starts cleanly without preloading any default JSON content, presenting the **Workspace Launcher Hub**:
-   * **🚀 Built-in Example**: One-click interactive load of the canonical demonstration dataset (*Operation Sentinel Dawn*).
-   * **📥 Open JSON Workspace**: Seamless drag-and-drop anywhere onto the page (or click to browse local storage) to immediately load any existing `.json` portfolio file.
+Waypoint requires no server setup or installation. To deploy in an air-gapped or restricted environment:
+
+1. Copy the standalone artifact `build/waypoint.html` to any local directory, workstation, or secure offline media drive.
+2. Double-click `build/waypoint.html` to open directly in any modern browser (Google Chrome, Microsoft Edge, Mozilla Firefox, Apple Safari).
+3. The application starts cleanly in the **Workspace Launcher Hub**:
+   * **🚀 Built-in Example**: Click to load the *Operation Sentinel Dawn* demo portfolio.
+   * **📥 Open JSON Workspace**: Drag-and-drop a `.json` file or click to select from disk.
    * **➕ Create Blank Workspace**: Start fresh with an empty project, customizable OKR ladder, DoD criteria, and clean team directory.
-   * **🕒 Recent Workspaces**: Quickly resume recent workspaces with 1-click open buttons, showing workstream counts, personnel counts, and last modified timestamps.
-5. Use the **📂 Workspace ▾** header menu at any time to open new files, save, save as, switch recent workspaces, or close the active session to return to the launcher.
-6. Use **💾 Save** (`Ctrl+S`) to save directly back to the active file handle or prompt Save As, **Save As...** (`Ctrl+Shift+S`) to write to a chosen file destination (or download offline JSON), and **✕ Close** to close the session with an interactive confirmation modal offering **Save & Close**, **Save As & Close**, **Discard & Close**, or **Cancel** whenever unsaved changes are present.
+   * **🕒 Recent Workspaces**: Quickly resume previous sessions.
+4. Use the **📂 Workspace ▾** header menu at any time to open, save, save as, switch recent workspaces, or close the active session.
+
+---
 
 ## Development & Build Workflow
 
@@ -85,6 +119,8 @@ To compile edits made in `/src/` into the standalone `build/waypoint.html` distr
   ```
 
 > **Air-Gapped Standalone Guarantee**: The compiled artifact `build/waypoint.html` is generated on demand, excluded from git version control, and remains a completely standalone, zero-dependency HTML5 application ready for drag-and-drop deployment onto secure, offline, air-gapped systems.
+
+---
 
 ## Data Schema Specification
 
@@ -143,6 +179,8 @@ Waypoint uses a single-root nested JSON structure (`schemaVersion: 2`) with a hy
 }
 ```
 
+---
+
 ## Feature Backlog & Roadmap
 
 ### 1. Meetings & Meeting Minutes System
@@ -162,15 +200,16 @@ Tabular export for tasks, schedules, team assignments, and blocker logs.
 ### 4. Change Audit Tracker
 Historical change log tracking property revisions, timestamped edits, and workspace evolution over time.
 
+---
+
 ## Architecture Analysis & Refactoring COAs (Future Maintenance)
 
 ### Executive Assessment & Technical Debt
-* **Current Footprint**: `waypoint.html` is ~5,200 lines (1,780 lines of CSS, 290 lines of HTML, 3,100 lines of JavaScript) in a single standalone file. It delivers 100% zero-dependency, air-gapped, offline execution.
-* **Maintenance Friction**:
-  1. **Monolithic DOM Thrashing**: State changes call `renderAll()`, which tears down and repaints large swaths of the DOM via `innerHTML = ""`. This resets scroll positions, triggers layout thrashing, and risks scale bottlenecks as data grows.
-  2. **Recursive Traversal Overhead**: Lookups, reparenting, metric rollups, and property resolutions perform $O(N)$ recursive tree scans (`findTaskRecursive`, `findParent`, `getTaskDepth`, `countPrefix`).
-  3. **String Concatenation UI**: Mixing template literals, raw HTML strings, and inline event handlers (`onclick="..."`) makes UI components fragile to syntax errors and state bugs.
-  4. **Developer Ergonomics**: Navigating a 5,200-line single file to coordinate styles, markup, and event handlers creates high cognitive load and merge conflicts.
+* **Phase 1 Outcome (COA #2 Complete)**: Source code is fully modularized into `/src/` (CSS, JS, and HTML templates are isolated in 100–350 line files). Zero-dependency native Node and PowerShell micro-bundlers compile `build/waypoint.html` in ~12ms. The build artifact is gitignored, completely eliminating source divergence and cognitive load.
+* **Remaining Technical Debt Focus (Phase 2)**:
+  1. **Monolithic DOM Renders**: Certain state changes trigger `renderAll()`, repainting views via `innerHTML = ""`. An Event Bus will allow views to selectively repaint only their active branch.
+  2. **Recursive Traversal Overhead**: Tree scans (`findTaskRecursive`, `findParent`, `getTaskDepth`) currently run in $O(N)$ time. An in-memory normalized index will make lookups $O(1)$.
+  3. **String Concatenation UI**: Transitioning inline handlers (`onclick="..."`) to delegated listeners or `<template>` clones will improve component maintainability.
 
 ---
 
@@ -183,10 +222,10 @@ Preserve the single-file distribution with zero build tooling, but re-architect 
   * Maintain an in-memory **Entity Map** (`idMap = new Map()`, `parentMap = new Map()`) alongside the tree so lookups and depth calculations are $O(1)$ instead of $O(N)$.
   * Introduce an Event Bus (`Waypoint.bus.emit('TASK_CHANGED', id)`) allowing views to update only their own DOM branch instead of full-screen `renderAll()`.
 * **Pros**: Maintains strict zero-build single-file deployment; significant performance gains on lookups and updates; clean internal boundaries.
-* **Cons**: The file remains ~5,000+ lines in the editor.
+* **Cons**: The file remains ~5,000+ lines in the editor (superseded by COA 2).
 
-#### COA 2: Source Separation with a Zero-Dependency Micro-Bundler (Recommended)
-Split the codebase into a clean `/src` directory structure during development, and use a lightweight 30-line Node or PowerShell script (`build.js` / `build.ps1`) to compile into the release `waypoint.html`.
+#### COA 2: Source Separation with a Zero-Dependency Micro-Bundler (Implemented ✅)
+Split the codebase into a clean `/src` directory structure during development, and use a lightweight 30-line Node or PowerShell script (`build.js` / `build.ps1`) to compile into the release `build/waypoint.html`.
 * **Architecture**:
   ```text
   /waypoint
@@ -203,7 +242,7 @@ Split the codebase into a clean `/src` directory structure during development, a
           └── components/ (inspector.js, modals.js, rich-text.js)
   ```
 * **Pros**: Superior developer ergonomics (files are 150–400 lines); isolated feature development; zero merge friction; preserves 100% offline air-gapped deployment; zero external npm dependencies.
-* **Cons**: Requires executing a build script before testing changes; risk of source divergence if someone edits `waypoint.html` directly.
+* **Cons**: Requires executing a build script before testing changes.
 
 #### COA 3: Reactive Proxy Store with Granular DOM Patching
 Modernize the data layer using native browser APIs (`Proxy`, `<template>` fragments, and `CustomEvent`).
@@ -229,7 +268,7 @@ Preserve the existing codebase structure and monolithic file, but surgically add
 
 | Metric | COA 1 (In-Place Namespaces) | COA 2 (Source Split + Bundler) | COA 3 (Reactive Proxy) | COA 4 (Surgical Clean-up) |
 | :--- | :---: | :---: | :---: | :---: |
-| **Maintainability** | High | **Superior** | High | Medium |
+| **Maintainability** | High | **Superior (Implemented)** | High | Medium |
 | **Air-Gap / Offline Integrity** | **100% Native** | **100% Native** | **100% Native** | **100% Native** |
 | **Developer Ergonomics** | Moderate | **Superior** | Moderate | Low-Moderate |
 | **Refactoring Risk** | Medium | Low-Medium | High | **Very Low** |
@@ -239,7 +278,7 @@ Preserve the existing codebase structure and monolithic file, but surgically add
 ---
 
 ### Recommended Phased Roadmap
-1. **Phase 1 (Completed)**: Implemented **COA 2** by separating CSS, HTML, and JS into `/src/` with zero-dependency native scripts (`build.js` / `build.ps1`).
+1. **Phase 1 (Completed ✅)**: Implemented **COA 2** by separating CSS, HTML, and JS into `/src/` with zero-dependency native scripts (`build.js` / `build.ps1`) outputting to `build/waypoint.html`.
 2. **Phase 2**: Implement the normalized in-memory index from **COA 1** to make task and member lookups $O(1)$.
 3. **Phase 3**: Build upcoming backlog features (Meetings & Minutes, Risk Register, Audit Logs) inside isolated modular files.
 
