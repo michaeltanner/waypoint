@@ -108,6 +108,16 @@
     </div>
   </div>
 
+  <div id="shortcutsModal" class="modal-overlay" role="presentation" onclick="if (event.target === this) closeShortcutsModal()">
+    <div class="modal-card shortcuts-card" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle" tabindex="-1">
+      <div class="modal-head">
+        <h3 id="shortcutsModalTitle">Keyboard Shortcuts</h3>
+        <button type="button" class="btn" id="shortcutsModalClose" onclick="closeShortcutsModal()" aria-label="Close keyboard shortcuts">✕</button>
+      </div>
+      <div class="modal-body" id="shortcutsModalBody"></div>
+    </div>
+  </div>
+
   <!-- Header Navigation Toolbar (Left-Anchored File Actions) -->
   <header>
     <div class="header-left-zone">
@@ -159,12 +169,15 @@
     </div>
 
     <!-- View Switcher Tabs -->
-    <div class="nav-tabs" id="navTabs">
-      <button class="nav-tab active" data-view="tree" onclick="switchView('tree')">📂 Hierarchy</button>
-      <button class="nav-tab" data-view="gantt" onclick="switchView('gantt')">📅 Timeline</button>
-      <button class="nav-tab" data-view="kanban" onclick="switchView('kanban')">📋 Kanban</button>
-      <button class="nav-tab" data-view="team" onclick="switchView('team')">👥 Roster</button>
-      <button class="nav-tab" data-view="json" onclick="switchView('json')">📄 JSON</button>
+    <div class="header-right-zone">
+      <div class="nav-tabs" id="navTabs">
+        <button class="nav-tab active" data-view="tree" onclick="switchView('tree')">📂 Hierarchy</button>
+        <button class="nav-tab" data-view="gantt" onclick="switchView('gantt')">📅 Timeline</button>
+        <button class="nav-tab" data-view="kanban" onclick="switchView('kanban')">📋 Kanban</button>
+        <button class="nav-tab" data-view="team" onclick="switchView('team')">👥 Roster</button>
+        <button class="nav-tab" data-view="json" onclick="switchView('json')">📄 JSON</button>
+      </div>
+      <button type="button" class="btn btn-shortcuts" id="shortcutsHelpBtn" onclick="toggleShortcutsModal()" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts" aria-haspopup="dialog" aria-expanded="false">?</button>
     </div>
   </header>
 

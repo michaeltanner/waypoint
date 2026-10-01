@@ -37,6 +37,7 @@ const JS_FILES = [
   'core/hierarchy.js',
   'core/storage.js',
   'core/navigation.js',
+  'core/shortcuts.js',
   'components/rich-text.js',
   'views/launcher.js',
   'views/tree.js',

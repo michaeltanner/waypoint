@@ -563,16 +563,6 @@
       if (btn) { btn.innerText = "⤢ Expand View"; btn.title = "Expand drawer to wide screen reading view"; }
     }
 
-    // Keyboard Shortcut Listener: 'Esc' Key closes Inspector Drawer
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" || e.key === "Esc") {
-        const drawer = document.getElementById("detailDrawer");
-        if (drawer && drawer.classList.contains("open")) {
-          closeInspector();
-        }
-      }
-    });
-
     // Outside Click Listener: Close Inspector Drawer when clicking outside of panel
     document.addEventListener("pointerdown", (e) => {
       const drawer = document.getElementById("detailDrawer");

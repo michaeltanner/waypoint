@@ -49,12 +49,15 @@ Top and bottom security classification banners (UNCLASSIFIED, CUI, or custom). H
 
 | Shortcut | Action | Scope |
 | :--- | :--- | :--- |
-| `Ctrl + S` | **Save Workspace** (direct overwrite or save-as prompt) | Global |
-| `Ctrl + Shift + S` | **Save Workspace As...** (prompt file destination) | Global |
-| `Escape` | Dismiss active modal dialog or close slide-out inspector | Global |
+| `?` | Show or hide the keyboard shortcut list. Also available from the **?** button in the header. Ignored while typing in a field. | Global |
+| `Ctrl + S` | **Save Workspace** (direct overwrite or save-as prompt). Command on macOS. | Global |
+| `Ctrl + Shift + S` | **Save Workspace As...** (prompt file destination). Command on macOS. | Global |
+| `Escape` | Close the topmost layer: shortcut list, dialog, menu, or slide-out inspector | Global |
 | `Ctrl + B` | **Bold** selected text | Rich Text Inspector Editor |
 | `Ctrl + I` | *Italic* selected text | Rich Text Inspector Editor |
 | `Ctrl + U` | <u>Underline</u> selected text | Rich Text Inspector Editor |
+
+The in-app list is rendered from `src/js/core/shortcuts.js`. Add a shortcut there and in this table together.
 
 ---
 

@@ -325,6 +325,26 @@
       margin: 0 4px;
     }
 
+    .header-right-zone {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .btn.btn-shortcuts {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      padding: 0;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 800;
+      justify-content: center;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
     .btn-save {
       background: rgba(16, 185, 129, 0.15) !important;
       border-color: rgba(16, 185, 129, 0.4) !important;
@@ -492,8 +512,14 @@
       .header-divider {
         display: none;
       }
-      .nav-tabs {
+      .header-right-zone {
         width: 100%;
+        min-width: 0;
+      }
+      .nav-tabs {
+        flex: 1;
+        width: auto;
+        min-width: 0;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;

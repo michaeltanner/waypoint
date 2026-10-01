@@ -3,7 +3,8 @@
 
       header,
       .inspector-panel,
-      .classification-banner {
+      .classification-banner,
+      .modal-overlay {
         display: none !important;
       }
 
